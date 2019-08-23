@@ -1,0 +1,650 @@
+******ManofWar Edit******
+		*** FULL DIABLO II STYLE SOCKETING SYSTEM BY ManofWar ****** 1-14-12 ***
+		
+I Feel the same as Lord Hog Fred, I have spent alot of hours redoing these scripts and making all the weapons, shields and armor all updated with all new stuff. So I give credit to the first one with this idea and Lord Hog Fred for giving me this version to work off of. So for what I have done I take credit and what was there I give credit to the original scriptors. Heres a list of things I have changed,
+
+1 - I have updated every script with a little better drop rate of 5% for a 3 socket, 15% for a 2 socket and then 80% for 1 socket. That is if you even get a socketed item to drop. So you will not get alot of 3 sockets all at once.
+
+2 - I cleaned up the Gems, they are not as overpowering and I listed every gem with a label of what it does on mouse over. Plus a bonus I cleaned up the color system so it is more pleasant to the eyes.
+		
+3 - I have added all the new items from all the expansions that it did not have before, so I believe I got all the ML and SA items that I think should be dropped.
+
+4 - I have included my version of the Horadic Cube which I believe is more pleasant to the eyes as well. I also remade it so you can easily update more ways of using it within the gump.
+
+5 - I have emplemented the system into the loot and lootpack cs files for the drops. So you can have magic items with sockets. This you can play with to make more drops or less drop just by adding it to each type of loot drop.
+
+6 - I have included my version of the SocketedGemKey, which adds and takes a certain amount of gems at one time. Since I changed the gems to be stackable I had to change the key.
+******ManofWar Edit******
+
+		*** FULL DIABLO II STYLE SOCKETING SYSTEM BY LORD HOG FRED ***
+
+
+Before I go any further I would like to point out that the base of this system is NOT mine.
+I took the basic Diablo 2 Socket System script from RunUOscripts.com and have turned it into what you have here. So the very basics of this system were not made by me, however I ahve put a LOT of work into the original system to make it what it is now, I added sections of code and have re-worked a lot of the original code. So please understand that I have put a lot of time and effort into altering this system and I take full credit for everything I've done BUT I do also give credit to the original author Xeus.
+
+////////////////////////////////////////////////////////////////////////////////////////////
+******ManofWar Edit******
+Edit-- You can ethier use these installation instructions or use the the files I have included in the Distro file and then use Winmerge to do the edits necessary. I think I have marked all the edits needed.
+******ManofWar Edit****** 
+
+INSTALLATION
+-------------
+
+Ok firstly you will need to place both sets of scripts found in the zip files into your RunUO Custom Scripts folder.
+
+Once you have done that you need to make changes to the following files:
+
+\RunUO\Scripts\Items\Weapons\BaseWeapon.cs
+\RunUO\Scripts\Items\Armor\BaseArmor.cs
+\RunUO\Scripts\Items\Shields\BaseShield.cs
+\RunUO\Scripts\Misc\LootPack.cs
+\RunUO\Scripts\Misc\Loot.cs
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+
+ALTERING BASEWEAPON.CS
+----------------------
+
+To alter BaseWeapon.cs you need to find this line:
+
+		public override int EnergyResistance{ get{ return m_AosWeaponAttributes.ResistEnergyBonus; } }
+
+
+Underneath it you need to paste this:
+
+// <Socketed Weapon System>
+		private int m_UsedSockets, m_MaxSockets;
+		private string m_SocketLabel, m_AugmentList;
+		
+		[CommandProperty( AccessLevel.GameMaster )]
+		public string AugmentList
+		{
+			get{ return m_AugmentList; }
+			set{ m_AugmentList = value; InvalidateProperties(); }
+		}
+		
+		public virtual string SocketLabel{ get{ return m_SocketLabel; } set{ m_SocketLabel = value; } }
+		
+		[CommandProperty( AccessLevel.GameMaster )]
+		public int UsedSockets
+		{
+			get{ return m_UsedSockets; }
+			set{ m_UsedSockets = value; InvalidateProperties(); }
+		}
+		
+		[CommandProperty( AccessLevel.GameMaster )]
+		public int MaxSockets
+		{
+			get{ return m_MaxSockets; }
+			set{ m_MaxSockets = value; InvalidateProperties(); }
+		}
+// </Socketed Weapon System>
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+
+ALTERING BASEARMOR.CS
+---------------------
+
+To alter BaseArmor.cs you need to find this line:
+
+		public virtual int InitMaxHits{ get{ return 0; } }
+
+
+Underneath it you need to paste this:
+
+// <Socketed Armour System>
+		private int m_UsedSockets, m_MaxSockets;
+		private string m_SocketLabel, m_AugmentList;
+		
+		[CommandProperty( AccessLevel.GameMaster )]
+		public string AugmentList
+		{
+			get{ return m_AugmentList; }
+			set{ m_AugmentList = value; InvalidateProperties(); }
+		}
+		
+		public virtual string SocketLabel{ get{ return m_SocketLabel; } set{ m_SocketLabel = value; } }
+		
+		[CommandProperty( AccessLevel.GameMaster )]
+		public int UsedSockets
+		{
+			get{ return m_UsedSockets; }
+			set{ m_UsedSockets = value; InvalidateProperties(); }
+		}
+		
+		[CommandProperty( AccessLevel.GameMaster )]
+		public int MaxSockets
+		{
+			get{ return m_MaxSockets; }
+			set{ m_MaxSockets = value; InvalidateProperties(); }
+		}
+// </Socketed Armour System>
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+
+ALTERING BASESHIELD.CS
+----------------------
+
+To alter BaseShield.cs you need to find this line:
+
+		public override ArmorMaterialType MaterialType{ get{ return ArmorMaterialType.Plate; } }
+
+
+Underneath it you need to paste this:
+
+// <Socketed Shield System>
+		private int m_UsedSockets, m_MaxSockets;
+		private string m_SocketLabel, m_AugmentList;
+		
+		[CommandProperty( AccessLevel.GameMaster )]
+		public string AugmentList
+		{
+			get{ return m_AugmentList; }
+			set{ m_AugmentList = value; InvalidateProperties(); }
+		}
+		
+		public virtual string SocketLabel{ get{ return m_SocketLabel; } set{ m_SocketLabel = value; } }
+		
+		[CommandProperty( AccessLevel.GameMaster )]
+		public int UsedSockets
+		{
+			get{ return m_UsedSockets; }
+			set{ m_UsedSockets = value; InvalidateProperties(); }
+		}
+		
+		[CommandProperty( AccessLevel.GameMaster )]
+		public int MaxSockets
+		{
+			get{ return m_MaxSockets; }
+			set{ m_MaxSockets = value; InvalidateProperties(); }
+		}
+// </Socketed Shield System>
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+
+ALTERING LOOTPACK.CS
+--------------------
+
+To alter LootPack.cs you need to find this section of code:
+		private static readonly LootPackItem[] PotionItems = new LootPackItem[]
+			{
+				new LootPackItem( typeof( AgilityPotion ), 1 ),
+				new LootPackItem( typeof( StrengthPotion ), 1 ),
+				new LootPackItem( typeof( RefreshPotion ), 1 ),
+				new LootPackItem( typeof( LesserCurePotion ), 1 ),
+				new LootPackItem( typeof( LesserHealPotion ), 1 ),
+				new LootPackItem( typeof( LesserPoisonPotion ), 1 )
+			};
+
+
+Inderneath this code you need to paste this:
+
+// SOCKET ADDITION START
+		private static readonly LootPackItem[] ChippedGems = new LootPackItem[]
+			{
+				new LootPackItem( typeof( ChippedAmethyst ), 1 ),
+				new LootPackItem( typeof( ChippedEmerald ), 1 ),
+				new LootPackItem( typeof( ChippedDiamond ), 1 ),
+				new LootPackItem( typeof( ChippedRuby ), 1 ),
+				new LootPackItem( typeof( ChippedSapphire ), 1 ),
+				new LootPackItem( typeof( ChippedTopaz ), 1 )
+			};
+
+		private static readonly LootPackItem[] FlawedGems = new LootPackItem[]
+			{
+				new LootPackItem( typeof( FlawedAmethyst ), 1 ),
+				new LootPackItem( typeof( FlawedEmerald ), 1 ),
+				new LootPackItem( typeof( FlawedDiamond ), 1 ),
+				new LootPackItem( typeof( FlawedRuby ), 1 ),
+				new LootPackItem( typeof( FlawedSapphire ), 1 ),
+				new LootPackItem( typeof( FlawedTopaz ), 1 )
+			};
+
+		private static readonly LootPackItem[] PlainGems = new LootPackItem[]
+			{
+				new LootPackItem( typeof( PlainAmethyst ), 1 ),
+				new LootPackItem( typeof( PlainEmerald ), 1 ),
+				new LootPackItem( typeof( PlainDiamond ), 1 ),
+				new LootPackItem( typeof( PlainRuby ), 1 ),
+				new LootPackItem( typeof( PlainSapphire ), 1 ),
+				new LootPackItem( typeof( PlainTopaz ), 1 )
+			};
+
+		private static readonly LootPackItem[] FlawlessGems = new LootPackItem[]
+			{
+				new LootPackItem( typeof( FlawlessAmethyst ), 1 ),
+				new LootPackItem( typeof( FlawlessEmerald ), 1 ),
+				new LootPackItem( typeof( FlawlessDiamond ), 1 ),
+				new LootPackItem( typeof( FlawlessRuby ), 1 ),
+				new LootPackItem( typeof( FlawlessSapphire ), 1 ),
+				new LootPackItem( typeof( FlawlessTopaz ), 1 )
+			};
+
+		private static readonly LootPackItem[] PerfectGems = new LootPackItem[]
+			{
+				new LootPackItem( typeof( PerfectAmethyst ), 1 ),
+				new LootPackItem( typeof( PerfectEmerald ), 1 ),
+				new LootPackItem( typeof( PerfectDiamond ), 1 ),
+				new LootPackItem( typeof( PerfectRuby ), 1 ),
+				new LootPackItem( typeof( PerfectSapphire ), 1 ),
+				new LootPackItem( typeof( PerfectTopaz ), 1 )
+			};
+// SOCKET ADDITION END
+
+********** EDit***************************
+
+******ManofWar Edit******
+the following needs to be added to the version your server uses. If you are SA, ML or SE you should put the following under the ML and SE lootpacks. If you use AOS then put it under the AOS lootpacks. Or do what I did and put it under all the lootpacks so no matted what your server is set too it will drop the Gems.
+******ManofWar Edit******
+
+Now you need to find this section of code:
+		public static readonly LootPack AosPoor = new LootPack( new LootPackEntry[]
+			{
+				new LootPackEntry(  true, Gold,			100.00, "1d10+10" ),
+				new LootPackEntry( false, MagicItems,	  0.02, 1, 5, 0, 90 ),
+				new LootPackEntry( false, Instruments,	  0.02, 1 ),
+			} );
+
+Now underneath "new LootPackEntry( false, Instruments,	  0.02, 1 )," paste this:
+// SOCKET ADDITION START
+				new LootPackEntry( false, ChippedGems,	  0.05, 1 )
+// SOCKET ADDITION END
+
+
+Now you need to find the instrument lines for each Aos LootPack and add the gems underneath them. This is the code for each LootPack:
+
+AosMeager:
+// SOCKET ADDITION START
+			new LootPackEntry( false, ChippedGems,	  0.23, 1 ),
+			new LootPackEntry( false, FlawedGems,	  0.14, 1 )
+// SOCKET ADDITION END
+
+
+AosAverage:
+// SOCKET ADDITION START
+				new LootPackEntry( false, ChippedGems,	  0.23, 1 ),
+				new LootPackEntry( false, FlawedGems,	  0.14, 1 ),
+				new LootPackEntry( false, PlainGems,	  0.09, 1 )
+// SOCKET ADDITION END
+
+AosRich:
+// SOCKET ADDITION START
+				new LootPackEntry( false, ChippedGems,	  0.23, 1 ),
+				new LootPackEntry( false, FlawedGems,	  0.14, 1 ),
+				new LootPackEntry( false, PlainGems,	  0.09, 1 ),
+				new LootPackEntry( false, FlawlessGems,	  0.05, 1 )				
+// SOCKET ADDITION END
+
+
+AosFilthyRich:
+// SOCKET ADDITION START
+				new LootPackEntry( false, ChippedGems,	  0.23, 1 ),
+				new LootPackEntry( false, FlawedGems,	  0.14, 1 ),
+				new LootPackEntry( false, PlainGems,	  0.09, 1 ),
+				new LootPackEntry( false, FlawlessGems,	  0.05, 1 ),	
+				new LootPackEntry( false, PerfectGems,	  0.02, 1 )				
+// SOCKET ADDITION END
+
+
+AosUltraRich:
+// SOCKET ADDITION START
+				new LootPackEntry( false, ChippedGems,	  0.25, 1 ),
+				new LootPackEntry( false, FlawedGems,	  0.16, 1 ),
+				new LootPackEntry( false, PlainGems,	  0.11, 1 ),
+				new LootPackEntry( false, FlawlessGems,	  0.08, 1 ),	
+				new LootPackEntry( false, PerfectGems,	  0.05, 1 )				
+// SOCKET ADDITION END
+
+
+AosSuperBoss:
+// SOCKET ADDITION START
+				new LootPackEntry( false, ChippedGems,	  1.25, 1 ),
+				new LootPackEntry( false, FlawedGems,	  1.16, 1 ),
+				new LootPackEntry( false, PlainGems,	  1.11, 1 ),
+				new LootPackEntry( false, FlawlessGems,	  1.08, 1 ),	
+				new LootPackEntry( false, PerfectGems,	  1.05, 1 )				
+// SOCKET ADDITION END
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+
+ALTERING LOOT.CS
+----------------
+
+To alter Loot.cs you need to find this line of code:
+        	public static Type[] ClothingTypes{ get{ return m_ClothingTypes; } }	
+
+
+Underneath it you need to paste this:
+
+// SOCKET ADDITION
+        private static Type[] m_ChippedGemTypes = new Type[]
+            {
+                	typeof( ChippedAmethyst ),		typeof( ChippedDiamond ),		typeof( ChippedEmerald ),
+			typeof( ChippedRuby ),			typeof( ChippedSapphire ),		typeof( ChippedSkull ),
+			typeof( ChippedTopaz )
+            };
+        public static Type[] ChippedGemTypes{ get{ return m_ChippedGemTypes; } }
+
+        private static Type[] m_FlawedGemTypes = new Type[]
+            {
+                	typeof( FlawedAmethyst ),		typeof( FlawedDiamond ),		typeof( FlawedEmerald ),
+			typeof( FlawedRuby ),			typeof( FlawedSapphire ),		typeof( FlawedSkull ),
+			typeof( FlawedTopaz )
+            };
+        public static Type[] FlawedGemTypes{ get{ return m_FlawedGemTypes; } }
+
+        private static Type[] m_PlainGemTypes = new Type[]
+            {
+                	typeof( PlainAmethyst ),		typeof( PlainDiamond ),		typeof( PlainEmerald ),
+			typeof( PlainRuby ),			typeof( PlainSapphire ),		typeof( PlainSkull ),
+			typeof( PlainTopaz )
+            };
+        public static Type[] PlainGemTypes{ get{ return m_PlainGemTypes; } }
+
+        private static Type[] m_FlawlessGemTypes = new Type[]
+            {
+                	typeof( FlawlessAmethyst ),		typeof( FlawlessDiamond ),		typeof( FlawlessEmerald ),
+			typeof( FlawlessRuby ),			typeof( FlawlessSapphire ),		typeof( FlawlessSkull ),
+			typeof( FlawlessTopaz )
+            };
+        public static Type[] FlawlessGemTypes{ get{ return m_FlawlessGemTypes; } }
+
+        private static Type[] m_PerfectGemTypes = new Type[]
+            {
+                	typeof( PerfectAmethyst ),		typeof( PerfectDiamond ),		typeof( PerfectEmerald ),
+			typeof( PerfectRuby ),			typeof( PerfectSapphire ),		typeof( PerfectSkull ),
+			typeof( PerfectTopaz )
+            };
+        public static Type[] PerfectGemTypes{ get{ return m_PerfectGemTypes; } }
+// SOCKET ADDITION
+
+
+Then find this section of code:
+		public static Item RandomStatue()
+		{
+			return Construct( m_StatueTypes );
+		}
+
+
+And underneath that paste this:
+
+// SOCKET ADDITION
+		public static Item RandomChippedGem()
+		{
+			return Construct( m_ChippedGemTypes );
+		}
+
+		public static Item RandomFlawedGem()
+		{
+			return Construct( m_FlawedGemTypes );
+		}
+
+		public static Item RandomPlainGem()
+		{
+			return Construct( m_PlainGemTypes );
+		}
+
+		public static Item RandomFlawlessGem()
+		{
+			return Construct( m_FlawlessGemTypes );
+		}
+
+		public static Item RandomPerfectGem()
+		{
+			return Construct( m_PerfectGemTypes );
+		}
+// SOCKET ADDITION
+
+////////////////////////////////////////////////////////////////////////////////////////////
+******ManofWar Edit******
+This is how I added the drops to the loot system.
+
+in loot.cs at the top I put this,
+
+		#region Socketed
+		private static Type[] m_SocketedWeaponTypes = new Type[]
+		{
+				typeof( SocketedBloodBlade ),							typeof( SocketedDiscMace ),				
+				typeof( SocketedDreadSword ),							typeof( SocketedDualPointedSpear ),						typeof( SocketedDualShortAxes ),				
+				typeof( SocketedGargishAxe ),							typeof( SocketedGargishBardiche ),						typeof( SocketedGargishBattleAxe ),				
+				typeof( SocketedGargishBoneHarvester ),					typeof( SocketedGargishButcherKnife ),					typeof( SocketedGargishCleaver ),				
+				typeof( SocketedGargishDagger ),						typeof( SocketedGargishDaisho ),						typeof( SocketedGargishGnarledStaff),				
+				typeof( SocketedGargishKatana ),						typeof( SocketedGargishKryss ),							typeof( SocketedGargishLance ),				
+				typeof( SocketedGargishMaul ),							typeof( SocketedGargishPike ),							typeof( SocketedGargishScythe ),				
+				typeof( SocketedGargishTalwar ),						typeof( SocketedGargishTekagi ),						typeof( SocketedGargishTessen ),
+				typeof( SocketedGargishWarfork ),						typeof( SocketedGargishWarHammer ),						typeof( SocketedGlassStaff ),				
+				typeof( SocketedGlassSword ),							typeof( SocketedSerpentStoneStaff ),					typeof( SocketedShortblade ),				
+				typeof( SocketedStoneWarSword ),						typeof( SocketedAssassinSpike ),						typeof( SocketedDiamondMace ),				
+				typeof( SocketedElvenMachete ),							typeof( SocketedElvenSpellblade),						typeof( SocketedLeafblade ),							
+				typeof( SocketedOrnateAxe ),							typeof( SocketedRadiantScimitar ),						typeof( SocketedRuneBlade ),							
+				typeof( SocketedWarCleaver ),							typeof( SocketedWildStaff ),							typeof( SocketedBokuto ),								
+				typeof( SocketedDaisho),								typeof( SocketedKama ),									typeof( SocketedLajatang ),								
+				typeof( SocketedNoDachi ),								typeof( SocketedNunchaku ),								typeof( SocketedSai ),									
+				typeof( SocketedTekagi ),								typeof( SocketedTessen ),								typeof( SocketedTetsubo ),								
+				typeof( SocketedWakizashi ),							typeof( SocketedLance ),								typeof( SocketedScythe ),								
+				typeof( SocketedBladedStaff ),							typeof( SocketedDoubleBladedStaff ),					typeof( SocketedPike ),									
+				typeof( SocketedBoneHarvester ),						typeof( SocketedCrescentBlade ),						typeof( SocketedLance ),
+				typeof( SocketedAxe ),									typeof( SocketedBattleAxe ),							typeof( SocketedDoubleAxe ),				
+				typeof( SocketedExecutionersAxe ),						typeof( SocketedHatchet ),								typeof( SocketedLargeBattleAxe ),				
+				typeof( SocketedTwoHandedAxe ),							typeof( SocketedWarAxe ),								typeof( SocketedButcherKnife),				
+				typeof( SocketedCleaver ),								typeof( SocketedDagger ),								typeof( SocketedClub ),									
+				typeof( SocketedHammerPick ),							typeof( SocketedMace ),									typeof( SocketedMaul ),								
+				typeof( SocketedScepter ),								typeof( SocketedWarHammer ),							typeof( SocketedWarMace ),
+				typeof( SocketedPitchfork ),							typeof( SocketedShortSpear ),							typeof( SocketedSpear ),							
+				typeof( SocketedTribalSpear ),							typeof( SocketedWarFork ),								typeof( SocketedBlackStaff ),							
+				typeof( SocketedGlacialStaff ),							typeof( SocketedQuarterStaff ),							typeof( SocketedShepherdsCrook ),						
+				typeof( SocketedBroadsword ),							typeof( SocketedCutlass ),								typeof( SocketedKatana ),								
+				typeof( SocketedKryss ),								typeof( SocketedLongSword ),							typeof( SocketedScimitar ),								
+				typeof( SocketedVikingSword ),							typeof( SocketedThinLongsword )
+		};
+		public static Type[] SocketedWeaponTypes { get { return m_SocketedWeaponTypes; } }
+		
+		private static Type[] m_SocketedRangedWeaponTypes = new Type[]
+		{
+				typeof( SocketedBoomerang ),							typeof( SocketedCyclone),								typeof( SocketedSoulGlaive ),
+				typeof( SocketedMagicalShortbow ),						typeof( SocketedElvenCompositeLongbow ),				typeof( SocketedYumi ),
+				typeof( SocketedRepeatingCrossbow ),					typeof( SocketedCompositeBow ),							typeof( SocketedJukaBow ),
+				typeof( SocketedBow ),									typeof( SocketedCrossbow ),								typeof( SocketedHeavyCrossbow )
+		};
+		public static Type[] SocketedRangedWeaponTypes { get { return m_SocketedRangedWeaponTypes; } }
+		
+		private static Type[] m_SocketedArmorTypes = new Type[]
+		{
+				typeof( SocketedFemaleGargishLeatherKilt ),				typeof( SocketedFemaleGargishLeatherLegs ),				typeof( SocketedMaleGargishLeatherArms ),
+				typeof( SocketedMaleGargishLeatherChest ),				typeof( SocketedMaleGargishLeatherKilt ),				typeof( SocketedMaleGargishLeatherLegs ),
+				typeof( SocketedGargishLeatherArms ),					typeof( SocketedGargishLeatherChest ),					typeof( SocketedGargishLeatherKilt ),
+				typeof( SocketedGargishLeatherLegs ),					typeof( SocketedGargishLeatherWingArmor ),				typeof( SocketedFemaleGargishPlateArms ),
+				typeof( SocketedFemaleGargishPlateChest ),				typeof( SocketedFemaleGargishPlateKilt ),				typeof( SocketedFemaleGargishPlateLegs ),
+				typeof( SocketedMaleGargishPlateArms ),					typeof( SocketedMaleGargishPlateChest ),				typeof( SocketedMaleGargishPlateKilt ),
+				typeof( SocketedMaleGargishPlateLegs ),					typeof( SocketedGargishPlateArms ),						typeof( SocketedGargishPlateChest ),				
+				typeof( SocketedGargishPlateKilt ),						typeof( SocketedGargishPlateLegs ),						typeof( SocketedGargishPlateWingArmor ),
+				typeof( SocketedFemaleGargishStoneArms ),				typeof( SocketedFemaleGargishStoneChest ),				typeof( SocketedFemaleGargishStoneKilt ),
+				typeof( SocketedFemaleGargishStoneLegs ),				typeof( SocketedMaleGargishStoneArms ),					typeof( SocketedMaleGargishStoneChest ),
+				typeof( SocketedMaleGargishStoneKilt ),					typeof( SocketedMaleGargishStoneLegs ),					typeof( SocketedGargishStoneArms ),
+				typeof( SocketedGargishStoneChest ),					typeof( SocketedGargishStoneKilt ),						typeof( SocketedGargishStoneLegs ),				
+				typeof( SocketedGargishStoneWingArmor ),				typeof( SocketedMaleGargishStoneKilt ),					typeof( SocketedMaleGargishStoneLegs ),	
+				typeof( SocketedGargishStoneArms ),						typeof( SocketedFemaleGargishLeatherArms ),				typeof( SocketedFemaleGargishLeatherChest ),
+				typeof( SocketedWoodlandArms ),							typeof( SocketedWoodlandChest ),						typeof( SocketedWoodlandGloves ),				
+				typeof( SocketedWoodlandGorget ),						typeof( SocketedWoodlandLegs ),							typeof( SocketedFemaleElvenPlateChest ),						
+				typeof( SocketedRangerArms ),							typeof( SocketedRangerChest ),							typeof( SocketedRangerGloves ),							
+				typeof( SocketedRangerGorget ),							typeof( SocketedRangerLegs ),							typeof( SocketedHideChest ),							
+				typeof( SocketedHideFemaleChest ),						typeof( SocketedHideGloves ),							typeof( SocketedHideGorget ),	
+				typeof( SocketedHidePants ),							typeof( SocketedHideChest ),							typeof( SocketedHideFemaleChest ),	
+				typeof( SocketedHideGloves ),							typeof( SocketedHideGorget ),							typeof( SocketedHidePants ),	
+				typeof( SocketedHidePauldrons ),						typeof( SocketedLeafArms ),								typeof( SocketedLeafChest ),	
+				typeof( SocketedLeafGloves ),							typeof( SocketedLeafGorget ),							typeof( SocketedLeafLegs ),		
+				typeof( SocketedLeafTonlet ),							typeof( SocketedFemaleLeafChest ),						typeof( SocketedPlateMempo ),							
+				typeof( SocketedPlateDo ),								typeof( SocketedPlateSuneate ),							typeof( SocketedSmallPlateJingasa ),					
+				typeof( SocketedStandardPlateKabuto),					typeof( SocketedPlateHaidate ),							typeof( SocketedPlateHatsuburi ),						
+				typeof( SocketedDecorativePlateKabuto),					typeof( SocketedHeavyPlateJingasa ),					typeof( SocketedLightPlateJingasa ),					
+				typeof( SocketedPlateBattleKabuto ),					typeof( SocketedPlateHiroSode ),						typeof( SocketedStuddedHaidate ),						
+				typeof( SocketedStuddedHiroSode ),						typeof( SocketedStuddedLegs ),							typeof( SocketedLeatherMempo ),							
+				typeof( SocketedLeatherNinjaHood ),						typeof( SocketedLeatherNinjaJacket ),					typeof( SocketedLeatherNinjaMitts ),					
+				typeof( SocketedLeatherNinjaPants ),					typeof( SocketedLeatherSuneate ),						typeof( SocketedStuddedMempo ),							
+				typeof( SocketedStuddedSuneate ),						typeof( SocketedStuddedDo ),							typeof( SocketedLeatherHaidate ),						
+				typeof( SocketedLeatherHiroSode ),						typeof( SocketedLeatherJingasa ),						typeof( SocketedLeatherDo ),							
+				typeof( SocketedChainHatsuburi ),						typeof( SocketedStuddedArms ),							typeof( SocketedStuddedBustierArms ),					
+				typeof( SocketedStuddedChest ),							typeof( SocketedStuddedGloves ),						typeof( SocketedStuddedGorget ),						
+				typeof( SocketedPlateLegs ),							typeof( SocketedPlateArms ),							typeof( SocketedPlateChest ),							
+				typeof( SocketedPlateGloves),							typeof( SocketedPlateGorget ),							typeof( SocketedFemalePlateChest ),						
+				typeof( SocketedFemaleStuddedChest ),					typeof( SocketedRingmailArms ),							typeof( SocketedRingmailChest ),						
+				typeof( SocketedRingmailGloves ),						typeof( SocketedRingmailLegs ),							typeof( SocketedLeatherShorts ),						
+				typeof( SocketedLeatherSkirt ),							typeof( SocketedLeatherLegs),							typeof( SocketedLeatherBustierArms ),					
+				typeof( SocketedLeatherChest ),							typeof( SocketedLeatherGloves ),						typeof( SocketedLeatherGorget ),						
+				typeof( SocketedLeatherArms ),							typeof( SocketedFemaleLeatherChest ),					typeof( SocketedBoneArms ),								
+				typeof( SocketedBoneChest ),							typeof( SocketedBoneLegs ),								typeof( SocketedBoneGloves ),							
+				typeof( SocketedChainChest ),							typeof( SocketedChainLegs ),							typeof( SocketedDaemonArms ),							
+				typeof( SocketedDaemonChest ),							typeof( SocketedDaemonGloves ),							typeof( SocketedDaemonLegs ),							
+				typeof( SocketedDragonArms ),							typeof( SocketedDragonChest ),							typeof( SocketedDragonGloves ),							
+				typeof( SocketedDragonHelm ),							typeof( SocketedDragonLegs )
+		};
+		public static Type[] SocketedArmorTypes { get { return m_SocketedArmorTypes; } }
+		
+		private static Type[] m_SocketedShieldTypes = new Type[]
+		{
+				typeof( SocketedDragonHideShield ),						typeof( SocketedGargishWoodenShield),					typeof( SocketedLargePlateShield ),
+				typeof( SocketedLargeStoneShield ),						typeof( SocketedMediumPlateShield ),					typeof( SocketedMysticsGuard ),	
+				typeof( SocketedPillarOfStrength ),						typeof( SocketedSmallPlateShield ),						typeof( SocketedGargishKiteShield ),
+				typeof( SocketedBronzeShield ),							typeof( SocketedBuckler ),								typeof( SocketedHeaterShield ),				
+				typeof( SocketedMetalKiteShield ),						typeof( SocketedMetalShield ),							typeof( SocketedWoodenKiteShield ),				
+				typeof( SocketedWoodenShield )				
+		};
+		public static Type[] SocketedShieldTypes { get { return m_SocketedShieldTypes; } }
+		#endregion
+		
+then lower down in the script I used what was there and just added the socketed stuff like so,
+
+		public static BaseWeapon RandomRangedWeapon( bool inTokuno, bool isMondain )
+		{
+            #region SA
+			if ( Core.SA )
+				return Construct( m_SocketedRangedWeaponTypes, m_SARangedWeaponTypes, m_MLRangedWeaponTypes, m_AosRangedWeaponTypes, m_RangedWeaponTypes ) as BaseWeapon;
+			#endregion 
+
+			#region Mondain's Legacy
+			if ( Core.ML && isMondain )
+				return Construct( m_MLRangedWeaponTypes, m_AosRangedWeaponTypes, m_RangedWeaponTypes ) as BaseWeapon;
+			#endregion
+
+			if ( Core.SE && inTokuno )
+				return Construct( m_SERangedWeaponTypes, m_AosRangedWeaponTypes, m_RangedWeaponTypes ) as BaseWeapon;
+
+			if ( Core.AOS )
+				return Construct( m_AosRangedWeaponTypes, m_RangedWeaponTypes ) as BaseWeapon;
+
+			return Construct( m_RangedWeaponTypes ) as BaseWeapon;
+		}
+		
+		public static BaseWeapon RandomWeapon( bool inTokuno, bool isMondain )
+		{
+            #region SA
+			if ( Core.SA )
+				return Construct( m_SocketedWeaponTypes, m_SAWeaponTypes, m_MLWeaponTypes, m_AosWeaponTypes, m_WeaponTypes ) as BaseWeapon;
+			#endregion
+
+			#region Mondain's Legacy
+			if ( Core.ML && isMondain )
+				return Construct( m_MLWeaponTypes, m_AosWeaponTypes, m_WeaponTypes ) as BaseWeapon;
+			#endregion
+
+			if ( Core.SE && inTokuno )
+				return Construct( m_SEWeaponTypes, m_AosWeaponTypes, m_WeaponTypes ) as BaseWeapon;
+
+			if ( Core.AOS )
+				return Construct( m_AosWeaponTypes, m_WeaponTypes ) as BaseWeapon;
+
+			return Construct( m_WeaponTypes ) as BaseWeapon;
+		}
+
+		public static BaseArmor RandomArmor( bool inTokuno, bool isMondain )
+		{
+            #region SA
+			if ( Core.SA )
+				return Construct( m_SocketedArmorTypes, m_SAArmorTypes, m_MLArmorTypes, m_ArmorTypes ) as BaseArmor;
+			#endregion
+
+			#region Mondain's Legacy
+			if ( Core.ML && isMondain )
+				return Construct( m_MLArmorTypes, m_ArmorTypes ) as BaseArmor;
+			#endregion
+
+			if ( Core.SE && inTokuno )
+				return Construct( m_SEArmorTypes, m_ArmorTypes ) as BaseArmor;
+
+			return Construct( m_ArmorTypes ) as BaseArmor;
+		}
+
+		public static BaseArmor RandomArmorOrShield( bool inTokuno, bool isMondain )
+		{  
+            #region SA
+			if ( Core.SA )
+				return Construct( m_SocketedShieldTypes, m_SAShieldTypes, m_MLArmorTypes, m_ArmorTypes, m_AosShieldTypes, m_ShieldTypes ) as BaseArmor;
+			#endregion
+                        
+                        #region Mondain's Legacy
+			if ( Core.ML && isMondain )
+				return Construct( m_MLArmorTypes, m_ArmorTypes, m_AosShieldTypes, m_ShieldTypes ) as BaseArmor;
+			#endregion
+
+			if ( Core.SE && inTokuno )
+				return Construct( m_SEArmorTypes, m_ArmorTypes, m_AosShieldTypes, m_ShieldTypes ) as BaseArmor;
+
+			if ( Core.AOS )
+				return Construct( m_ArmorTypes, m_AosShieldTypes, m_ShieldTypes ) as BaseArmor;
+
+			return Construct( m_ArmorTypes, m_ShieldTypes ) as BaseArmor;
+		}		
+******ManofWar Edit******
+
+///////////////////////////////////////////////////////////////////////////////////////////
+
+
+Once you've done that your ready to go. 
+Just fire up your RunUO server and have fun =)
+
+Ok I will add how to change power and drop rates :)
+
+To change power of the enhancements go to the "Socket Gems" folder and then go to the folder of the gem you want to change ie; Amethyst. Then select which type of Amethyst you want to change ie; ChippedAmethyst.
+
+Then in the script you will find lines like these:
+
+Code:
+
+			                  Weapon.UsedSockets += 1;
+			                  Weapon.Attributes.WeaponDamage += 8;
+						Weapon.Hue = 316;
+
+The line(s) in between the UsedSockets and the Hue are the ones that apply the different attributes.
+
+If you want to change an items enhancement on Armor scroll down till you find:
+
+Code:
+
+			                  Armor.UsedSockets += 1;
+			                  Armor.Attributes.BonusStr += 3;
+						Armor.Hue = 316;
+
+Again the lines between UsedSockets and Hue are the ones that apply the bonuses.
+
+Shield is the same again except these are the lines needed:
+
+Code:
+
+			                  Shield.UsedSockets += 1;
+			                  Shield.Attributes.DefendChance += 8;
+						Shield.Hue = 316;
+
+
+Ok I hope that helps with how to change the bonuses on a gem.
+			
+

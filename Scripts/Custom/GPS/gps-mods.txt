@@ -1,0 +1,34 @@
+/scripts.misc/weightoverloading.cs
+
+change:
+
+public static void EventSink_Movement(MovementEventArgs e)
+        {
+            Mobile from = e.Mobile;
+           
+            if (!from.Alive || from.IsStaff())
+                return;
+
+            if (!from.Player)
+            {
+                return;
+            }
+
+
+
+
+TO:
+
+ public static void EventSink_Movement(MovementEventArgs e)
+        {
+            Mobile from = e.Mobile;
+            ((Mobile)from).CloseGump(typeof(GpsGump));
+
+            e.Mobile.SendGump(new GpsGump(e.Mobile, 16383)); //////////////////////////////////////////////////
+            if (!from.Alive || from.IsStaff())
+                return;
+
+            if (!from.Player)
+            {
+                return;
+            }

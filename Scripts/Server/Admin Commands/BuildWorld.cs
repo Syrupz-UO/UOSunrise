@@ -1,0 +1,100 @@
+using System;
+using Server;
+using System.Collections;
+using System.Collections.Generic;
+using Server.Misc;
+using Server.Items;
+using Server.Network;
+using Server.Commands;
+using Server.Commands.Generic;
+using Server.Mobiles;
+using Server.Accounting;
+using Server.Regions;
+using System.IO;
+
+namespace Server.Scripts.Commands 
+{
+    public class BuildWorld
+    {
+        public static void Initialize()
+        {
+            CommandSystem.Register("BuildWorld", AccessLevel.Counselor, new CommandEventHandler( BuildWorlds ));
+        }
+
+        [Usage("BuildWorld")]
+        [Description("This cleans up the world and rebuilds it, leaving players intact.")]
+        public static void BuildWorlds( CommandEventArgs e )
+        {
+			int DungeonHomesDecorated = 0;
+
+			ArrayList targets = new ArrayList();
+			foreach ( Item item in World.Items.Values )
+			if ( item is PremiumSpawner || item is PotionCauldron || item is MagicPool )
+			{
+				targets.Add( item );
+			}
+			else if ( item.Weight == -3.0 ) // DECORATE DUNGEON HOMES IF THEY ARE NOT ALREADY
+			{
+				DungeonHomesDecorated++;
+			}
+			for ( int i = 0; i < targets.Count; ++i )
+			{
+				Item item = ( Item )targets[ i ];
+				item.Delete();
+			}
+
+			ArrayList beings = new ArrayList();
+			foreach ( Mobile being in World.Mobiles.Values )
+			if ( being is BaseCreature )
+			{
+				BaseCreature bc = (BaseCreature)being;
+
+				if ( bc.Home.X > 0 && !bc.IsStabled && !bc.Controlled && bc.ControlMaster == null )
+					beings.Add( being );
+			}
+			for ( int i = 0; i < beings.Count; ++i )
+			{
+				Mobile being = ( Mobile )beings[ i ];
+				being.Delete();
+			}
+
+			Server.Commands.Decorate.Decorate_OnCommand( e );
+			if ( DungeonHomesDecorated == 0 ){ Server.Commands.Monopoly.Monopoly_OnCommand( e ); }
+
+			Server.SpawnGenerator.Parse( e.Mobile, "dangers.map" );
+			Server.SpawnGenerator.Parse( e.Mobile, "land.map" );
+			Server.SpawnGenerator.Parse( e.Mobile, "animals.map" );
+			Server.SpawnGenerator.Parse( e.Mobile, "world.map" );
+			Server.SpawnGenerator.Parse( e.Mobile, "pirates.map" );
+			Server.SpawnGenerator.Parse( e.Mobile, "spread.map" );
+			Server.SpawnGenerator.Parse( e.Mobile, "towns.map" );
+
+			Server.Regions.SpawnEntry.RespawnAllRegions_OnCommand( e );
+
+			Server.Items.StealableArtifactsSpawner.RemoveStealArties_OnCommand( e );
+			Server.Items.StealableArtifactsSpawner.GenStealArties_OnCommand( e );
+
+			Server.Items.Coffer.ConfigureAllThiefQuestItems();
+
+			Server.Items.BasementDoor.ConfigureBasementDoors();
+
+			// CLEAR THESE OUT AT CREATION TIME BECAUSE THEY DUPLICATE FOR SOME REASON
+			ArrayList specials = new ArrayList();
+			foreach ( Item item in World.Items.Values )
+			if ( item is PotionCauldron || item is MagicPool )
+			{
+				specials.Add( item );
+			}
+			for ( int i = 0; i < specials.Count; ++i )
+			{
+				Item item = ( Item )specials[ i ];
+				item.Delete();
+			}
+
+			// DO INITIAL SETUP THE MAGIC MIRRORS
+			Server.Items.MagicMirror.SetMirrors();
+
+			e.Mobile.SendMessage( "The world has been rebuilt." );
+        }
+    }
+}
