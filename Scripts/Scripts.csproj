@@ -7783,17 +7783,17 @@
     <Compile Include="Server\Gumps\PetResurrectGump.cs" />
     <Compile Include="Server\Gumps\PlayerVendorGumps.cs" />
     <Compile Include="Server\Gumps\PolymorphGump.cs" />
-    <Compile Include="Server\Gumps\Properties\PropsConfig.cs" />
-    <Compile Include="Server\Gumps\Properties\PropsGump.cs" />
-    <Compile Include="Server\Gumps\Properties\SetBodyGump.cs" />
-    <Compile Include="Server\Gumps\Properties\SetCustomEnumGump.cs" />
-    <Compile Include="Server\Gumps\Properties\SetGump.cs" />
-    <Compile Include="Server\Gumps\Properties\SetListOptionGump.cs" />
-    <Compile Include="Server\Gumps\Properties\SetObjectGump.cs" />
-    <Compile Include="Server\Gumps\Properties\SetObjectTarget.cs" />
-    <Compile Include="Server\Gumps\Properties\SetPoint2DGump.cs" />
-    <Compile Include="Server\Gumps\Properties\SetPoint3DGump.cs" />
-    <Compile Include="Server\Gumps\Properties\SetTimeSpanGump.cs" />
+    <Compile Include="Server\Gumps\Props\PropsConfig.cs" />
+    <Compile Include="Server\Gumps\Props\PropsGump.cs" />
+    <Compile Include="Server\Gumps\Props\SetBodyGump.cs" />
+    <Compile Include="Server\Gumps\Props\SetCustomEnumGump.cs" />
+    <Compile Include="Server\Gumps\Props\SetGump.cs" />
+    <Compile Include="Server\Gumps\Props\SetListOptionGump.cs" />
+    <Compile Include="Server\Gumps\Props\SetObjectGump.cs" />
+    <Compile Include="Server\Gumps\Props\SetObjectTarget.cs" />
+    <Compile Include="Server\Gumps\Props\SetPoint2DGump.cs" />
+    <Compile Include="Server\Gumps\Props\SetPoint3DGump.cs" />
+    <Compile Include="Server\Gumps\Props\SetTimeSpanGump.cs" />
     <Compile Include="Server\Gumps\ReclaimVendorGump.cs" />
     <Compile Include="Server\Gumps\ReportMurderer.cs" />
     <Compile Include="Server\Gumps\ResurrectGump.cs" />
@@ -8066,7 +8066,6 @@
     <None Include="Custom\FSATS\Taming\spiders.cfg" />
     <None Include="Custom\hue room\hues.mul" />
     <None Include="Custom\MailSystem\LetterGump.cs.bak" />
-    <None Include="Custom\PetExperienceScrolls.zip" />
     <None Include="Custom\Quest2\ArrianasQuest\ArrianasQuest.zip" />
     <None Include="Custom\Quest2\Runic quest\Runic quest\Data\Decoration\Britannia\RunicQuest.cfg" />
     <None Include="Custom\Quest2\Santa Claus Quest\Santa Claus Quest\Quest Items\ReindeerRewards.exe.manifest" />
@@ -8092,7 +8091,6 @@
   <ItemGroup>
     <Content Include="Custom\Archery\Making Bow String Tutorial.txt" />
     <Content Include="Custom\Auction System\Readme.htm" />
-    <Content Include="Custom\BaseCreature mods.txt" />
     <Content Include="Custom\CRL Homestead\MilkandCheese\Milk and Cheese Readme.txt" />
     <Content Include="Custom\Diablo System\How To.txt" />
     <Content Include="Custom\Diablo System\OnHover.jpg" />
