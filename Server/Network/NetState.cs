@@ -79,7 +79,7 @@ namespace Server.Network {
 
 		public TimeSpan ConnectedFor {
 			get {
-				return ( DateTime.Now - m_ConnectedOn );
+				return ( DateTime.UtcNow - m_ConnectedOn );
 			}
 		}
 
@@ -339,19 +339,19 @@ namespace Server.Network {
 			}
 		}
 
-		public IEnumerable<Gump> Gumps {
+		public List<Gump> Gumps {
 			get {
 				return m_Gumps;
 			}
 		}
 
-		public IEnumerable<HuePicker> HuePickers {
+		public List<HuePicker> HuePickers {
 			get {
 				return m_HuePickers;
 			}
 		}
 
-		public IEnumerable<IMenu> Menus {
+		public List<IMenu> Menus {
 			get {
 				return m_Menus;
 			}
@@ -557,7 +557,7 @@ namespace Server.Network {
 
 			m_SendQueue = new SendQueue();
 
-			m_NextCheckActivity = DateTime.Now + TimeSpan.FromMinutes( 0.5 );
+			m_NextCheckActivity = DateTime.UtcNow + TimeSpan.FromMinutes( 0.5 );
 
 			m_Instances.Add( this );
 
@@ -570,7 +570,7 @@ namespace Server.Network {
 				m_ToString = "(error)";
 			}
 
-			m_ConnectedOn = DateTime.Now;
+			m_ConnectedOn = DateTime.UtcNow;
 
 			if ( m_CreatedCallback != null )
 			{
@@ -691,7 +691,7 @@ namespace Server.Network {
 				return;
 			}
 
-			m_NextCheckActivity = DateTime.Now + TimeSpan.FromMinutes( 1.2 );
+			m_NextCheckActivity = DateTime.UtcNow + TimeSpan.FromMinutes( 1.2 );
 
 			byte[] buffer = m_RecvBuffer;
 
@@ -757,7 +757,7 @@ namespace Server.Network {
 				return;
 			}
 
-			m_NextCheckActivity = DateTime.Now + TimeSpan.FromMinutes( 1.2 );
+			m_NextCheckActivity = DateTime.UtcNow + TimeSpan.FromMinutes( 1.2 );
 		}
 
 		public static void Pause() {
@@ -843,7 +843,7 @@ namespace Server.Network {
 			if ( m_Socket == null )
 				return false;
 
-			if ( DateTime.Now < m_NextCheckActivity ) {
+			if ( DateTime.UtcNow < m_NextCheckActivity ) {
 				return true;
 			}
 

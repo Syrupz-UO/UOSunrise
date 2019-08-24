@@ -15,7 +15,7 @@ namespace Server.Items
          Hue = 1151; 
       	Name="Snowball Launcher 2010";
       	LootType = LootType.Blessed;
-	    m_NextAbilityTime = DateTime.Now;
+	    m_NextAbilityTime = DateTime.UtcNow;
    
       } 
 
@@ -36,7 +36,7 @@ private DateTime m_NextAbilityTime;
          base.Deserialize( reader ); 
 
          int version = reader.ReadInt(); 
-      	m_NextAbilityTime = DateTime.Now;
+      	m_NextAbilityTime = DateTime.UtcNow;
       } 
       
       public override void OnDoubleClick( Mobile from ) 
@@ -49,7 +49,7 @@ private DateTime m_NextAbilityTime;
          else 
          { 
             
-            if ( DateTime.Now >= m_NextAbilityTime )
+            if ( DateTime.UtcNow >= m_NextAbilityTime )
 			{
                from.Target = new SnowTarget( from, this ); 
                from.SendLocalizedMessage( 1005575 );   // You carefully pack the snow into a ball... 
@@ -88,7 +88,7 @@ private DateTime m_NextAbilityTime;
                from.SendLocalizedMessage( 1010573 );   // You throw the snowball and hit the target! 
                m.SendLocalizedMessage( 1010572 ); // You have just been hit by a snowball! 
                Effects.SendMovingEffect( from, m, 0x36E4, 7, 0, false, true, 0x480, 0 ); 
-               m_Snow.m_NextAbilityTime = DateTime.Now + TimeSpan.FromSeconds( 5.0 ) ;
+               m_Snow.m_NextAbilityTime = DateTime.UtcNow + TimeSpan.FromSeconds( 5.0 ) ;
         } 
 
             else 

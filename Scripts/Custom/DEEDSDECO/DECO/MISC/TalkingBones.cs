@@ -14,7 +14,7 @@ namespace Server.Items
 	{
 		private bool i_Active = true;
 		private int i_Range = 4;
-		private DateTime i_SpeakNext = DateTime.Now;
+		private DateTime i_SpeakNext = DateTime.UtcNow;
 		
 		private string[] i_Messages = 
 		{
@@ -88,9 +88,9 @@ namespace Server.Items
 		{                                                    
 			if( i_Active && m.Player && m.InRange( this, i_Range ) && ( !m.Hidden || m.AccessLevel == AccessLevel.Player ) ) 
 			{ 
-				if ( DateTime.Now > i_SpeakNext ) 
+				if ( DateTime.UtcNow > i_SpeakNext ) 
 				{                
-					i_SpeakNext = (DateTime.Now).AddSeconds( Utility.RandomMinMax( 5, 15 ) );
+					i_SpeakNext = (DateTime.UtcNow).AddSeconds( Utility.RandomMinMax( 5, 15 ) );
 					
 					string msg = i_Messages[Utility.Random( i_Messages.Length )];
 					PublicOverheadMessage( Network.MessageType.Regular, 0x3B2, false, msg ); 

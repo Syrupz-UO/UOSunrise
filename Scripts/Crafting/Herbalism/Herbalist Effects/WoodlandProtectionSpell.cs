@@ -88,13 +88,13 @@ namespace Server.Spells.Herbalist
 			public InternalTimer( Mobile owner, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromMinutes( 0.1 ) )
 			{
 				m_Owner = owner;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 				
 			}
 			
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					m_Owner.PrivateOverheadMessage(MessageType.Regular, 0x14C, false, "Your woodland protection has worn off", m_Owner.NetState);
 					WoodlandProtectionSpell.RemoveEffect( m_Owner );

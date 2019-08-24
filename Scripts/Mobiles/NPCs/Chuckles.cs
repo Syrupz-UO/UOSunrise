@@ -15,7 +15,7 @@ namespace Server.Mobiles
 		{
 			if( m is PlayerMobile )
 			{
-				if ( DateTime.Now >= m_NextTalk && InRange( m, 4 ) && InLOS( m ) )
+				if ( DateTime.UtcNow >= m_NextTalk && InRange( m, 4 ) && InLOS( m ) )
 				{
 					switch ( Utility.Random( 22 ))
 					{
@@ -42,7 +42,7 @@ namespace Server.Mobiles
 						case 20: Say("What did the dragon say when it saw the Knight? 'Not more tinned food!'"); break;
 						case 21: Say("What do you do with a green dragon? Wait until it ripens!"); break;
 					};
-					m_NextTalk = (DateTime.Now + TimeSpan.FromSeconds( 30 ));
+					m_NextTalk = (DateTime.UtcNow + TimeSpan.FromSeconds( 30 ));
 				}
 			}
 		}

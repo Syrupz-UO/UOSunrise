@@ -20,7 +20,7 @@ namespace Server.Engines.Craft
 
 		private DefBrewing() : base( 1, 1, 1.25 ) { }
 
-		public override int CanCraft( Mobile from, BaseTool tool, Type itemType )
+		public override object CanCraft( Mobile from, BaseTool tool, Type itemType )
 		{
 			if ( tool.Deleted || tool.UsesRemaining < 0 ) return 1044038;
 			return 0;

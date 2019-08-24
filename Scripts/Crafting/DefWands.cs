@@ -47,7 +47,7 @@ namespace Server.Engines.Craft
 		private static Type typeofAnvil = typeof( AnvilAttribute );
 		private static Type typeofForge = typeof( ForgeAttribute );
 
-		public override int CanCraft( Mobile from, BaseTool tool, Type itemType )
+		public override object CanCraft( Mobile from, BaseTool tool, Type itemType )
 		{
 			int say = 0;
 

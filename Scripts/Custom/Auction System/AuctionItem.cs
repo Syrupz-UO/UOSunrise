@@ -723,7 +723,7 @@ namespace Arya.Auction
 		{
 			get
 			{
-				return m_EndTime - DateTime.Now;
+				return m_EndTime - DateTime.UtcNow;
 			}
 		}
 
@@ -1073,7 +1073,7 @@ namespace Arya.Auction
 			/// </summary>
 		public bool Expired
 		{
-			get { return DateTime.Now > m_EndTime; }
+			get { return DateTime.UtcNow > m_EndTime; }
 		}
 
 		/// <summary>
@@ -1121,7 +1121,7 @@ namespace Arya.Auction
 		{
 			get
 			{
-				return DateTime.Now >= m_PendingEnd;
+				return DateTime.UtcNow >= m_PendingEnd;
 			}
 		}
 
@@ -1131,7 +1131,7 @@ namespace Arya.Auction
 			/// </summary>
 		public TimeSpan PendingTimeLeft
 		{
-			get { return m_PendingEnd - DateTime.Now; }
+			get { return m_PendingEnd - DateTime.UtcNow; }
 		}
 
 		[ CommandProperty( AccessLevel.Administrator ) ]
@@ -1228,7 +1228,7 @@ namespace Arya.Auction
 		/// </summary>
 		public void Confirm()
 		{
-			m_StartTime = DateTime.Now;
+			m_StartTime = DateTime.UtcNow;
 			m_EndTime = m_StartTime + m_Duration;
 
 			if ( Creature && Pet != null )
@@ -1384,7 +1384,7 @@ namespace Arya.Auction
 				// Check for auction extension
 				if ( AuctionConfig.LateBidExtention > TimeSpan.Zero )
 				{
-					TimeSpan timeLeft = m_EndTime - DateTime.Now;
+					TimeSpan timeLeft = m_EndTime - DateTime.UtcNow;
 
 					if ( timeLeft < TimeSpan.FromMinutes( 5.0 ) )
 					{
@@ -1511,7 +1511,7 @@ namespace Arya.Auction
 				{
 					// Reserve hasn't been met or auction isn't valid, this auction is pending
 					m_Pending = true;
-					m_PendingEnd = DateTime.Now + TimeSpan.FromDays( AuctionConfig.DaysForConfirmation );
+					m_PendingEnd = DateTime.UtcNow + TimeSpan.FromDays( AuctionConfig.DaysForConfirmation );
 					AuctionSystem.Pending.Add( this );
 
 					DoOwnerMessage();

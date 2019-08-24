@@ -72,7 +72,7 @@ namespace Arya.Auction
 		/// <param name="amount">The amount of the bid</param>
 		public Bid( Mobile m, int amount )
 		{
-			m_Time = DateTime.Now;
+			m_Time = DateTime.UtcNow;
 			m_Mobile = m;
 			m_Amount = amount;
 		}

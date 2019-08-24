@@ -40,7 +40,7 @@ namespace Server.ACC.CSS.Systems.Ancient
             m_Burn = new BurnTimer(this, m_Caster);
             m_Burn.Start();
 
-            m_End = DateTime.Now + TimeSpan.FromMinutes(5.0);
+            m_End = DateTime.UtcNow + TimeSpan.FromMinutes(5.0);
         }
 
         public NaturalFire(Serial serial)
@@ -76,7 +76,7 @@ namespace Server.ACC.CSS.Systems.Ancient
 
             writer.Write((int)1); // version
 
-            writer.Write(m_End - DateTime.Now);
+            writer.Write(m_End - DateTime.UtcNow);
         }
 
         public override void Deserialize(GenericReader reader)
@@ -94,7 +94,7 @@ namespace Server.ACC.CSS.Systems.Ancient
                         m_Timer = new InternalTimer(this, duration);
                         m_Timer.Start();
 
-                        m_End = DateTime.Now + duration;
+                        m_End = DateTime.UtcNow + duration;
 
                         break;
                     }
@@ -105,7 +105,7 @@ namespace Server.ACC.CSS.Systems.Ancient
                         m_Timer = new InternalTimer(this, duration);
                         m_Timer.Start();
 
-                        m_End = DateTime.Now + duration;
+                        m_End = DateTime.UtcNow + duration;
 
                         break;
                     }
@@ -151,7 +151,7 @@ namespace Server.ACC.CSS.Systems.Ancient
 
                 m_FireRing = ap;
                 m_Caster = ca;
-                m_Duration = DateTime.Now + TimeSpan.FromSeconds(15.0 + (Utility.RandomDouble() * 15.0));
+                m_Duration = DateTime.UtcNow + TimeSpan.FromSeconds(15.0 + (Utility.RandomDouble() * 15.0));
             }
 
             protected override void OnTick()
@@ -159,7 +159,7 @@ namespace Server.ACC.CSS.Systems.Ancient
                 if (m_FireRing.Deleted)
                     return;
 
-                if (DateTime.Now > m_Duration)
+                if (DateTime.UtcNow > m_Duration)
                 {
 
                     Stop();

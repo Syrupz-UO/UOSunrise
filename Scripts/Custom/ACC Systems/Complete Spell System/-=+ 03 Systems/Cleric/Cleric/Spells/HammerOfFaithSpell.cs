@@ -83,7 +83,7 @@ namespace Server.ACC.CSS.Systems.Cleric
 				Name = "Hammer of Faith";
 
 				double time = ( owner.Skills[SkillName.SpiritSpeak].Value / 20.0 ) * ClericDivineFocusSpell.GetScalar( owner );
-				m_Expire = DateTime.Now + TimeSpan.FromMinutes( (int)time );
+				m_Expire = DateTime.UtcNow + TimeSpan.FromMinutes( (int)time );
 				m_Timer = new InternalTimer( this, m_Expire );
 
 				m_Timer.Start();
@@ -156,7 +156,7 @@ namespace Server.ACC.CSS.Systems.Cleric
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					m_Hammer.Remove();
 					Stop();

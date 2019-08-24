@@ -58,7 +58,7 @@ namespace Server.Items
 		public SwiftBoots()
 			: base(5899)
 		{
-			_lastUsed = DateTime.Now.Subtract(UsageInterval);
+			_lastUsed = DateTime.UtcNow.Subtract(UsageInterval);
 			Name = "Boots of Swiftness";
 			Hue = BootsHue;
 
@@ -78,7 +78,7 @@ namespace Server.Items
 		[CommandProperty(AccessLevel.GameMaster)]
 		public bool CanBeUsed
 		{
-			get { return _lastUsed.Add(UsageInterval) <= DateTime.Now; }
+			get { return _lastUsed.Add(UsageInterval) <= DateTime.UtcNow; }
 		}
 
 		[CommandProperty(AccessLevel.GameMaster)]
@@ -207,7 +207,7 @@ namespace Server.Items
 			from.SendMessage(6, "You feel faster than the wind.");
 
 			//set timers and last used time
-			_lastUsed = DateTime.Now;
+			_lastUsed = DateTime.UtcNow;
 			_timer = new DurationTimer(from, this);
 			_bodyCheckTimer = new BodyModCheck(from, this);
 

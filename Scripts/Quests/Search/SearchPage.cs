@@ -208,7 +208,7 @@ namespace Server.Items
 		public static void ArtifactQuestTimeAllowed( Mobile m )
 		{
 			CharacterDatabase DB = Server.Items.CharacterDatabase.GetDB( m );
-			DateTime TimeFinished = DateTime.Now;
+			DateTime TimeFinished = DateTime.UtcNow;
 			DB.ArtifactQuestTime = Convert.ToString(TimeFinished);
 		}
 
@@ -223,7 +223,7 @@ namespace Server.Items
 			if ( sTime != null )
 			{
 				DateTime TimeThen = Convert.ToDateTime(sTime);
-				DateTime TimeNow = DateTime.Now;
+				DateTime TimeNow = DateTime.UtcNow;
 				long ticksThen = TimeThen.Ticks;
 				long ticksNow = TimeNow.Ticks;
 				int minsThen = (int)TimeSpan.FromTicks(ticksThen).TotalMinutes;

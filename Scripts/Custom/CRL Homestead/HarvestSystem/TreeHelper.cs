@@ -99,7 +99,7 @@ namespace Server.Items.Crops
 				i_stump = stump;
 				t_tree = treetype;
 
-				d_timerstart = DateTime.Now;
+				d_timerstart = DateTime.UtcNow;
 			}
 
 			protected override void OnTick()
@@ -261,7 +261,7 @@ namespace Server.Items.Crops
 		public static void init( FruitTreeStump plant )
 		{
 			TimeSpan delay = TreeHelper.StumpTime;
-			plant.treeTime = DateTime.Now + delay;
+			plant.treeTime = DateTime.UtcNow + delay;
 
 			plant.thisTimer = new TreeHelper.GrowTimer( plant, plant.t_treeType, delay );
 			plant.thisTimer.Start();

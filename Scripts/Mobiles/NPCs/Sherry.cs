@@ -24,10 +24,10 @@ namespace Server.Mobiles
 		{
 			if( m is PlayerMobile )
 			{
-				if ( DateTime.Now >= m_NextTalk && InRange( m, 4 ) && InLOS( m ) )
+				if ( DateTime.UtcNow >= m_NextTalk && InRange( m, 4 ) && InLOS( m ) )
 				{
 					Say("Squeak");
-					m_NextTalk = (DateTime.Now + TimeSpan.FromSeconds( 30 ));
+					m_NextTalk = (DateTime.UtcNow + TimeSpan.FromSeconds( 30 ));
 				}
 			}
 		}

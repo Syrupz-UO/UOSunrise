@@ -96,12 +96,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirAlchemy.RemoveEffect( m_m );
 					Stop();
@@ -200,12 +200,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirAnatomy.RemoveEffect( m_m );
 					Stop();
@@ -304,12 +304,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirAnimalLore.RemoveEffect( m_m );
 					Stop();
@@ -408,12 +408,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirAnimalTaming.RemoveEffect( m_m );
 					Stop();
@@ -512,12 +512,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirArchery.RemoveEffect( m_m );
 					Stop();
@@ -616,12 +616,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirArmsLore.RemoveEffect( m_m );
 					Stop();
@@ -720,12 +720,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirBegging.RemoveEffect( m_m );
 					Stop();
@@ -824,12 +824,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirBlacksmith.RemoveEffect( m_m );
 					Stop();
@@ -928,12 +928,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirCamping.RemoveEffect( m_m );
 					Stop();
@@ -1032,12 +1032,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirCarpentry.RemoveEffect( m_m );
 					Stop();
@@ -1136,12 +1136,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirCartography.RemoveEffect( m_m );
 					Stop();
@@ -1240,12 +1240,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirCooking.RemoveEffect( m_m );
 					Stop();
@@ -1344,12 +1344,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirDetectHidden.RemoveEffect( m_m );
 					Stop();
@@ -1448,12 +1448,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirDiscordance.RemoveEffect( m_m );
 					Stop();
@@ -1552,12 +1552,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirEvalInt.RemoveEffect( m_m );
 					Stop();
@@ -1656,12 +1656,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirFencing.RemoveEffect( m_m );
 					Stop();
@@ -1760,12 +1760,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirFishing.RemoveEffect( m_m );
 					Stop();
@@ -1864,12 +1864,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirFletching.RemoveEffect( m_m );
 					Stop();
@@ -1968,12 +1968,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirFocus.RemoveEffect( m_m );
 					Stop();
@@ -2072,12 +2072,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirForensics.RemoveEffect( m_m );
 					Stop();
@@ -2176,12 +2176,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirHealing.RemoveEffect( m_m );
 					Stop();
@@ -2280,12 +2280,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirHerding.RemoveEffect( m_m );
 					Stop();
@@ -2384,12 +2384,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirHiding.RemoveEffect( m_m );
 					Stop();
@@ -2488,12 +2488,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirInscribe.RemoveEffect( m_m );
 					Stop();
@@ -2592,12 +2592,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirItemID.RemoveEffect( m_m );
 					Stop();
@@ -2696,12 +2696,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirLockpicking.RemoveEffect( m_m );
 					Stop();
@@ -2800,12 +2800,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirLumberjacking.RemoveEffect( m_m );
 					Stop();
@@ -2904,12 +2904,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirMacing.RemoveEffect( m_m );
 					Stop();
@@ -3008,12 +3008,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirMagicResist.RemoveEffect( m_m );
 					Stop();
@@ -3112,12 +3112,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirMeditation.RemoveEffect( m_m );
 					Stop();
@@ -3216,12 +3216,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirMining.RemoveEffect( m_m );
 					Stop();
@@ -3320,12 +3320,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirMusicianship.RemoveEffect( m_m );
 					Stop();
@@ -3424,12 +3424,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirParry.RemoveEffect( m_m );
 					Stop();
@@ -3528,12 +3528,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirPeacemaking.RemoveEffect( m_m );
 					Stop();
@@ -3632,12 +3632,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirPoisoning.RemoveEffect( m_m );
 					Stop();
@@ -3736,12 +3736,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirProvocation.RemoveEffect( m_m );
 					Stop();
@@ -3840,12 +3840,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirRemoveTrap.RemoveEffect( m_m );
 					Stop();
@@ -3944,12 +3944,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirSnooping.RemoveEffect( m_m );
 					Stop();
@@ -4048,12 +4048,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirSpiritSpeak.RemoveEffect( m_m );
 					Stop();
@@ -4152,12 +4152,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirStealing.RemoveEffect( m_m );
 					Stop();
@@ -4256,12 +4256,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirStealth.RemoveEffect( m_m );
 					Stop();
@@ -4360,12 +4360,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirSwords.RemoveEffect( m_m );
 					Stop();
@@ -4464,12 +4464,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirTactics.RemoveEffect( m_m );
 					Stop();
@@ -4568,12 +4568,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirTailoring.RemoveEffect( m_m );
 					Stop();
@@ -4672,12 +4672,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirTasteID.RemoveEffect( m_m );
 					Stop();
@@ -4776,12 +4776,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirTinkering.RemoveEffect( m_m );
 					Stop();
@@ -4880,12 +4880,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirTracking.RemoveEffect( m_m );
 					Stop();
@@ -4984,12 +4984,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirVeterinary.RemoveEffect( m_m );
 					Stop();
@@ -5088,12 +5088,12 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					ElixirWrestling.RemoveEffect( m_m );
 					Stop();

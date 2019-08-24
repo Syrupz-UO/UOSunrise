@@ -119,7 +119,7 @@ namespace Server.Spells.Third
 				m_Timer = new InternalTimer( this, TimeSpan.FromSeconds( 10.0 + nBenefit ) );
 				m_Timer.Start();
 
-				m_End = DateTime.Now + TimeSpan.FromSeconds( 10.0 );
+				m_End = DateTime.UtcNow + TimeSpan.FromSeconds( 10.0 );
 			}
 
 			public InternalItem( Serial serial ) : base( serial )
@@ -147,7 +147,7 @@ namespace Server.Spells.Third
 					{
 						m_End = reader.ReadDeltaTime();
 
-						m_Timer = new InternalTimer( this, m_End - DateTime.Now );
+						m_Timer = new InternalTimer( this, m_End - DateTime.UtcNow );
 						m_Timer.Start();
 
 						break;
@@ -159,7 +159,7 @@ namespace Server.Spells.Third
 						m_Timer = new InternalTimer( this, duration );
 						m_Timer.Start();
 
-						m_End = DateTime.Now + duration;
+						m_End = DateTime.UtcNow + duration;
 
 						break;
 					}

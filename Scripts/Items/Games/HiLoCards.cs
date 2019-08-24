@@ -47,13 +47,13 @@ namespace Server.Items
 
 		//Mobile & timeout
 		private Mobile m_InUseBy = null;
-		private DateTime m_LastPlayed = DateTime.Now;
+		private DateTime m_LastPlayed = DateTime.UtcNow;
 		private TimeSpan m_TimeOut;
 		private TimeSpan m_IdleTimer = TimeSpan.FromMinutes(5); // How long can a person be standing at the machine not playing?
 
 		//Last Win info
 		private Mobile m_LastWonBy = null;
-		private DateTime m_LastWonByDate = DateTime.Now;
+		private DateTime m_LastWonByDate = DateTime.UtcNow;
 		private int m_LastWonAmount = 0;
 
 		//ATM Stuff
@@ -172,7 +172,7 @@ namespace Server.Items
 					m_TotalPlays = 0;
 					m_TotalWins = 0;
 					m_LastWonBy = null;
-					m_LastWonByDate = DateTime.Now;
+					m_LastWonByDate = DateTime.UtcNow;
 					m_LastWonAmount = 0;
 					InvalidateProperties();
 				}
@@ -502,7 +502,7 @@ namespace Server.Items
 				return;
 			}
 
-			m_TimeOut = DateTime.Now - m_LastPlayed;
+			m_TimeOut = DateTime.UtcNow - m_LastPlayed;
 
 			if (m_InUseBy == null || m_InUseBy.Deleted)
 				InUseBy = from;
@@ -804,16 +804,16 @@ namespace Server.Items
 			if (m_LastWonBy == null || m_LastWonBy.Deleted)
 			{
 				m_LastWonBy = m;
-				m_LastWonByDate = DateTime.Now;
+				m_LastWonByDate = DateTime.UtcNow;
 				m_LastWonAmount = winamount;
 			}
 			else
 			{
-				TimeSpan timespan = DateTime.Now - m_LastWonByDate;
+				TimeSpan timespan = DateTime.UtcNow - m_LastWonByDate;
 				if (m_LastWonAmount <= winamount || TimeSpan.FromDays(30) < timespan)
 				{
 					m_LastWonBy = m;
-					m_LastWonByDate = DateTime.Now;
+					m_LastWonByDate = DateTime.UtcNow;
 					m_LastWonAmount = winamount;
 				}
 			}

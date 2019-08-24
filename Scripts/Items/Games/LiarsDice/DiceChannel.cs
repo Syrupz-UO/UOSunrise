@@ -500,11 +500,11 @@ namespace Server.LiarsDice
 			Game timer limit on a player, warn/kick if necessary in the callbacks
 		*/
 		public void SetTimerAction(MobileDiceStstatus prevPlayer, MobileDiceStstatus currPlayer){
-			prevPlayer.SetTimeStamp(DateTime.Now);
-			currPlayer.SetTimeStamp(DateTime.Now);
+			prevPlayer.SetTimeStamp(DateTime.UtcNow);
+			currPlayer.SetTimeStamp(DateTime.UtcNow);
 			//setup the "warning" timer
 			Timer timer = Timer.DelayCall( TimeSpan.FromSeconds(this.playerToActSeconds - 5), new TimerCallback( delegate( ) {
-				TimeSpan timeDiff = (DateTime.Now - currPlayer.GetTimeStamp());	
+				TimeSpan timeDiff = (DateTime.UtcNow - currPlayer.GetTimeStamp());	
 				//check time in miliseconds
 				if(timeDiff.TotalMilliseconds  > ( (this.playerToActSeconds-5) * 1000)){
 					if(this.playerCnt > 1){
@@ -514,7 +514,7 @@ namespace Server.LiarsDice
 			} ) );
 			//setup timer to kick player if applicable
 			Timer timer2 = Timer.DelayCall( TimeSpan.FromSeconds( this.playerToActSeconds), new TimerCallback( delegate( ) {
-				TimeSpan timeDiff = (DateTime.Now - currPlayer.GetTimeStamp());	
+				TimeSpan timeDiff = (DateTime.UtcNow - currPlayer.GetTimeStamp());	
 				//check time in miliseconds
 				if(timeDiff.TotalMilliseconds  > (this.playerToActSeconds * 1000)){
 					if(this.playerCnt > 1){

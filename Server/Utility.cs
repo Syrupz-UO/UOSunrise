@@ -767,7 +767,7 @@ namespace Server
 			return total;
 		}
 
-		public static int RandomList( params int[] list )
+		public static T RandomList<T>( params T[] list )
 		{
 			return list[m_Random.Next( list.Length )];
 		}
@@ -904,6 +904,17 @@ namespace Server
 		public static int RandomDyedHue()
 		{
 			return Random( 2, 1000 );
+		}
+
+		/// <summary>
+		///     Random hue from 0x62, 0x71, 0x03, 0x0D, 0x13, 0x1C, 0x21, 0x30, 0x37, 0x3A, 0x44, 0x59
+		/// </summary>
+		public static int RandomBrightHue()
+		{
+			if (RandomDouble() < 0.1)
+				return RandomList(0x62, 0x71);
+
+			return RandomList(0x03, 0x0D, 0x13, 0x1C, 0x21, 0x30, 0x37, 0x3A, 0x44, 0x59);
 		}
 
 		//[Obsolete( "Depreciated, use the methods for the Mobile's race", false )]

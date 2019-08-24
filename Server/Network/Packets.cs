@@ -377,7 +377,7 @@ namespace Server.Network
 
 	public sealed class VendorSellList : Packet
 	{
-		public VendorSellList( Mobile shopkeeper, Hashtable table ) : base( 0x9E )
+		public VendorSellList( Mobile shopkeeper, List<SellItemState> table ) : base( 0x9E )
 		{
 			this.EnsureCapacity( 256 );
 
@@ -385,7 +385,7 @@ namespace Server.Network
 
 			m_Stream.Write( (ushort) table.Count );
 
-			foreach ( SellItemState state in table.Values )
+			foreach ( SellItemState state in table )
 			{
 				m_Stream.Write( (int) state.Item.Serial );
 				m_Stream.Write( (ushort) state.Item.ItemID );
@@ -1524,6 +1524,72 @@ namespace Server.Network
 		public MovingEffect( IEntity from, IEntity to, int itemID, int speed, int duration, bool fixedDirection, bool explodes, int hue, int renderMode ) : base( EffectType.Moving, from.Serial, to.Serial, itemID, from.Location, to.Location, speed, duration, fixedDirection, explodes, hue, renderMode )
 		{
 		}
+	}
+	
+	public enum ScreenEffectType
+	{
+		FadeOut = 0x00,
+		FadeIn = 0x01,
+		LightFlash = 0x02,
+		FadeInOut = 0x03,
+		DarkFlash = 0x04
+	}
+
+	public class ScreenEffect : Packet
+	{
+		public ScreenEffect(ScreenEffectType type)
+			: base(0x70, 28)
+		{
+			m_Stream.Write((byte)0x04);
+			m_Stream.Fill(8);
+			m_Stream.Write((short)type);
+			m_Stream.Fill(16);
+		}
+	}
+
+	public sealed class ScreenFadeOut : ScreenEffect
+	{
+		public static readonly Packet Instance = SetStatic(new ScreenFadeOut());
+
+		public ScreenFadeOut()
+			: base(ScreenEffectType.FadeOut)
+		{ }
+	}
+
+	public sealed class ScreenFadeIn : ScreenEffect
+	{
+		public static readonly Packet Instance = SetStatic(new ScreenFadeIn());
+
+		public ScreenFadeIn()
+			: base(ScreenEffectType.FadeIn)
+		{ }
+	}
+
+	public sealed class ScreenFadeInOut : ScreenEffect
+	{
+		public static readonly Packet Instance = SetStatic(new ScreenFadeInOut());
+
+		public ScreenFadeInOut()
+			: base(ScreenEffectType.FadeInOut)
+		{ }
+	}
+
+	public sealed class ScreenLightFlash : ScreenEffect
+	{
+		public static readonly Packet Instance = SetStatic(new ScreenLightFlash());
+
+		public ScreenLightFlash()
+			: base(ScreenEffectType.LightFlash)
+		{ }
+	}
+
+	public sealed class ScreenDarkFlash : ScreenEffect
+	{
+		public static readonly Packet Instance = SetStatic(new ScreenDarkFlash());
+
+		public ScreenDarkFlash()
+			: base(ScreenEffectType.DarkFlash)
+		{ }
 	}
 
 	public enum DeleteResultType

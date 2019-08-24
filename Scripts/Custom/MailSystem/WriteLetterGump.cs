@@ -85,7 +85,7 @@ namespace Server.Gumps
                     letter.BodyText = un;
                     letter.m_From = m_Owner;
                     letter.m_To = m_From;
-                    letter.m_Time = DateTime.Now;
+                    letter.m_Time = DateTime.UtcNow;
                     m_Owner.AddToBackpack(letter);
                     from.CloseGump(typeof(WriteLetterGump));
                     break;

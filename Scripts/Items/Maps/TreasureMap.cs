@@ -705,7 +705,7 @@ namespace Server.Items
 			}
 
 			from.LocalOverheadMessage( MessageType.Regular, 0x3B2, 503019 ); // You successfully decode a treasure map!
-            Found = DateTime.Now;
+            Found = DateTime.UtcNow;
 			Decoder = from;
 			LootType = LootType.Blessed;
 			DisplayTo( from );
@@ -987,7 +987,7 @@ namespace Server.Items
                 }
                 if (version <= 1)
                 {
-                    m_Found = DateTime.Now;
+                    m_Found = DateTime.UtcNow;
                 }
 
                 StartTimer();
@@ -1021,7 +1021,7 @@ namespace Server.Items
             {
                 // = Get New Treasure Location after 30 Days
                 m_Decoder = null;
-                m_Found = DateTime.Now;
+                m_Found = DateTime.UtcNow;
 
 				Point3D locale = new Point3D( m_Location.X, m_Location.Y, 0 );
 
@@ -1055,7 +1055,7 @@ namespace Server.Items
 
         public static int GetAge(DateTime found)
         {
-            TimeSpan span = DateTime.Now - found;
+            TimeSpan span = DateTime.UtcNow - found;
 
             return (int)(span.TotalDays);
         }

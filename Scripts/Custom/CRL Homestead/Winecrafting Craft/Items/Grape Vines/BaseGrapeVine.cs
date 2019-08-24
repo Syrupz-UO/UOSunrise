@@ -63,7 +63,7 @@ namespace Server.Items.Crops
 
 		public static void init ( BaseGrapeVine plant, bool full )
 		{
-			plant.LastPick = DateTime.Now;
+			plant.LastPick = DateTime.UtcNow;
 			plant.regrowTimer = new FruitTimer( plant );
 
 			if ( full )
@@ -85,9 +85,9 @@ namespace Server.Items.Crops
 				return;
 			}
 
-			if ( DateTime.Now > lastpicked.AddSeconds(5) )
+			if ( DateTime.UtcNow > lastpicked.AddSeconds(5) )
 			{
-				lastpicked = DateTime.Now;
+				lastpicked = DateTime.UtcNow;
 
 				int lumberValue = (int)from.Skills[SkillName.Cooking].Value / 20;
 				if ( from.Mounted )

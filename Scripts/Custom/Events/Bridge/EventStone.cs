@@ -130,11 +130,11 @@ namespace Server.Items
             Visible = false;
             m_Running = false;
 			m_EventRate = TimeSpan.FromHours(6.0);
-			m_LastEvent = DateTime.Now;
+			m_LastEvent = DateTime.UtcNow;
 		    m_StartLocation = new Point3D(6927, 2122, 5);
 			m_MapLocation = Map.Felucca;
 			m_RestartTimer = new InternalTimer(this, TimeSpan.FromSeconds(1.0));
-            m_LastReset = DateTime.Now;
+            m_LastReset = DateTime.UtcNow;
             m_TimerEnabled = false;
 			m_BroadcastHue = 269;
             m_BroadcastList = new List<Mobile>();
@@ -226,7 +226,7 @@ namespace Server.Items
             {
                 Running = true;
                 AcceptingPlayers = true;
-                LastEvent = DateTime.Now;
+                LastEvent = DateTime.UtcNow;
                 BCastTimer = new BroadcastTimer(this, TimeSpan.FromSeconds(BroadCastTickDelay), TimeSpan.FromSeconds(BroadCastTickDelay));
                 BCastTimer.Start();
                 string text = "A Bridge Event is starting up. Type [joinbridge To Join.";
@@ -406,7 +406,7 @@ namespace Server.Items
             }
 					if (version == 0)
 					{	
-					m_LastReset = DateTime.Now;
+					m_LastReset = DateTime.UtcNow;
 					}
 					m_RestartTimer = new InternalTimer(this, TimeSpan.FromSeconds(1.0));
             
@@ -465,10 +465,10 @@ namespace Server.Items
         {
             if (m_TimerEnabled)
             {
-                if (m_LastEvent + m_EventRate <= DateTime.Now)
+                if (m_LastEvent + m_EventRate <= DateTime.UtcNow)
                 {
                     KickStart = true;
-                    m_LastEvent = DateTime.Now;
+                    m_LastEvent = DateTime.UtcNow;
                 }
 
                 if (m_RestartTimer != null)

@@ -32,7 +32,10 @@ namespace Server
 		AOS,
 		SE,
 		ML,
-		SA
+		SA,
+		HS,
+		TOL,
+		EJ
 	}
 
 	[Flags]

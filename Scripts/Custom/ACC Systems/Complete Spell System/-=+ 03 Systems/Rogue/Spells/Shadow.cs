@@ -60,7 +60,7 @@ namespace Server.ACC.CSS.Systems.Rogue
                 m_Table.Add(Caster, mod);
                 Caster.AddSkillMod(mod);
 
-                new InternalTimer(Caster, DateTime.Now.AddSeconds(15*(Caster.Skills[DamageSkill].Base / 10))).Start();
+                new InternalTimer(Caster, DateTime.UtcNow.AddSeconds(15*(Caster.Skills[DamageSkill].Base / 10))).Start();
             }
             else
                 Caster.SendMessage("You are already in the shadows!");
@@ -80,7 +80,7 @@ namespace Server.ACC.CSS.Systems.Rogue
 
             protected override void OnTick()
             {
-                if (DateTime.Now >= m_ExpiresAt)
+                if (DateTime.UtcNow >= m_ExpiresAt)
                 {
                     RogueShadowSpell.Remove(m_Owner);
                     Stop();

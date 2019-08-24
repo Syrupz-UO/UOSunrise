@@ -1077,7 +1077,7 @@ namespace Server.Misc
 
 		public static string LogServer ( string sText )
 		{
-			//String timeStamp = GetTimestamp(DateTime.Now);
+			//String timeStamp = GetTimestamp(DateTime.UtcNow);
 
 			//string sEvent = sText + "#" + timeStamp;
 			//LoggingFunctions.LogEvent( sEvent, "Logging Server" );

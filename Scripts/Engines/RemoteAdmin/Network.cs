@@ -161,7 +161,7 @@ namespace Server.RemoteAdmin
 				Console.WriteLine( "ADMIN: Access granted to '{0}' from {1}", user, state );
 				state.Account = a;
 				a.LogAccess( state );
-				a.LastLogin = DateTime.Now;
+				a.LastLogin = DateTime.UtcNow;
 
 				state.Send( new Login( LoginResponse.OK ) );
 				state.Send( Compress( new ConsoleData( m_ConsoleData.ToString() ) ) );

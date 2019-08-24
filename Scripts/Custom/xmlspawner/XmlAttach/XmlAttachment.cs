@@ -156,7 +156,7 @@ namespace Server.Engines.XmlSpawner2
 				// if the expiration timer is running then return the remaining time
 				if (m_ExpirationTimer != null)
 				{
-					return m_ExpirationEnd - DateTime.Now;
+					return m_ExpirationEnd - DateTime.UtcNow;
 				}
 				else
 					return m_Expiration;
@@ -224,7 +224,7 @@ namespace Server.Engines.XmlSpawner2
 		// ----------------------------------------------
 		private void DoTimer(TimeSpan delay)
 		{
-			m_ExpirationEnd = DateTime.Now + delay;
+			m_ExpirationEnd = DateTime.UtcNow + delay;
 
 			if (m_ExpirationTimer != null)
 				m_ExpirationTimer.Stop();
@@ -257,7 +257,7 @@ namespace Server.Engines.XmlSpawner2
 		// ----------------------------------------------
 		public XmlAttachment()
 		{
-			m_CreationTime = DateTime.Now;
+			m_CreationTime = DateTime.UtcNow;
 
 			// get the next unique serial id
 			m_Serial = ASerial.NewSerial();
@@ -480,7 +480,7 @@ namespace Server.Engines.XmlSpawner2
 			writer.Write(m_Expiration);
 			if (m_ExpirationTimer != null)
 			{
-				writer.Write(m_ExpirationEnd - DateTime.Now);
+				writer.Write(m_ExpirationEnd - DateTime.UtcNow);
 			}
 			else
 			{

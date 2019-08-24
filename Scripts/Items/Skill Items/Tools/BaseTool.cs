@@ -133,11 +133,15 @@ namespace Server.Items
 			{
 				CraftSystem system = this.CraftSystem;
 
-				int num = system.CanCraft( from, this, null );
+				object num = system.CanCraft( from, this, null );
 
-				if ( num > 0 && ( num != 1044267 || !Core.SE ) ) // Blacksmithing shows the gump regardless of proximity of an anvil and forge after SE
+				// Blacksmithing shows the gump regardless of proximity of an anvil and forge after SE
+				if( ( num is int && (int)num > 0 && ( (int)num != 1044267 || !Core.SE ) ) || ( num is string && !string.IsNullOrWhiteSpace( (string)num ) ) )
 				{
-					from.SendLocalizedMessage( num );
+					if( num is int )
+						from.SendLocalizedMessage( (int)num );
+					else
+						from.SendMessage( (string)num );
 				}
 				else
 				{
@@ -165,11 +169,15 @@ namespace Server.Items
 			{
 				CraftSystem system = tool.CraftSystem;
 
-				int num = system.CanCraft(from, tool, null);
+				object num = system.CanCraft(from, tool, null);
 
-				if (num > 0 && (num != 1044267 || !Core.SE)) // Blacksmithing shows the gump regardless of proximity of an anvil and forge after SE
+				// Blacksmithing shows the gump regardless of proximity of an anvil and forge after SE
+				if( ( num is int && (int)num > 0 && ( (int)num != 1044267 || !Core.SE ) ) || ( num is string && !string.IsNullOrWhiteSpace( (string)num ) ) )
 				{
-					from.SendLocalizedMessage(num);
+					if( num is int )
+						from.SendLocalizedMessage( (int)num );
+					else
+						from.SendMessage( (string)num );
 				}
 				else
 				{

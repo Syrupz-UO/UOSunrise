@@ -131,7 +131,7 @@ namespace Server.SkillHandlers
 			protected override void OnTargetFinish( Mobile from )
 			{
 				if ( m_SetSkillTime )
-					from.NextSkillTime = DateTime.Now;
+					from.NextSkillTime = DateTime.UtcNow;
 			}
 
 			protected override void OnTarget( Mobile from, object targeted )
@@ -197,7 +197,7 @@ namespace Server.SkillHandlers
 							}
 							else
 							{
-								from.NextSkillTime = DateTime.Now + TimeSpan.FromSeconds( 5.0 );
+								from.NextSkillTime = DateTime.UtcNow + TimeSpan.FromSeconds( 5.0 );
 								if ( targ is BaseCreature )
 								{
 									BaseCreature bc = (BaseCreature)targ;
@@ -214,7 +214,7 @@ namespace Server.SkillHandlers
 									else if ( seconds < 10 )
 										seconds = 10;
 
-									bc.Pacify( from, DateTime.Now + TimeSpan.FromSeconds( seconds ) );
+									bc.Pacify( from, DateTime.UtcNow + TimeSpan.FromSeconds( seconds ) );
 								}
 								else
 								{
@@ -225,7 +225,7 @@ namespace Server.SkillHandlers
 								}
 							}
 						}
-						from.NextSkillTime = DateTime.Now + TimeSpan.FromSeconds( 10.0 );
+						from.NextSkillTime = DateTime.UtcNow + TimeSpan.FromSeconds( 10.0 );
 						m_SetSkillTime = false;
 						if ( from.Karma > -2459 ){ Titles.AwardKarma( from, -40, true ); }
 						if ( from.Fame > -2459 ){ Titles.AwardFame( from, -40, true ); }
@@ -335,7 +335,7 @@ namespace Server.SkillHandlers
 						m_Target.SendLocalizedMessage( 500404 ); // They seem unwilling to give you any money.
 					}
 
-					m_From.NextSkillTime = DateTime.Now + TimeSpan.FromSeconds( 10.0 );
+					m_From.NextSkillTime = DateTime.UtcNow + TimeSpan.FromSeconds( 10.0 );
 				}
 			}
 		}

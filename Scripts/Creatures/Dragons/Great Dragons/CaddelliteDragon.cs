@@ -151,7 +151,7 @@ namespace Server.Mobiles
 
 		public void Provoke( Mobile target )
 		{
-			if ( target == null || Deleted || !Alive || m_NextProvoke > DateTime.Now || 0.05 < Utility.RandomDouble() )
+			if ( target == null || Deleted || !Alive || m_NextProvoke > DateTime.UtcNow || 0.05 < Utility.RandomDouble() )
 				return;
 
 			foreach ( Mobile m in GetMobilesInRange( RangePerception ) )
@@ -173,7 +173,7 @@ namespace Server.Mobiles
 				}
 			}
 
-			m_NextProvoke = DateTime.Now + TimeSpan.FromSeconds( 10 );
+			m_NextProvoke = DateTime.UtcNow + TimeSpan.FromSeconds( 10 );
 		}
 		#endregion
 		//////////////////////////////////////////////////////////////////////////////////

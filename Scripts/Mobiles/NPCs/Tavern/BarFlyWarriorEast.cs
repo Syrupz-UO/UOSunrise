@@ -153,10 +153,10 @@ namespace Server.Mobiles
 		public override void OnMovement( Mobile m, Point3D oldLocation )
 		{
 			Region reg = Region.Find( this.Location, this.Map );
-			if ( DateTime.Now >= m_NextTalk && InRange( m, 30 ) )
+			if ( DateTime.UtcNow >= m_NextTalk && InRange( m, 30 ) )
 			{
 				TavernPatrons.GetChatter( this );
-				m_NextTalk = (DateTime.Now + TimeSpan.FromSeconds( Utility.RandomMinMax( 15, 45 ) ));
+				m_NextTalk = (DateTime.UtcNow + TimeSpan.FromSeconds( Utility.RandomMinMax( 15, 45 ) ));
 			}
 		}
 

@@ -1512,7 +1512,7 @@ namespace Server
 
 		public void SetLastMoved()
 		{
-			m_LastMovedTime = DateTime.Now;
+			m_LastMovedTime = DateTime.UtcNow;
 		}
 
 		public DateTime LastMoved
@@ -2065,7 +2065,7 @@ namespace Server
 
 			/* begin last moved time optimization */
 			long ticks = m_LastMovedTime.Ticks;
-			long now = DateTime.Now.Ticks;
+			long now = DateTime.UtcNow.Ticks;
 
 			TimeSpan d;
 
@@ -2166,56 +2166,56 @@ namespace Server
 				writer.WriteEncodedInt( info.m_SavedFlags );
 		}
 
-		public IPooledEnumerable GetObjectsInRange( int range )
+		public IPooledEnumerable<IEntity> GetObjectsInRange(int range)
 		{
-			Map map = m_Map;
+			var map = m_Map;
 
-			if ( map == null )
-				return Server.Map.NullEnumerable.Instance;
+			if (map == null)
+				return Map.NullEnumerable<IEntity>.Instance;
 
-			if ( m_Parent == null )
-				return map.GetObjectsInRange( m_Location, range );
+			if (m_Parent == null)
+				return map.GetObjectsInRange(m_Location, range);
 
-			return map.GetObjectsInRange( GetWorldLocation(), range );
+			return map.GetObjectsInRange(GetWorldLocation(), range);
 		}
 
-		public IPooledEnumerable GetItemsInRange( int range )
+		public IPooledEnumerable<Item> GetItemsInRange(int range)
 		{
-			Map map = m_Map;
+			var map = m_Map;
 
-			if ( map == null )
-				return Server.Map.NullEnumerable.Instance;
+			if (map == null)
+				return Map.NullEnumerable<Item>.Instance;
 
-			if ( m_Parent == null )
-				return map.GetItemsInRange( m_Location, range );
+			if (m_Parent == null)
+				return map.GetItemsInRange(m_Location, range);
 
-			return map.GetItemsInRange( GetWorldLocation(), range );
+			return map.GetItemsInRange(GetWorldLocation(), range);
 		}
 
-		public IPooledEnumerable GetMobilesInRange( int range )
+		public IPooledEnumerable<Mobile> GetMobilesInRange(int range)
 		{
-			Map map = m_Map;
+			var map = m_Map;
 
-			if ( map == null )
-				return Server.Map.NullEnumerable.Instance;
+			if (map == null)
+				return Map.NullEnumerable<Mobile>.Instance;
 
-			if ( m_Parent == null )
-				return map.GetMobilesInRange( m_Location, range );
+			if (m_Parent == null)
+				return map.GetMobilesInRange(m_Location, range);
 
-			return map.GetMobilesInRange( GetWorldLocation(), range );
+			return map.GetMobilesInRange(GetWorldLocation(), range);
 		}
 
-		public IPooledEnumerable GetClientsInRange( int range )
+		public IPooledEnumerable<NetState> GetClientsInRange(int range)
 		{
-			Map map = m_Map;
+			var map = m_Map;
 
-			if ( map == null )
-				return Server.Map.NullEnumerable.Instance;
+			if (map == null)
+				return Map.NullEnumerable<NetState>.Instance;
 
-			if ( m_Parent == null )
-				return map.GetClientsInRange( m_Location, range );
+			if (m_Parent == null)
+				return map.GetClientsInRange(m_Location, range);
 
-			return map.GetClientsInRange( GetWorldLocation(), range );
+			return map.GetClientsInRange(GetWorldLocation(), range);
 		}
 
 		private static int m_LockedDownFlag;
@@ -2314,8 +2314,8 @@ namespace Server
 					{
 						int minutes = reader.ReadEncodedInt();
 
-						try{ LastMoved = DateTime.Now - TimeSpan.FromMinutes( minutes ); }
-						catch{ LastMoved = DateTime.Now; }
+						try{ LastMoved = DateTime.UtcNow - TimeSpan.FromMinutes( minutes ); }
+						catch{ LastMoved = DateTime.UtcNow; }
 					}
 
 					if ( GetSaveFlag( flags, SaveFlag.Direction ) )
@@ -4506,6 +4506,21 @@ namespace Server
 
 			if ( this.Amount <= 0 )
 				this.Delete();
+		}
+		
+		public virtual void ReplaceWith(Item newItem)
+		{
+			if (m_Parent is Container)
+			{
+				((Container)m_Parent).AddItem(newItem);
+				newItem.Location = m_Location;
+			}
+			else
+			{
+				newItem.MoveToWorld(GetWorldLocation(), m_Map);
+			}
+
+			Delete();
 		}
 
 		[CommandProperty( AccessLevel.GameMaster )]

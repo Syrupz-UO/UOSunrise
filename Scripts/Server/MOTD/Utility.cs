@@ -146,7 +146,7 @@ namespace Joeku.MOTD
 				writer.WriteLine( "// {0}", ExampleCode[i] );
 
 			writer.WriteLine();
-			writer.WriteLine( "[*]{0}", DateTime.Now.ToShortDateString() );
+			writer.WriteLine( "[*]{0}", DateTime.UtcNow.ToShortDateString() );
 			writer.WriteLine( "System" );
 			writer.WriteLine( "   This script does not contain any entries. Contact the shard administrators for more information." );
 		}

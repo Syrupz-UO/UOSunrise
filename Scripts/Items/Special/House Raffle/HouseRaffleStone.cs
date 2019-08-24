@@ -42,7 +42,7 @@ namespace Server.Items
 			else
 				m_Address = IPAddress.None;
 
-			m_Date = DateTime.Now;
+			m_Date = DateTime.UtcNow;
 		}
 
 		public void Serialize( GenericWriter writer )
@@ -125,7 +125,7 @@ namespace Server.Items
 						m_Entries.Clear();
 						m_Winner = null;
 						m_Deed = null;
-						m_Started = DateTime.Now;
+						m_Started = DateTime.UtcNow;
 					}
 
 					m_Active = value;
@@ -196,7 +196,7 @@ namespace Server.Items
 				if ( CurrentState != HouseRaffleState.Completed )
 					return false;
 
-				return ( m_Started + m_Duration + ExpirationTime <= DateTime.Now );
+				return ( m_Started + m_Duration + ExpirationTime <= DateTime.UtcNow );
 			}
 		}
 
@@ -471,7 +471,7 @@ namespace Server.Items
 
 		public void CheckEnd()
 		{
-			if ( !m_Active || m_Started + m_Duration > DateTime.Now )
+			if ( !m_Active || m_Started + m_Duration > DateTime.UtcNow )
 				return;
 
 			m_Active = false;

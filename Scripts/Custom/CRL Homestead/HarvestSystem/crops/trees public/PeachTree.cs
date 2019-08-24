@@ -26,7 +26,7 @@ namespace Server.Items.Crops
 		public static void init( PeachSapling plant )
 		{
 			TimeSpan delay = TreeHelper.SaplingTime;
-			plant.treeTime = DateTime.Now + delay;
+			plant.treeTime = DateTime.UtcNow + delay;
 
 			plant.thisTimer = new TreeHelper.TreeTimer( plant, typeof(PeachTree), delay );
 			plant.thisTimer.Start();
@@ -82,7 +82,7 @@ namespace Server.Items.Crops
 
 		public static void init ( PeachTree plant, bool full )
 		{
-			plant.LastPick = DateTime.Now;
+			plant.LastPick = DateTime.UtcNow;
 			plant.regrowTimer = new FruitTimer( plant );
 
 			if ( full )
@@ -112,9 +112,9 @@ namespace Server.Items.Crops
 				return;
 			}
 
-			if ( DateTime.Now > lastpicked.AddSeconds(3) )
+			if ( DateTime.UtcNow > lastpicked.AddSeconds(3) )
 			{
-				lastpicked = DateTime.Now;
+				lastpicked = DateTime.UtcNow;
 
 				int cookValue = (int)from.Skills[SkillName.Cooking].Value / 30;
 				if ( from.Mounted )

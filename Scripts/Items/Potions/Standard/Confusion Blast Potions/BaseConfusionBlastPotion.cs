@@ -112,7 +112,7 @@ namespace Server.Items
 				{
 					BaseCreature mon = (BaseCreature) mobile;
 
-					mon.Pacify( from, DateTime.Now + TimeSpan.FromSeconds( 5.0 ) ); // TODO check
+					mon.Pacify( from, DateTime.UtcNow + TimeSpan.FromSeconds( 5.0 ) ); // TODO check
 				}
 			}
 		}
@@ -149,8 +149,8 @@ namespace Server.Items
 		{
 			Timer timer = m_Delay[ m ] as Timer;
 
-			if ( timer != null && timer.Next > DateTime.Now )
-				return (int) (timer.Next - DateTime.Now).TotalSeconds;
+			if ( timer != null && timer.Next > DateTime.UtcNow )
+				return (int) (timer.Next - DateTime.UtcNow).TotalSeconds;
 
 			return 0;
 		}

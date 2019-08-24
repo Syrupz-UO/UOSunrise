@@ -134,13 +134,13 @@ namespace Server.ACC.CSS.Systems.Ranger
 			public InternalTimer( Mobile owner, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_Owner = owner;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 
 			}
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					RangerHuntersAimSpell.RemoveEffect( m_Owner );
 					Stop();

@@ -80,10 +80,10 @@ namespace Server.Mobiles
 		public override void OnThink()
 		{
 			base.OnThink();
-			if ( DateTime.Now < m_NextPickup )
+			if ( DateTime.UtcNow < m_NextPickup )
 				return;
 
-			m_NextPickup = DateTime.Now + TimeSpan.FromSeconds( Utility.RandomMinMax( 10, 20 ) );
+			m_NextPickup = DateTime.UtcNow + TimeSpan.FromSeconds( Utility.RandomMinMax( 10, 20 ) );
 
 			Peace( Combatant );
 		}
@@ -92,14 +92,14 @@ namespace Server.Mobiles
 
 		public void Peace( Mobile target )
 		{
-			if ( target == null || Deleted || !Alive || m_NextPeace > DateTime.Now || 0.1 < Utility.RandomDouble() )
+			if ( target == null || Deleted || !Alive || m_NextPeace > DateTime.UtcNow || 0.1 < Utility.RandomDouble() )
 				return;
 
 			PlayerMobile p = target as PlayerMobile;
 
-			if ( p != null && p.PeacedUntil < DateTime.Now && !p.Hidden && CanBeHarmful( p ) )
+			if ( p != null && p.PeacedUntil < DateTime.UtcNow && !p.Hidden && CanBeHarmful( p ) )
 			{
-				p.PeacedUntil = DateTime.Now + TimeSpan.FromSeconds( 20.0 );
+				p.PeacedUntil = DateTime.UtcNow + TimeSpan.FromSeconds( 20.0 );
 				p.SendLocalizedMessage( 500616 ); // You hear lovely music, and forget to continue battling!
 				p.FixedParticles( 0x376A, 1, 32, 0x15BD, EffectLayer.Waist );
 				p.Combatant = null;
@@ -107,7 +107,7 @@ namespace Server.Mobiles
 				PlaySound( 0x58C );
 			}
 
-			m_NextPeace = DateTime.Now + TimeSpan.FromSeconds( 10 );
+			m_NextPeace = DateTime.UtcNow + TimeSpan.FromSeconds( 10 );
 		}
 
 		public override bool CanRummageCorpses{ get{ return true; } }

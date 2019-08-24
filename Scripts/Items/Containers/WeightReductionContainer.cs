@@ -265,7 +265,7 @@ namespace Server.Items
         public override int DefaultMaxItems { get { return ContainerMaxItems; } }
         public override int MaxWeight { get { return WeightReductionAmount == 1.0 ? 0 : 400; } }
 
-        private DateTime NextAccessTime = DateTime.Now;
+        private DateTime NextAccessTime = DateTime.UtcNow;
 
         public WeightReductionContainer()
             : this(0xE76)
@@ -288,13 +288,13 @@ namespace Server.Items
                 return false;
             }
 
-            if (DateTime.Now < NextAccessTime)
+            if (DateTime.UtcNow < NextAccessTime)
             {
                 if (AccessDelayMessage != "")
                     from.SendMessage(Utility.RandomNeutralHue(), AccessDelayMessage);
 
                 from.SendMessage(String.Format("You will need to wait approximately {0} more minutes before you can try again",
-                    NextAccessTime.Subtract(DateTime.Now).Minutes));
+                    NextAccessTime.Subtract(DateTime.UtcNow).Minutes));
 
                 return false;
             }
@@ -302,7 +302,7 @@ namespace Server.Items
             if (AddAccessMessage != "")
                 from.SendMessage(Utility.RandomNeutralHue(), AddAccessMessage);
 
-            NextAccessTime = (DateTime.Now).Add(AccessDelay);
+            NextAccessTime = (DateTime.UtcNow).Add(AccessDelay);
 
             return base.OnDragDrop(from, dropped);
         }
@@ -312,13 +312,13 @@ namespace Server.Items
             if (item == this)
                 return base.CheckLift(from, item, ref reject);
 
-            if (DateTime.Now < NextAccessTime)
+            if (DateTime.UtcNow < NextAccessTime)
             {
                 if (AccessDelayMessage != "")
                     from.SendMessage(Utility.RandomNeutralHue(), AccessDelayMessage);
 
                 from.SendMessage(String.Format("You will need to wait approximately {0} more minutes before you can try again",
-                    NextAccessTime.Subtract(DateTime.Now).Minutes));
+                    NextAccessTime.Subtract(DateTime.UtcNow).Minutes));
 
                 return false;
             }
@@ -326,7 +326,7 @@ namespace Server.Items
             if (RemoveAccessMessage != "")
                 from.SendMessage(Utility.RandomNeutralHue(), RemoveAccessMessage);
 
-            NextAccessTime = (DateTime.Now).Add(AccessDelay);
+            NextAccessTime = (DateTime.UtcNow).Add(AccessDelay);
 
             return base.CheckLift(from, item, ref reject);
         }

@@ -168,7 +168,7 @@ namespace Server.Items
             {
                 bool allow = base.OnDragDrop(from, dropped);
 
-                if (allow && (DateTime.Now > m_NextUse ) )
+                if (allow && (DateTime.UtcNow > m_NextUse ) )
                     this.Enhance(from);
 
                 return allow;
@@ -186,7 +186,7 @@ namespace Server.Items
             {
                 bool allow = base.OnDragDropInto(from, item, p);
 
-                if (allow && (DateTime.Now > m_NextUse ) )
+                if (allow && (DateTime.UtcNow > m_NextUse ) )
                     this.Enhance(from);
 
                 return allow;
@@ -239,7 +239,7 @@ namespace Server.Items
         {
             this.m_Charges = 10;
 
-			if (DateTime.Now > m_NextUse )
+			if (DateTime.UtcNow > m_NextUse )
                 this.Enhance(null);
 			
 			InvalidateProperties(); 
@@ -269,7 +269,7 @@ namespace Server.Items
                 {
                     Item enhanced;
 					
-					m_NextUse = DateTime.Now + TimeSpan.FromDays(1);
+					m_NextUse = DateTime.UtcNow + TimeSpan.FromDays(1);
 
                     if (bandage.Amount > this.m_Charges)
                     {
@@ -304,7 +304,7 @@ namespace Server.Items
 		
         [Constructable]		
         public FountainOfLifeDeed()
-            : this(10, DateTime.Now)
+            : this(10, DateTime.UtcNow)
         {
         }
 		

@@ -123,7 +123,7 @@ namespace Server.Items
 
 		public static void ThiefTimeAllowed( Mobile m )
 		{
-			DateTime TimeFinished = DateTime.Now;
+			DateTime TimeFinished = DateTime.UtcNow;
 			string sFinished = Convert.ToString(TimeFinished);
 			CharacterDatabase.SetQuestInfo( m, "ThiefQuest", sFinished );
 		}
@@ -136,7 +136,7 @@ namespace Server.Items
 			if ( sTime.Length > 0 && !( CharacterDatabase.GetQuestState( m, "ThiefQuest" ) ) )
 			{
 				DateTime TimeThen = Convert.ToDateTime(sTime);
-				DateTime TimeNow = DateTime.Now;
+				DateTime TimeNow = DateTime.UtcNow;
 				long ticksThen = TimeThen.Ticks;
 				long ticksNow = TimeNow.Ticks;
 				int minsThen = (int)TimeSpan.FromTicks(ticksThen).TotalMinutes;

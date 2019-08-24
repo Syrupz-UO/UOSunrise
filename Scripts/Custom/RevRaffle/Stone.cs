@@ -51,7 +51,7 @@ namespace Bittiez.RevRaffle
         {
             get
             {
-                DateTime Now = DateTime.Now;
+                DateTime Now = DateTime.UtcNow;
                 if (Expiration == null)
                     return TimeSpan.FromMilliseconds(6);
                 if (Expiration > Now)
@@ -202,7 +202,7 @@ namespace Bittiez.RevRaffle
             m_Prize = null;
             m_Contestants = new ArrayList();
             m_NewContestants = new List<Contestant>();
-            m_Expiration = DateTime.Now;
+            m_Expiration = DateTime.UtcNow;
             SetUP = false;
             m_Bag = new RevBag();
             InvalidateProperties();

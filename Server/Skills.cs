@@ -22,6 +22,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+
 using Server.Network;
 
 namespace Server
@@ -689,7 +691,7 @@ namespace Server
 	}
 
 	[PropertyObject]
-	public class Skills
+	public class Skills : IEnumerable<Skill>
 	{
 		private Mobile m_Owner;
 		private Skill[] m_Skills;
@@ -942,11 +944,11 @@ namespace Server
 
 				if ( info.Callback != null )
 				{
-					if ( from.NextSkillTime <= DateTime.Now && from.Spell == null )
+					if ( from.NextSkillTime <= DateTime.UtcNow && from.Spell == null )
 					{
 						from.DisruptiveAction();
 
-						from.NextSkillTime = DateTime.Now + info.Callback( from );
+						from.NextSkillTime = DateTime.UtcNow + info.Callback( from );
 
 						return true;
 					}
@@ -1106,6 +1108,16 @@ namespace Server
 
 			if ( ns != null )
 				ns.Send( new SkillChange( skill ) );
+		}
+		
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+
+		public IEnumerator<Skill> GetEnumerator()
+		{
+			return m_Skills.OfType<Skill>().GetEnumerator();
 		}
 	}
 }

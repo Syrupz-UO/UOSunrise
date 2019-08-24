@@ -1,4 +1,4 @@
-﻿// created by BondD
+// created by BondD
 using System;
 using Server; 
 using Server.Misc;

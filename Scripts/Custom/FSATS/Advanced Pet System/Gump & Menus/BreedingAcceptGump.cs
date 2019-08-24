@@ -282,8 +282,8 @@ namespace Server.Gumps
 
 					if ( bc1 != null || bc2 != null )
 					{
-						bc1.MatingDelay = DateTime.Now + TimeSpan.FromHours( 1.0 );
-						bc2.MatingDelay = DateTime.Now + TimeSpan.FromHours( 1.0 );
+						bc1.MatingDelay = DateTime.UtcNow + TimeSpan.FromHours( 1.0 );
+						bc2.MatingDelay = DateTime.UtcNow + TimeSpan.FromHours( 1.0 );
 					}
 				}
 				else
@@ -292,8 +292,8 @@ namespace Server.Gumps
 					{
 						cm1.SendMessage( "Breeding Failed: It is hard to successfully mate to strong pets together, You will have to wait twelve hours to try again." );
 						cm2.SendMessage( "Breeding Failed: It is hard to successfully mate to strong pets together, You will have to wait twelve hours to try again." );
-						bc1.MatingDelay = DateTime.Now + TimeSpan.FromHours( 1.0 );
-						bc2.MatingDelay = DateTime.Now + TimeSpan.FromHours( 1.0 );
+						bc1.MatingDelay = DateTime.UtcNow + TimeSpan.FromHours( 1.0 );
+						bc2.MatingDelay = DateTime.UtcNow + TimeSpan.FromHours( 1.0 );
 					}
 				}
 			}

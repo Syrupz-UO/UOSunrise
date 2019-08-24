@@ -49,7 +49,7 @@ namespace Arya.Savings
 
 		private static void World_Save( WorldSaveEventArgs args )
 		{
-			DateTime now = DateTime.Now;
+			DateTime now = DateTime.UtcNow;
 
 			if ( AuctionConfig.InterestHour <= now.Hour && SavingsAccount.DateLastPaid != now.Date )
 			{

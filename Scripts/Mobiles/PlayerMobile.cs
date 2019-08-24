@@ -99,7 +99,7 @@ namespace Server.Mobiles
 		{
 			get
 			{
-				TimeSpan ts = m_NextTamingBulkOrder - DateTime.Now;
+				TimeSpan ts = m_NextTamingBulkOrder - DateTime.UtcNow;
 
 				if ( ts < TimeSpan.Zero )
 					ts = TimeSpan.Zero;
@@ -108,7 +108,7 @@ namespace Server.Mobiles
 			}
 			set
 			{
-				try{ m_NextTamingBulkOrder = DateTime.Now + value; }
+				try{ m_NextTamingBulkOrder = DateTime.UtcNow + value; }
 				catch{}
 			}
 		}
@@ -126,12 +126,12 @@ namespace Server.Mobiles
 		{
 			get
 			{
-				if (DateTime.Now >= _NextCaptchaTime)
+				if (DateTime.UtcNow >= _NextCaptchaTime)
 					return TimeSpan.FromSeconds(0);
 	 
-				return (_NextCaptchaTime - DateTime.Now);
+				return (_NextCaptchaTime - DateTime.UtcNow);
 			}
-			set { _NextCaptchaTime = DateTime.Now + value; }
+			set { _NextCaptchaTime = DateTime.UtcNow + value; }
 		}
 	  /* End Captcha Mod *///////////////////////////////////////////
 
@@ -148,7 +148,7 @@ namespace Server.Mobiles
 			public int Count
 			{
 				get { return m_Count; }
-				set	{ m_Count = value; m_Stamp = DateTime.Now; }
+				set	{ m_Count = value; m_Stamp = DateTime.UtcNow; }
 			}
 		}
 
@@ -1145,13 +1145,13 @@ namespace Server.Mobiles
 
 			if ( pm != null )
 			{
-				pm.m_SessionStart = DateTime.Now;
+				pm.m_SessionStart = DateTime.UtcNow;
 
 				if ( pm.m_Quest != null )
 					pm.m_Quest.StartTimer();
 
 				pm.BedrollLogout = false;
-				pm.LastOnline = DateTime.Now;
+				pm.LastOnline = DateTime.UtcNow;
 			}
 
 			DisguiseTimers.StartTimer( e.Mobile );
@@ -1199,13 +1199,13 @@ namespace Server.Mobiles
 
 			if ( pm != null )
 			{
-				pm.m_GameTime += (DateTime.Now - pm.m_SessionStart);
+				pm.m_GameTime += (DateTime.UtcNow - pm.m_SessionStart);
 
 				if ( pm.m_Quest != null )
 					pm.m_Quest.StopTimer();
 
 				pm.m_SpeechLog = null;
-				pm.LastOnline = DateTime.Now;
+				pm.LastOnline = DateTime.UtcNow;
 			}
 
 			DisguiseTimers.StopTimer( from );
@@ -2538,7 +2538,7 @@ namespace Server.Mobiles
 		{
 			get
 			{
-				TimeSpan ts = m_SavagePaintExpiration - DateTime.Now;
+				TimeSpan ts = m_SavagePaintExpiration - DateTime.UtcNow;
 
 				if ( ts < TimeSpan.Zero )
 					ts = TimeSpan.Zero;
@@ -2547,7 +2547,7 @@ namespace Server.Mobiles
 			}
 			set
 			{
-				m_SavagePaintExpiration = DateTime.Now + value;
+				m_SavagePaintExpiration = DateTime.UtcNow + value;
 			}
 		}
 
@@ -2556,7 +2556,7 @@ namespace Server.Mobiles
 		{
 			get
 			{
-				TimeSpan ts = m_NextSmithBulkOrder - DateTime.Now;
+				TimeSpan ts = m_NextSmithBulkOrder - DateTime.UtcNow;
 
 				if ( ts < TimeSpan.Zero )
 					ts = TimeSpan.Zero;
@@ -2565,7 +2565,7 @@ namespace Server.Mobiles
 			}
 			set
 			{
-				try{ m_NextSmithBulkOrder = DateTime.Now + value; }
+				try{ m_NextSmithBulkOrder = DateTime.UtcNow + value; }
 				catch{}
 			}
 		}
@@ -2575,7 +2575,7 @@ namespace Server.Mobiles
 		{
 			get
 			{
-				TimeSpan ts = m_NextTailorBulkOrder - DateTime.Now;
+				TimeSpan ts = m_NextTailorBulkOrder - DateTime.UtcNow;
 
 				if ( ts < TimeSpan.Zero )
 					ts = TimeSpan.Zero;
@@ -2584,7 +2584,7 @@ namespace Server.Mobiles
 			}
 			set
 			{
-				try{ m_NextTailorBulkOrder = DateTime.Now + value; }
+				try{ m_NextTailorBulkOrder = DateTime.UtcNow + value; }
 				catch{}
 			}
 		}
@@ -2835,7 +2835,7 @@ namespace Server.Mobiles
 			CountAndTimeStamp count = (CountAndTimeStamp)tbl[obj];
 			if ( count != null )
 			{
-				if ( count.TimeStamp + SkillCheck.AntiMacroExpire <= DateTime.Now )
+				if ( count.TimeStamp + SkillCheck.AntiMacroExpire <= DateTime.UtcNow )
 				{
 					count.Count = 1;
 					return true;
@@ -3173,7 +3173,7 @@ namespace Server.Mobiles
 				ArrayList remove = new ArrayList();
 				foreach ( CountAndTimeStamp time in t.Values )
 				{
-					if ( time.TimeStamp + SkillCheck.AntiMacroExpire <= DateTime.Now )
+					if ( time.TimeStamp + SkillCheck.AntiMacroExpire <= DateTime.UtcNow )
 						remove.Add( time );
 				}
 
@@ -3344,7 +3344,7 @@ namespace Server.Mobiles
 			get
 			{
 				if ( NetState != null )
-					return m_GameTime + (DateTime.Now - m_SessionStart);
+					return m_GameTime + (DateTime.UtcNow - m_SessionStart);
 				else
 					return m_GameTime;
 			}
@@ -3718,7 +3718,7 @@ if (Country != null)
 		{
 			PlayerMobile pm = ns.Mobile as PlayerMobile;
 
-			TimeSpan ts = pm.m_NextMovementTime - DateTime.Now;
+			TimeSpan ts = pm.m_NextMovementTime - DateTime.UtcNow;
 
 			if ( pm != null )
 			{
@@ -3735,14 +3735,14 @@ if (Country != null)
 			if ( pm.m_NextMovementTime == DateTime.MinValue )
 			{
 				// has not yet moved
-				pm.m_NextMovementTime = DateTime.Now;
+				pm.m_NextMovementTime = DateTime.UtcNow;
 				return true;
 			}
 
 			if ( ts < TimeSpan.Zero )
 			{
 				// been a while since we've last moved
-				pm.m_NextMovementTime = DateTime.Now;
+				pm.m_NextMovementTime = DateTime.UtcNow;
 				return true;
 			}
 
@@ -3974,9 +3974,9 @@ if (Country != null)
 			if ( this.Quest != null && this.Quest.IgnoreYoungProtection( from ) )
 				return false;
 
-			if ( DateTime.Now - m_LastYoungMessage > TimeSpan.FromMinutes( 1.0 ) )
+			if ( DateTime.UtcNow - m_LastYoungMessage > TimeSpan.FromMinutes( 1.0 ) )
 			{
-				m_LastYoungMessage = DateTime.Now;
+				m_LastYoungMessage = DateTime.UtcNow;
 				SendLocalizedMessage( 1019067 ); // A monster looks at you menacingly but does not attack.  You would be under attack now if not for your status as a new citizen of Britannia.
 			}
 
@@ -3987,9 +3987,9 @@ if (Country != null)
 
 		public bool CheckYoungHealTime()
 		{
-			if ( DateTime.Now - m_LastYoungHeal > TimeSpan.FromMinutes( 5.0 ) )
+			if ( DateTime.UtcNow - m_LastYoungHeal > TimeSpan.FromMinutes( 5.0 ) )
 			{
-				m_LastYoungHeal = DateTime.Now;
+				m_LastYoungHeal = DateTime.UtcNow;
 				return true;
 			}
 
@@ -4274,7 +4274,7 @@ if (Country != null)
 					m_Values[index].Value -= value;
 
 				if( before != m_Values[index].Value )
-					m_Values[index].LastDecay = DateTime.Now;
+					m_Values[index].LastDecay = DateTime.UtcNow;
 			}
 
 			public override string ToString()
@@ -4375,7 +4375,7 @@ if (Country != null)
 
 				for( int i = 0; i < t.m_Values.Length; i++ )
 				{
-					if( (t.GetLastDecay( i ) + LossDelay) < DateTime.Now )
+					if( (t.GetLastDecay( i ) + LossDelay) < DateTime.UtcNow )
 					{
 						t.Atrophy( i, LossAmount );
 					}

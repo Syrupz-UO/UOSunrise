@@ -112,7 +112,7 @@ namespace Server
 		//[spawngen remove and [spawngen remove region
 		private static void Remove( Mobile from, string region )
 		{
-			DateTime aTime = DateTime.Now;
+			DateTime aTime = DateTime.UtcNow;
 			int count = 0;
 			List<Item> itemtodo = new List<Item>();
 
@@ -143,7 +143,7 @@ namespace Server
 		//[spawngen unload SpawnID
 		private static void Unload( int ID )
 		{
-			DateTime aTime = DateTime.Now;
+			DateTime aTime = DateTime.UtcNow;
 			int count = 0;
 			List<Item> itemtodo = new List<Item>();
 
@@ -162,7 +162,7 @@ namespace Server
 		//[spawngen remove x1 y1 x2 y2
 		private static void RemoveByCoord( Mobile from, int x1, int y1, int x2, int y2 )
 		{
-			DateTime aTime = DateTime.Now;
+			DateTime aTime = DateTime.UtcNow;
 			int count = 0;
 			List<Item> itemtodo = new List<Item>();
 
@@ -182,7 +182,7 @@ namespace Server
 		//this is the old [SpawnRem
 		public static void CleanFacet( Mobile from )
 		{
-			DateTime aTime = DateTime.Now;
+			DateTime aTime = DateTime.UtcNow;
 			int count = 0;
 			List<Item> itemtodo = new List<Item>();
 
@@ -213,7 +213,7 @@ namespace Server
 					item.Delete();
 				}
 				
-				DateTime bTime = DateTime.Now;
+				DateTime bTime = DateTime.UtcNow;
 				World.Broadcast( 0x35, true, "{0} PremiumSpawners have been removed in {1:F1} seconds.", count, (bTime - aTime).TotalSeconds );
 			}
 		}
@@ -221,7 +221,7 @@ namespace Server
 		//[spawngen save and [spawngen save region
 		private static void Save( Mobile from, string region )
 		{
-			DateTime aTime = DateTime.Now;
+			DateTime aTime = DateTime.UtcNow;
 			int count = 0;
 			List<Item> itemtodo = new List<Item>();
 			string mapanome = region;
@@ -253,7 +253,7 @@ namespace Server
 		//[spawngen SaveByHand
 		private static void SaveByHand()
 		{
-			DateTime aTime = DateTime.Now;
+			DateTime aTime = DateTime.UtcNow;
 			int count = 0;
 			List<Item> itemtodo = new List<Item>();
 			string mapanome = "SpawnsByHand";
@@ -273,7 +273,7 @@ namespace Server
 		//[spawngen save x1 y1 x2 y2
 		private static void SaveByCoord( Mobile from, int x1, int y1, int x2, int y2 )
 		{
-			DateTime aTime = DateTime.Now;
+			DateTime aTime = DateTime.UtcNow;
 			int count = 0;
 			List<Item> itemtodo = new List<Item>();
 			string mapanome = "SpawnsByCoords";
@@ -418,7 +418,7 @@ namespace Server
 					}
 				}
 
-				DateTime endTime = DateTime.Now;
+				DateTime endTime = DateTime.UtcNow;
 				World.Broadcast( 0x35, true, "{0} spawns have been saved. The entire process took {1:F1} seconds.", count, (endTime - startTime).TotalSeconds );
 			}
 		}

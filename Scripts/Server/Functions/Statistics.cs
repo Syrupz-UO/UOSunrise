@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using Server.Items;
@@ -102,7 +102,7 @@ namespace Server
             StatsList.Clear();
 
             List<Party> parties = new List<Party>();
-            DateTime shardCreation = DateTime.Now;
+            DateTime shardCreation = DateTime.UtcNow;
 
             foreach (Item i in World.Items.Values)
             {
@@ -160,10 +160,10 @@ namespace Server
                     shardCreation = a.Created;
             }
 
-            m_ShardAge = DateTime.Now - shardCreation;
+            m_ShardAge = DateTime.UtcNow - shardCreation;
             m_Uptime = DateTime.Now - Clock.ServerStart;
             m_LastRestart = Clock.ServerStart;
-            m_LastStatsUpdate = DateTime.Now;
+            m_LastStatsUpdate = DateTime.UtcNow;
             m_ActiveAccounts = Accounts.Count;
             m_ActiveGuilds = Guild.List.Count;
             m_ActiveParties = parties.Count;

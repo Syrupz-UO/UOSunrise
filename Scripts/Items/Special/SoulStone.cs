@@ -151,7 +151,7 @@ namespace Server.Items
 			{
 				AggressorInfo info = m.Aggressed[i];
 
-				if ( DateTime.Now - info.LastCombatTime < time )
+				if ( DateTime.UtcNow - info.LastCombatTime < time )
 					return true;
 			}
 
@@ -160,7 +160,7 @@ namespace Server.Items
 
 		protected virtual bool CheckUse( Mobile from )
 		{
-			DateTime now = DateTime.Now;
+			DateTime now = DateTime.UtcNow;
 
 			PlayerMobile pm = from as PlayerMobile;
 
@@ -220,7 +220,7 @@ namespace Server.Items
 			}
 
 			#region Scroll of Alacrity
-			if ( pm.AcceleratedStart > DateTime.Now )
+			if ( pm.AcceleratedStart > DateTime.UtcNow )
 			{
 				from.SendLocalizedMessage(1078115); // You may not use a soulstone while your character is under the effects of a Scroll of Alacrity.
 				return false;
@@ -597,7 +597,7 @@ namespace Server.Items
 
 				#region Scroll of ALacrity
 				PlayerMobile pm = from as PlayerMobile;
-				if (pm.AcceleratedStart > DateTime.Now)
+				if (pm.AcceleratedStart > DateTime.UtcNow)
 				{
 					// <CENTER>Unable to Absorb Selected Skill from Soulstone</CENTER>
 

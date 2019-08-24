@@ -265,7 +265,7 @@ namespace Server.Gumps
                             return;
                         }
 
-                        DateTime dt = DateTime.Now;
+                        DateTime dt = DateTime.UtcNow;
                         dt = dt.AddDays(d);
                         dt = dt.AddHours(h);
                         dt = dt.AddMinutes(m);
@@ -321,7 +321,7 @@ namespace Server.Gumps
                             return;
                         }
 
-                        DateTime dt = DateTime.Now;
+                        DateTime dt = DateTime.UtcNow;
                         dt = dt.AddDays(d);
                         dt = dt.AddHours(h);
                         dt = dt.AddMinutes(m);
@@ -420,7 +420,7 @@ namespace Server.Gumps
                     }
                 case 5003:
                     {
-                        REVR.Expiration = DateTime.Now.Subtract(TimeSpan.FromDays(1));
+                        REVR.Expiration = DateTime.UtcNow.Subtract(TimeSpan.FromDays(1));
                         REVR.Expire();
                         break;
                     }

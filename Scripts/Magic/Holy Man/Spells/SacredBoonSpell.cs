@@ -109,7 +109,7 @@ namespace Server.Spells.HolyMan
 				dest = m;
 				source = from;
 				Priority = TimerPriority.FiftyMS;
-				Expire = DateTime.Now + TimeSpan.FromSeconds( 30.0 );
+				Expire = DateTime.UtcNow + TimeSpan.FromSeconds( 30.0 );
 			}
 
 			protected override void OnTick()
@@ -120,10 +120,10 @@ namespace Server.Spells.HolyMan
 					m_Table.Remove( dest );
 				}
 
-				if ( DateTime.Now < NextTick )
+				if ( DateTime.UtcNow < NextTick )
 					return;
 
-				if ( DateTime.Now >= NextTick )
+				if ( DateTime.UtcNow >= NextTick )
 				{
 					double heal = 5 + ( source.Skills[SkillName.Healing].Value / 20.0 ) + ( source.Skills[SkillName.SpiritSpeak].Value / 20.0 );
 
@@ -132,10 +132,10 @@ namespace Server.Spells.HolyMan
 					dest.PlaySound( 0x202 );
 					dest.FixedParticles( 0x376A, 1, 62, 9923, 3, 3, EffectLayer.Waist );
 					dest.FixedParticles( 0x3779, 1, 46, 9502, 5, 3, EffectLayer.Waist );
-					NextTick = DateTime.Now + TimeSpan.FromSeconds( 4 );
+					NextTick = DateTime.UtcNow + TimeSpan.FromSeconds( 4 );
 				}
 
-				if ( DateTime.Now >= Expire )
+				if ( DateTime.UtcNow >= Expire )
 				{
 					Stop();
 					if ( m_Table.Contains( dest ) )

@@ -272,7 +272,7 @@ namespace Server.Items
             m_LostLocation = new Point3D(0, 0, 0);
             m_DuelLocation1 = new Point3D(0, 0, 0);
             m_DuelLocation2 = new Point3D(0, 0, 0);
-            m_LastEvent = DateTime.Now;
+            m_LastEvent = DateTime.UtcNow;
             m_DuelingArea = new Rectangle2D(0, 0, 0, 0);
             m_StageingArea = new Rectangle2D(0, 0, 0, 0);
             m_ViewingArea = new Rectangle2D(0, 0, 0, 0);
@@ -297,7 +297,7 @@ namespace Server.Items
             m_CoinsWinner = 1000;
             m_RestartTimer = new InternalTimer(this, TimeSpan.FromSeconds(1.0));
             m_TimerEnabled = false;
-            m_LastReset = DateTime.Now;
+            m_LastReset = DateTime.UtcNow;
             Rectangle2D[] m_Rects = new Rectangle2D[] { m_DuelingArea };
             PvPRegion = new PvPRegion(this, "The Pit", this.Map, m_Rects);
             m_Rects = new Rectangle2D[] { m_ViewingArea };
@@ -568,7 +568,7 @@ namespace Server.Items
                     }
             }
             if (version == 7)
-                m_LastReset = DateTime.Now;
+                m_LastReset = DateTime.UtcNow;
 
             if (version == 5)
             {
@@ -615,7 +615,7 @@ namespace Server.Items
             {
                 Running = true;
                 AcceptingPlayers = true;
-                LastEvent = DateTime.Now;
+                LastEvent = DateTime.UtcNow;
                 BCastTimer = new BroadcastTimer(this, TimeSpan.FromSeconds(BroadCastTickDelay), TimeSpan.FromSeconds(BroadCastTickDelay));
                 BCastTimer.Start();
                 string text = "A Player Vs Player Event is starting up in 5 minutes. Type [joinpvp To Join.";
@@ -943,7 +943,7 @@ namespace Server.Items
             {
 
                 //Set up a random generator
-                Random rand = new Random(DateTime.Now.Millisecond);
+                Random rand = new Random(DateTime.UtcNow.Millisecond);
 
                 //Grab a random player, set them up, toss them into the fray
                 int duelerone = rand.Next(m_DuelList.Count);
@@ -1097,10 +1097,10 @@ namespace Server.Items
         {
             if (m_TimerEnabled)
             {
-                if (m_LastEvent + m_EventRate <= DateTime.Now)
+                if (m_LastEvent + m_EventRate <= DateTime.UtcNow)
                 {
                     KickStart = true;
-                    m_LastEvent = DateTime.Now;
+                    m_LastEvent = DateTime.UtcNow;
                 }
 
                 if (m_RestartTimer != null)

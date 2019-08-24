@@ -128,7 +128,7 @@ namespace Server.Items.Crops
 			Name = "Tan Ginger Plant";
 			Hue = 0x000;
 			m_sower = sower;
-			m_lastvisit = DateTime.Now;
+			m_lastvisit = DateTime.UtcNow;
 			init( this, false );
 		}
 
@@ -136,7 +136,7 @@ namespace Server.Items.Crops
 		{
 			plant.PickGraphic = ( 0xCB5 );
 			plant.FullGraphic = ( 0xCC7 );
-			plant.LastPick = DateTime.Now;
+			plant.LastPick = DateTime.UtcNow;
 			plant.regrowTimer = new CropTimer( plant );
 			if ( full ) { plant.Yield = plant.Capacity; ((Item)plant).ItemID = plant.FullGraphic; }
 			else { plant.Yield = 0; ((Item)plant).ItemID = plant.PickGraphic; plant.regrowTimer.Start(); }
@@ -148,9 +148,9 @@ namespace Server.Items.Crops
 			if ( from != m_sower ) { from.SendMessage( "You do not own this plant !!!" ); return; }
 
 			if ( from.Mounted && !CropHelper.CanWorkMounted ) { from.SendMessage( "You cannot harvest a crop while mounted." ); return; }
-			if ( DateTime.Now > lastpicked.AddSeconds(3) )
+			if ( DateTime.UtcNow > lastpicked.AddSeconds(3) )
 			{
-				lastpicked = DateTime.Now;
+				lastpicked = DateTime.UtcNow;
 				int cookValue = (int)from.Skills[SkillName.Cooking].Value / 20;
 				if ( cookValue == 0 ) { from.SendMessage( "You have no idea how to harvest this crop." ); return; }
 				if ( from.InRange( this.GetWorldLocation(), 1 ) )
@@ -160,7 +160,7 @@ namespace Server.Items.Crops
 					{
 						from.Direction = from.GetDirectionTo( this );
 						from.Animate( from.Mounted ? 29:32, 5, 1, true, false, 0 );
-						m_lastvisit = DateTime.Now;
+						m_lastvisit = DateTime.UtcNow;
 						if ( cookValue > m_yield ) cookValue = m_yield + 1;
 						int pick = Utility.RandomMinMax( cookValue - 4, cookValue );
 						if (pick < 0 ) pick = 0;

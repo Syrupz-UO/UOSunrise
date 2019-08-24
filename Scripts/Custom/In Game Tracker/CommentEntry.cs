@@ -44,7 +44,7 @@ namespace Server.Engines.Tracker
 			m_Issue = issue;
 
 			m_Submitter = submitter;
-			m_Created = DateTime.Now;
+			m_Created = DateTime.UtcNow;
 			m_Comment = comment;
 			m_CommentID = TrackerPersistance.NewComment;
 

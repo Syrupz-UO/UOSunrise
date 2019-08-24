@@ -16,17 +16,17 @@ namespace Server.Mobiles
 		public DateTime NextTalking{ get{ return m_NextTalking; } set{ m_NextTalking = value; } }
 		public override void OnMovement( Mobile m, Point3D oldLocation )
 		{
-			if ( DateTime.Now >= m_NextTalking && InRange( m, 20 ) )
+			if ( DateTime.UtcNow >= m_NextTalking && InRange( m, 20 ) )
 			{
 				this.Loyalty = 100;
-				m_NextTalking = (DateTime.Now + TimeSpan.FromSeconds( 300 ));
+				m_NextTalking = (DateTime.UtcNow + TimeSpan.FromSeconds( 300 ));
 			}
 		}
 
 		[Constructable] 
 		public Robot( ) : base( AIType.AI_Melee, FightMode.Closest, 10, 1, 0.4, 0.8 )
 		{
-			m_NextTalking = (DateTime.Now + TimeSpan.FromSeconds( 60 ));
+			m_NextTalking = (DateTime.UtcNow + TimeSpan.FromSeconds( 60 ));
 
 			Name = "a robot";
 			Body = 334;

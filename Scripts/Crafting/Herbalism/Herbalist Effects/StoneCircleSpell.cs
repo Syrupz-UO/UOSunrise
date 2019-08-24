@@ -171,7 +171,7 @@ namespace Server.Spells.Herbalist
 
 				m_Timer = new InternalTimer( this, TimeSpan.FromSeconds( 30.0 ) );
 				m_Timer.Start();
-				m_End = DateTime.Now + TimeSpan.FromSeconds( 30.0 );
+				m_End = DateTime.UtcNow + TimeSpan.FromSeconds( 30.0 );
 			}
 
 			public InternalItem( Serial serial ) : base( serial )
@@ -188,7 +188,7 @@ namespace Server.Spells.Herbalist
 			{
 				base.Serialize( writer );
 				writer.Write( (int) 1 ); // version
-				writer.Write( m_End - DateTime.Now );
+				writer.Write( m_End - DateTime.UtcNow );
 			}
 
 			public override void Deserialize( GenericReader reader )
@@ -204,7 +204,7 @@ namespace Server.Spells.Herbalist
 						TimeSpan duration = reader.ReadTimeSpan();
 						m_Timer = new InternalTimer( this, duration );
 						m_Timer.Start();
-						m_End = DateTime.Now + duration;
+						m_End = DateTime.UtcNow + duration;
 						break;
 					}
 					case 0:
@@ -212,7 +212,7 @@ namespace Server.Spells.Herbalist
 						TimeSpan duration = TimeSpan.FromSeconds( 10.0 );
 						m_Timer = new InternalTimer( this, duration );
 						m_Timer.Start();
-						m_End = DateTime.Now + duration;
+						m_End = DateTime.UtcNow + duration;
 						break;
 					}
 				}

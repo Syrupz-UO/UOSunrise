@@ -18,9 +18,9 @@ namespace Server.Items
 
         public override void OnDoubleClick(Mobile from)
 		{
-			if ( from.InRange( this.GetWorldLocation(), 4 ) && DateTime.Now >= m_NextFill )
+			if ( from.InRange( this.GetWorldLocation(), 4 ) && DateTime.UtcNow >= m_NextFill )
 			{
-				m_NextFill = (DateTime.Now + TimeSpan.FromSeconds( 60 ));
+				m_NextFill = (DateTime.UtcNow + TimeSpan.FromSeconds( 60 ));
 
 				switch( Utility.RandomMinMax( 0, 4 ) )
 				{

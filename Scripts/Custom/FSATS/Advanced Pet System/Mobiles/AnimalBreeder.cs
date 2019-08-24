@@ -54,7 +54,7 @@ namespace Server.Mobiles
 			if ( dropped is PetClaimTicket )
 			{
 				PetClaimTicket pct = (PetClaimTicket)dropped;
-				if ( pct.Time <= DateTime.Now )
+				if ( pct.Time <= DateTime.UtcNow )
 				{
 					if ( pct.Pet == null )
 					{

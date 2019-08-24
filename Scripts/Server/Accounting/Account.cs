@@ -20,7 +20,7 @@ namespace Server.Accounting
 
 		public static readonly TimeSpan InactiveDuration = TimeSpan.FromDays( 180.0 );
 
-		private string m_Username, m_PlainPassword, m_CryptPassword, m_NewCryptPassword;
+		private string m_Username, m_Email, m_PlainPassword, m_CryptPassword, m_NewCryptPassword;
 		private AccessLevel m_AccessLevel;
 		private int m_Flags;
 		private DateTime m_Created, m_LastLogin;
@@ -113,6 +113,15 @@ namespace Server.Accounting
 		}
 
 		/// <summary>
+		/// Email address used whenever the user wants to change their password.
+		/// </summary>
+		public string Email
+		{
+			get { return m_Email; }
+			set { m_Email = value; }
+		}
+
+		/// <summary>
 		/// Account password. Plain text. Case sensitive validation. May be null.
 		/// </summary>
 		public string PlainPassword
@@ -174,7 +183,7 @@ namespace Server.Accounting
 
 				if ( GetBanTags( out banTime, out banDuration ) )
 				{
-					if ( banDuration != TimeSpan.MaxValue && DateTime.Now >= ( banTime + banDuration ) )
+					if ( banDuration != TimeSpan.MaxValue && DateTime.UtcNow >= ( banTime + banDuration ) )
 					{
 						SetUnspecifiedBan( null ); // clear
 						Banned = false;
@@ -227,7 +236,7 @@ namespace Server.Accounting
 		/// </summary>
 		public bool Inactive
 		{
-			get { return ( ( m_LastLogin + InactiveDuration ) <= DateTime.Now && AccessLevel == AccessLevel.Player ); }
+			get { return ( ( m_LastLogin + InactiveDuration ) <= DateTime.UtcNow && AccessLevel == AccessLevel.Player ); }
 		}
 
 		/// <summary>
@@ -243,7 +252,7 @@ namespace Server.Accounting
 					PlayerMobile m = m_Mobiles[i] as PlayerMobile;
 
 					if ( m != null && m.NetState != null )
-						return m_TotalGameTime + ( DateTime.Now - m.SessionStart );
+						return m_TotalGameTime + ( DateTime.UtcNow - m.SessionStart );
 				}
 
 				return m_TotalGameTime;
@@ -477,6 +486,11 @@ namespace Server.Accounting
 			return ok;
 		}
 
+		public void SetEmail(string email)
+		{
+			m_Email = email;
+		}
+
 		private Timer m_YoungTimer;
 
 		public static void Initialize()
@@ -517,7 +531,7 @@ namespace Server.Accounting
 			if ( m == null )
 				return;
 
-			acc.m_TotalGameTime += DateTime.Now - m.SessionStart;
+			acc.m_TotalGameTime += DateTime.UtcNow - m.SessionStart;
 		}
 
 		private static void EventSink_Login( LoginEventArgs e )
@@ -596,7 +610,7 @@ namespace Server.Accounting
 
 			m_AccessLevel = AccessLevel.Player;
 
-			m_Created = m_LastLogin = DateTime.Now;
+			m_Created = m_LastLogin = DateTime.UtcNow;
 			m_TotalGameTime = TimeSpan.Zero;
 
 			m_Mobiles = new Mobile[7];
@@ -610,6 +624,7 @@ namespace Server.Accounting
 		public Account( XmlElement node )
 		{
 			m_Username = Utility.GetText( node["username"], "empty" );
+			m_Email = Utility.GetText( node["email"], "none" );
 
 			string plainPassword = Utility.GetText( node["password"], null );
 			string cryptPassword = Utility.GetText( node["cryptPassword"], null );
@@ -660,8 +675,8 @@ namespace Server.Accounting
 
 			m_AccessLevel = (AccessLevel)Enum.Parse( typeof( AccessLevel ), Utility.GetText( node["accessLevel"], "Player" ), true );
 			m_Flags = Utility.GetXMLInt32( Utility.GetText( node["flags"], "0" ), 0 );
-			m_Created = Utility.GetXMLDateTime( Utility.GetText( node["created"], null ), DateTime.Now );
-			m_LastLogin = Utility.GetXMLDateTime( Utility.GetText( node["lastLogin"], null ), DateTime.Now );
+			m_Created = Utility.GetXMLDateTime( Utility.GetText( node["created"], null ), DateTime.UtcNow );
+			m_LastLogin = Utility.GetXMLDateTime( Utility.GetText( node["lastLogin"], null ), DateTime.UtcNow );
 
 			m_Mobiles = LoadMobiles( node );
 			m_Comments = LoadComments( node );
@@ -972,6 +987,15 @@ namespace Server.Accounting
 			xml.WriteStartElement( "username" );
 			xml.WriteString( m_Username );
 			xml.WriteEndElement();
+
+			xml.WriteStartElement( "email" );
+
+            if ( m_Email == null )
+                xml.WriteString( "none" );
+            else
+                xml.WriteString( m_Email );
+
+            xml.WriteEndElement();
 
 			if ( m_PlainPassword != null )
 			{

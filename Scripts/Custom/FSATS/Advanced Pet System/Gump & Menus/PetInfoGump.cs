@@ -178,7 +178,7 @@ namespace Server.Gumps
 				{
 					from.SendMessage( "That creature has no master." );
 				}
-				else if ( bc.MatingDelay >= DateTime.Now )
+				else if ( bc.MatingDelay >= DateTime.UtcNow )
 				{
 					from.SendMessage( "That creature has mating in that last six days, It cannot mate again so soon." );
 				}

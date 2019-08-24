@@ -325,7 +325,7 @@ namespace Server.Mobiles
 			m_PayTimer = new PayTimer( this, delay );
 			m_PayTimer.Start();
 
-			m_NextPayTime = DateTime.Now + delay;
+			m_NextPayTime = DateTime.UtcNow + delay;
 		}
 
 		public PlayerVendor( Serial serial ) : base( serial )
@@ -396,7 +396,7 @@ namespace Server.Mobiles
 
 						string description = reader.ReadString();
 
-						DateTime created = version < 1 ? DateTime.Now : reader.ReadDateTime();
+						DateTime created = version < 1 ? DateTime.UtcNow : reader.ReadDateTime();
 
 						if ( item != null )
 						{
@@ -422,7 +422,7 @@ namespace Server.Mobiles
 					Timer.DelayCall( TimeSpan.Zero, new TimerCallback( FixDresswear ) );
 				}
 
-				m_NextPayTime = DateTime.Now + PayTimer.GetInterval();
+				m_NextPayTime = DateTime.UtcNow + PayTimer.GetInterval();
 
 				if ( newVendorSystemActivated )
 				{
@@ -431,7 +431,7 @@ namespace Server.Mobiles
 				}
 			}
 
-			TimeSpan delay = m_NextPayTime - DateTime.Now;
+			TimeSpan delay = m_NextPayTime - DateTime.UtcNow;
 
 			m_PayTimer = new PayTimer( this, delay > TimeSpan.Zero ? delay : TimeSpan.Zero );
 			m_PayTimer.Start();
@@ -793,7 +793,7 @@ namespace Server.Mobiles
 
 		private VendorItem SetVendorItem( Item item, int price, string description )
 		{
-			return SetVendorItem( item, price, description, DateTime.Now );
+			return SetVendorItem( item, price, description, DateTime.UtcNow );
 		}
 
 		private VendorItem SetVendorItem( Item item, int price, string description, DateTime created )
@@ -1118,7 +1118,7 @@ namespace Server.Mobiles
 			{
 				vendor.SayTo( from, 503202 ); // This item is not for sale.
 			}
-			else if ( vi.Created + TimeSpan.FromMinutes( 1.0 ) > DateTime.Now )
+			else if ( vi.Created + TimeSpan.FromMinutes( 1.0 ) > DateTime.UtcNow )
 			{
 				from.SendMessage( "You cannot buy this item right now.  Please wait one minute and try again." );
 			}
@@ -1397,7 +1397,7 @@ namespace Server.Mobiles
 
 			protected override void OnTick()
 			{
-				m_Vendor.m_NextPayTime = DateTime.Now + this.Interval;
+				m_Vendor.m_NextPayTime = DateTime.UtcNow + this.Interval;
 
 				int pay;
 				int totalGold;

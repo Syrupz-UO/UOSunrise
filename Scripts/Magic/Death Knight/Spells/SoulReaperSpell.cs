@@ -79,12 +79,12 @@ namespace Server.Spells.DeathKnight
 			public InternalTimer( Mobile owner ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 1.5 ) )
 			{
 				m_Owner = owner;
-				m_Expire = DateTime.Now + TimeSpan.FromSeconds( 30.0 );
+				m_Expire = DateTime.UtcNow + TimeSpan.FromSeconds( 30.0 );
 			}
 
 			protected override void OnTick()
 			{
-				if ( !m_Owner.CheckAlive() || DateTime.Now >= m_Expire )
+				if ( !m_Owner.CheckAlive() || DateTime.UtcNow >= m_Expire )
 				{
 					Stop();
 					m_Table.Remove( m_Owner );

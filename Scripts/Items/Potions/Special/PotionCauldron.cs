@@ -189,7 +189,7 @@ namespace Server.Items
 			if( m_DecayTimer != null )
 				m_DecayTimer.Stop();
 			if( setDecayTime )
-				m_DecayTime = DateTime.Now + DecayDelay;
+				m_DecayTime = DateTime.UtcNow + DecayDelay;
 			m_DecayTimer = Timer.DelayCall( DecayDelay, new TimerCallback( Delete ) );
 		}
 
@@ -275,7 +275,7 @@ namespace Server.Items
 			if( m_DecayTimer != null )
 				m_DecayTimer.Stop();
 			if( setDecayTime )
-				m_DecayTime = DateTime.Now + DecayDelay;
+				m_DecayTime = DateTime.UtcNow + DecayDelay;
 			m_DecayTimer = Timer.DelayCall( DecayDelay, new TimerCallback( Delete ) );
 		}
 

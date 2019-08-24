@@ -174,7 +174,7 @@ namespace Server.Items
 			Name = "a claim ticket from an animal breeder";
 			LootType = LootType.Blessed;
 
-			this.Time = DateTime.Now + TimeSpan.FromHours( 1.0 );
+			this.Time = DateTime.UtcNow + TimeSpan.FromHours( 1.0 );
 		}
 
 		public PetClaimTicket( Serial serial ) : base( serial )

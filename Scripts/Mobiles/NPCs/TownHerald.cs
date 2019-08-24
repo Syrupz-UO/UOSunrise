@@ -62,7 +62,7 @@ namespace Server.Mobiles
 		public override void OnMovement( Mobile m, Point3D oldLocation )
 		{
 			Region reg = Region.Find( this.Location, this.Map );
-			if ( DateTime.Now >= m_NextTalk && InRange( m, 10 ) && m is PlayerMobile )
+			if ( DateTime.UtcNow >= m_NextTalk && InRange( m, 10 ) && m is PlayerMobile )
 			{
 				if ( LoggingFunctions.LoggingEvents() == true )
 				{
@@ -73,7 +73,7 @@ namespace Server.Mobiles
 				{
 					Say( "All is well in the land!" );
 				}
-				m_NextTalk = (DateTime.Now + TimeSpan.FromSeconds( Utility.RandomMinMax( 15, 30 ) ));
+				m_NextTalk = (DateTime.UtcNow + TimeSpan.FromSeconds( Utility.RandomMinMax( 15, 30 ) ));
 			}
 		}
 

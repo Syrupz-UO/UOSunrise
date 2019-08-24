@@ -42,7 +42,7 @@ namespace Server
 
 	public delegate void TimerCallback();
 	public delegate void TimerStateCallback( object state );
-	public delegate void TimerStateCallback<T>( T state );
+	public delegate void TimerStateCallback<in T>( T state );
 
 	public class Timer
 	{
@@ -283,7 +283,7 @@ namespace Server
 
 					if ( tce.m_IsAdd )
 					{
-						timer.m_Next = DateTime.Now + timer.m_Delay;
+						timer.m_Next = DateTime.UtcNow + timer.m_Delay;
 						timer.m_Index = 0;
 					}
 
@@ -318,7 +318,7 @@ namespace Server
 
 					for ( i = 0; i < m_Timers.Length; i++)
 					{
-						now = DateTime.Now;
+						now = DateTime.UtcNow;
 						if ( now < m_NextPriorities[i] )
 							break;
 
@@ -465,6 +465,11 @@ namespace Server
 
 		#region DelayCall(..)
 
+		public static Timer DelayCall( TimerCallback callback )
+		{
+			return DelayCall( TimeSpan.Zero, TimeSpan.Zero, 1, callback );
+		}
+
 		public static Timer DelayCall( TimeSpan delay, TimerCallback callback )
 		{
 			return DelayCall( delay, TimeSpan.Zero, 1, callback );
@@ -487,6 +492,11 @@ namespace Server
 			t.Start();
 
 			return t;
+		}
+		
+		public static Timer DelayCall( TimerStateCallback callback, object state )
+		{
+			return DelayCall( TimeSpan.Zero, TimeSpan.Zero, 1, callback, state );
 		}
 
 		public static Timer DelayCall( TimeSpan delay, TimerStateCallback callback, object state )
@@ -515,6 +525,12 @@ namespace Server
 		#endregion
 
 		#region DelayCall<T>(..)
+
+		public static Timer DelayCall<T>( TimerStateCallback<T> callback, T state )
+		{
+			return DelayCall( TimeSpan.Zero, TimeSpan.Zero, 1, callback, state );
+		}
+
 		public static Timer DelayCall<T>( TimeSpan delay, TimerStateCallback<T> callback, T state )
 		{
 			return DelayCall( delay, TimeSpan.Zero, 1, callback, state );

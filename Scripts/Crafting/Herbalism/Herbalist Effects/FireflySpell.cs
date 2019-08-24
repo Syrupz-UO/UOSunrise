@@ -69,7 +69,7 @@ namespace Server.Spells.Herbalist
 						m.Warmode = false;
 						double seconds = Caster.Skills[SkillName.AnimalLore].Value;
 
-						bc.Pacify( Caster, DateTime.Now + TimeSpan.FromSeconds( seconds ) );
+						bc.Pacify( Caster, DateTime.UtcNow + TimeSpan.FromSeconds( seconds ) );
 					}
 					else
 					{

@@ -32,7 +32,7 @@ namespace Server.Mobiles
 		{
 			m_SBInfos.Add( new SBProvisioner() ); 
 
-			string CurrentMonth = DateTime.Now.ToString("MM");
+			string CurrentMonth = DateTime.UtcNow.ToString("MM");
 
 			if ( CurrentMonth == "12" ){ m_SBInfos.Add( new SBHolidayXmas() ); }
 			if ( CurrentMonth == "10" ){ m_SBInfos.Add( new SBHolidayHalloween() ); }

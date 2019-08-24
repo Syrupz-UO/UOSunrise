@@ -936,9 +936,9 @@ namespace Server.Engines.Craft
 					{
 						if( this.Recipe == null || !(from is PlayerMobile) || ((PlayerMobile)from).HasRecipe( this.Recipe ) )
 						{
-							int badCraft = craftSystem.CanCraft( from, tool, m_Type );
+							object badCraft = craftSystem.CanCraft( from, tool, m_Type );
 
-							if( badCraft <= 0 )
+							if ( ( !(badCraft is int) || (int)badCraft <= 0 ) && ( !(badCraft is string) || string.IsNullOrWhiteSpace( (string)badCraft ) ) )
 							{
 								int resHue = 0;
 								int maxAmount = 0;
@@ -1018,14 +1018,16 @@ namespace Server.Engines.Craft
 
 		public void CompleteCraft( int quality, bool makersMark, Mobile from, CraftSystem craftSystem, Type typeRes, BaseTool tool, CustomCraft customCraft )
 		{
-			int badCraft = craftSystem.CanCraft( from, tool, m_Type );
+			object badCraft = craftSystem.CanCraft( from, tool, m_Type );
 
-			if ( badCraft > 0 )
+			if ( ( badCraft is int && (int)badCraft > 0 ) || ( badCraft is string && !string.IsNullOrWhiteSpace( (string)badCraft ) ) )
 			{
 				if ( tool != null && !tool.Deleted && tool.UsesRemaining > 0 )
 					from.SendGump( new CraftGump( from, craftSystem, tool, badCraft ) );
+				else if( badCraft is int )
+					from.SendLocalizedMessage( (int)badCraft );
 				else
-					from.SendLocalizedMessage( badCraft );
+					from.SendMessage( (string)badCraft );
 
 				return;
 			}
@@ -1872,14 +1874,16 @@ namespace Server.Engines.Craft
 				{
 					m_From.EndAction( typeof( CraftSystem ) );
 
-					int badCraft = m_CraftSystem.CanCraft( m_From, m_Tool, m_CraftItem.m_Type );
+					object badCraft = m_CraftSystem.CanCraft( m_From, m_Tool, m_CraftItem.m_Type );
 
-					if ( badCraft > 0 )
+					if ( ( badCraft is int && (int)badCraft > 0 ) || ( badCraft is string && !string.IsNullOrWhiteSpace( (string)badCraft ) ) )
 					{
 						if ( m_Tool != null && !m_Tool.Deleted && m_Tool.UsesRemaining > 0 )
 							m_From.SendGump( new CraftGump( m_From, m_CraftSystem, m_Tool, badCraft ) );
+						else if( badCraft is int )
+							m_From.SendLocalizedMessage( (int)badCraft );
 						else
-							m_From.SendLocalizedMessage( badCraft );
+							m_From.SendMessage( (string)badCraft );
 
 						return;
 					}

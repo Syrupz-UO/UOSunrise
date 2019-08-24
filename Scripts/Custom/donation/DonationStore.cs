@@ -174,7 +174,7 @@ namespace Server.Engines.PlayerDonation
 				IDbTransaction transaction = connection.BeginTransaction();
 				command.Connection = connection;
 				command.Transaction = transaction;
-				DateTime currTime = DateTime.Now;
+				DateTime currTime = DateTime.UtcNow;
 				
 				string classConstructString = GetClassNameByType(typeId);
 				gift = getGiftInstance(classConstructString);

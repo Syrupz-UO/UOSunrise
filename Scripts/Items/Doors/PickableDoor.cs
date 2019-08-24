@@ -47,7 +47,7 @@ namespace Server.Items
 		{
 			Picker = from;
 			Locked = false;
-            m_Unlocked = DateTime.Now;		
+            m_Unlocked = DateTime.UtcNow;		
 		}
 		
 		[Constructable]
@@ -88,7 +88,7 @@ namespace Server.Items
 
 		public override void Use( Mobile from )
 		{
-			if ( DateTime.Now > m_Unlocked + m_RelockTime )
+			if ( DateTime.UtcNow > m_Unlocked + m_RelockTime )
 			{
 				Locked = true;
 				from.SendMessage( "This door is locked." );

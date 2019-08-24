@@ -91,7 +91,7 @@ namespace Server.ACC.CSS.Systems.Cleric
 		public override void DoFizzle()
 		{
 			Caster.PlaySound( 0x1D6 );
-			Caster.NextSpellTime = DateTime.Now;
+			Caster.NextSpellTime = DateTime.UtcNow;
 		}
 
 		public override void DoHurtFizzle()

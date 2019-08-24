@@ -112,7 +112,7 @@ namespace Server.Misc
 
 		public static void QuestTimeAllowed( Mobile m )
 		{
-			DateTime TimeFinished = DateTime.Now;
+			DateTime TimeFinished = DateTime.UtcNow;
 			string sFinished = Convert.ToString(TimeFinished);
 			CharacterDatabase.SetQuestInfo( m, "FishingQuest", sFinished );
 		}
@@ -125,7 +125,7 @@ namespace Server.Misc
 			if ( sTime.Length > 0 && !( CharacterDatabase.GetQuestState( m, "FishingQuest" ) ) )
 			{
 				DateTime TimeThen = Convert.ToDateTime(sTime);
-				DateTime TimeNow = DateTime.Now;
+				DateTime TimeNow = DateTime.UtcNow;
 				long ticksThen = TimeThen.Ticks;
 				long ticksNow = TimeNow.Ticks;
 				int minsThen = (int)TimeSpan.FromTicks(ticksThen).TotalMinutes;

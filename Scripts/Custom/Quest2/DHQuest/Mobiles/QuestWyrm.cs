@@ -168,11 +168,11 @@ namespace Server.Mobiles
 			if ( combatant == null || combatant.Deleted || combatant.Map != Map || !InRange( combatant, 12 ) || !CanBeHarmful( combatant ) || !InLOS( combatant ) )
 				return;
 
-			if ( DateTime.Now >= m_NextBreathe )
+			if ( DateTime.UtcNow >= m_NextBreathe )
 			{
 				Breathe( combatant );
 
-				m_NextBreathe = DateTime.Now + TimeSpan.FromSeconds( 3.0 + (3.0 * Utility.RandomDouble()) ); // 12-15 seconds
+				m_NextBreathe = DateTime.UtcNow + TimeSpan.FromSeconds( 3.0 + (3.0 * Utility.RandomDouble()) ); // 12-15 seconds
 			}
 		}
 

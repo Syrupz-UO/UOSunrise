@@ -20,7 +20,7 @@ namespace Server.Mobiles
 
 			if( m is PlayerMobile && reg.IsPartOf( "the Dungeon Room" ) )
 			{
-				if ( DateTime.Now >= m_NextTalk && InRange( m, 20 ) && InLOS( m ) )
+				if ( DateTime.UtcNow >= m_NextTalk && InRange( m, 20 ) && InLOS( m ) )
 				{
 					switch ( Utility.Random( 45 ))
 					{
@@ -41,7 +41,7 @@ namespace Server.Mobiles
 						case 14: PlaySound( Female ? 820 : 1094 ); Say( "*spits*" ); break;
 						case 15: PlaySound( Female ? 822 : 1096 ); Say( "*yawns*" ); break;
 					};
-					m_NextTalk = (DateTime.Now + TimeSpan.FromSeconds( 30 ));
+					m_NextTalk = (DateTime.UtcNow + TimeSpan.FromSeconds( 30 ));
 				}
 			}
 		}

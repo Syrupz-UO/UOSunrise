@@ -10,6 +10,10 @@ namespace Server
 		public int Number{ get{ return m_Number; } }
 		public string String{ get{ return m_String; } }
 
+		public TextDefinition() : this( 0, null )
+		{
+		}
+
 		public TextDefinition( int number ) : this( number, null )
 		{
 		}

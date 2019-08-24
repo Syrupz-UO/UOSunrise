@@ -76,7 +76,7 @@ namespace Server.Items
 			{
 				if ( !m_AllowBottling )
 					m_AllowBottling = ( 0 >= TimeSpan.Compare( TimeSpan.FromDays( m_BottleDuration ),
-						DateTime.Now.Subtract( m_Start )));
+						DateTime.UtcNow.Subtract( m_Start )));
 				return m_AllowBottling;
 			}
 			set { m_AllowBottling = value; }
@@ -201,7 +201,7 @@ namespace Server.Items
 			m_Variety = DefaultVariety;
 			m_BottleDuration = 7.0;
 			m_AllowBottling = false;
-			m_Start = DateTime.Now;
+			m_Start = DateTime.UtcNow;
 		}
 
 		public override void AddNameProperty( ObjectPropertyList list )
@@ -434,7 +434,7 @@ namespace Server.Items
 			Hue = 0;
 			BottleDuration = 7.0;
 			AllowBottling = false;
-			m_Start = DateTime.Now;
+			m_Start = DateTime.UtcNow;
 			return quality;
 		}
 		#endregion

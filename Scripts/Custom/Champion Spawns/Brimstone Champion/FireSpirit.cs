@@ -66,7 +66,7 @@ namespace Server.Mobiles
 			{
 				AggressorInfo info = (AggressorInfo)list[i];
 
-				if ( info.Attacker.Player && info.Attacker.Alive && (DateTime.Now - info.LastCombatTime) < TimeSpan.FromSeconds( 30.0 ) && !toGive.Contains( info.Attacker ) )
+				if ( info.Attacker.Player && info.Attacker.Alive && (DateTime.UtcNow - info.LastCombatTime) < TimeSpan.FromSeconds( 30.0 ) && !toGive.Contains( info.Attacker ) )
 					toGive.Add( info.Attacker );
 			}
 
@@ -75,7 +75,7 @@ namespace Server.Mobiles
 			{
 				AggressorInfo info = (AggressorInfo)list[i];
 
-				if ( info.Defender.Player && info.Defender.Alive && (DateTime.Now - info.LastCombatTime) < TimeSpan.FromSeconds( 30.0 ) && !toGive.Contains( info.Defender ) )
+				if ( info.Defender.Player && info.Defender.Alive && (DateTime.UtcNow - info.LastCombatTime) < TimeSpan.FromSeconds( 30.0 ) && !toGive.Contains( info.Defender ) )
 					toGive.Add( info.Defender );
 			}
 			if ( toGive.Count == 0 )//if nobody attacked it and it didn't attack anybody then break operation and no ps MUAH

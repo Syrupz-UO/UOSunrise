@@ -367,9 +367,9 @@ namespace Server.Engines.Craft
 
 		public void CraftItem( CraftItem item )
 		{
-			int num = m_CraftSystem.CanCraft( m_From, m_Tool, item.ItemType );
+			object num = m_CraftSystem.CanCraft( m_From, m_Tool, item.ItemType );
 
-			if ( num > 0 )
+			if ( ( num is int && (int)num > 0 ) || ( num is string && !string.IsNullOrWhiteSpace( (string)num ) ) )
 			{
 				m_From.SendGump( new CraftGump( m_From, m_CraftSystem, m_Tool, num ) );
 			}

@@ -31,7 +31,7 @@ namespace Server.Items
 			Z = Z + 2;
 			Visible = false;
 
-			DateTime TimeNow = DateTime.Now;
+			DateTime TimeNow = DateTime.UtcNow;
 			long ticksNow = TimeNow.Ticks;
 			int nBoatCode = (int)TimeSpan.FromTicks(ticksNow).TotalMinutes;
 			BoatCode = nBoatCode.ToString();

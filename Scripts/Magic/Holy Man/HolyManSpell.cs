@@ -94,7 +94,7 @@ namespace Server.Spells.HolyMan
 			Caster.PrivateOverheadMessage(MessageType.Regular, 0x3B2, false, "You fail to invoke the power.", Caster.NetState);
 			Caster.FixedParticles( 0x3735, 1, 30, 9503, EffectLayer.Waist );
 			Caster.PlaySound( 0x1D6 );
-			Caster.NextSpellTime = DateTime.Now;
+			Caster.NextSpellTime = DateTime.UtcNow;
 		}
 
 		public override int GetMana()

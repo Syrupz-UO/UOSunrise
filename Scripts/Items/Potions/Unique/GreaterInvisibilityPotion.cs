@@ -120,13 +120,13 @@ namespace Server.Items
 			public InternalTimer( Mobile m, TimeSpan duration ) : base( TimeSpan.Zero, TimeSpan.FromSeconds( 0.1 ) )
 			{
 				m_m = m;
-				m_Expire = DateTime.Now + duration;
+				m_Expire = DateTime.UtcNow + duration;
 				
 			}
 			
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					GreaterInvisibilityPotion.RemoveEffect( m_m );
 					Stop();

@@ -175,7 +175,7 @@ namespace Xanthos.SafeResurrection
 			{
 				Stop();
 
-				DateTime onTickTime = DateTime.Now;
+				DateTime onTickTime = DateTime.UtcNow;
 
 				while ( Resurrections.Count > 0 )
 				{
@@ -189,7 +189,7 @@ namespace Xanthos.SafeResurrection
 					else
 					{
 						// No more concurrent expiries - schedule the next one
-						Delay = nextDateTime.Subtract( DateTime.Now );
+						Delay = nextDateTime.Subtract( DateTime.UtcNow );
 						Start();
 						break;
 					}
@@ -203,7 +203,7 @@ namespace Xanthos.SafeResurrection
 			    return;
 
 			TimeSpan delay = TimeSpan.FromSeconds( SafeResConfig.SafeForSeconds );
-			DateTime when = DateTime.Now.Add( delay );
+			DateTime when = DateTime.UtcNow.Add( delay );
 
 			player.SafeResContext = SafeResContext.Instance;
 			BlessPlayer( player );

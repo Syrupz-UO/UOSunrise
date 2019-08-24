@@ -389,7 +389,7 @@ Mobile.SkillCheckDirectTargetHandler = new SkillCheckDirectTargetHandler( XmlSpa
 				PlayerMobile pm = from as PlayerMobile;
 
 				if ( from is PlayerMobile )
-					if (pm != null && skill.SkillName == pm.AcceleratedSkill && pm.AcceleratedStart > DateTime.Now)
+					if (pm != null && skill.SkillName == pm.AcceleratedSkill && pm.AcceleratedStart > DateTime.UtcNow)
 					toGain *= Utility.RandomMinMax(2, 5);
 					#endregion
 
@@ -518,38 +518,38 @@ Mobile.SkillCheckDirectTargetHandler = new SkillCheckDirectTargetHandler( XmlSpa
 				case Stat.Str:
 				{
 					if ( from is BaseCreature && ((BaseCreature)from).Controlled ) {
-						if ( (from.LastStrGain + m_PetStatGainDelay) >= DateTime.Now )
+						if ( (from.LastStrGain + m_PetStatGainDelay) >= DateTime.UtcNow )
 							return;
 					}
-					else if( (from.LastStrGain + m_StatGainDelay) >= DateTime.Now )
+					else if( (from.LastStrGain + m_StatGainDelay) >= DateTime.UtcNow )
 						return;
 
-					from.LastStrGain = DateTime.Now;
+					from.LastStrGain = DateTime.UtcNow;
 					break;
 				}
 				case Stat.Dex:
 				{
 					if ( from is BaseCreature && ((BaseCreature)from).Controlled ) {
-						if ( (from.LastDexGain + m_PetStatGainDelay) >= DateTime.Now )
+						if ( (from.LastDexGain + m_PetStatGainDelay) >= DateTime.UtcNow )
 							return;
 					}
-					else if( (from.LastDexGain + m_StatGainDelay) >= DateTime.Now )
+					else if( (from.LastDexGain + m_StatGainDelay) >= DateTime.UtcNow )
 						return;
 
-					from.LastDexGain = DateTime.Now;
+					from.LastDexGain = DateTime.UtcNow;
 					break;
 				}
 				case Stat.Int:
 				{
 					if ( from is BaseCreature && ((BaseCreature)from).Controlled ) {
-						if ( (from.LastIntGain + m_PetStatGainDelay) >= DateTime.Now )
+						if ( (from.LastIntGain + m_PetStatGainDelay) >= DateTime.UtcNow )
 							return;
 					}
 
-					else if( (from.LastIntGain + m_StatGainDelay) >= DateTime.Now )
+					else if( (from.LastIntGain + m_StatGainDelay) >= DateTime.UtcNow )
 						return;
 
-					from.LastIntGain = DateTime.Now;
+					from.LastIntGain = DateTime.UtcNow;
 					break;
 				}
 			}

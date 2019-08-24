@@ -51,7 +51,7 @@ namespace Server.Spells.First
 				 * 15 + (Inscription/20) Physcial bonus
 				 * -5 Elemental
 				 * The reactive armor spell has an indefinite duration, becoming active when cast, and deactivated when re-cast. 
-				 * Reactive Armor, Protection, and Magic Reflection will stay onóeven after logging out, even after dyingóuntil you ìturn them offî by casting them again. 
+				 * Reactive Armor, Protection, and Magic Reflection will stay on‚Äîeven after logging out, even after dying‚Äîuntil you ‚Äúturn them off‚Äù by casting them again. 
 				 * (+20 physical -5 elemental at 100 Inscription)
 				 */
 
@@ -136,6 +136,11 @@ namespace Server.Spells.First
 
 				FinishSequence();
 			}
+		}
+
+		public static void Dispel(Mobile m)
+		{
+			EndArmor(m);
 		}
 
 		public static void EndArmor( Mobile m )

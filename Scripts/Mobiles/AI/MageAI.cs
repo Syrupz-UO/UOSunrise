@@ -18,7 +18,7 @@ namespace Server.Mobiles
 	{
 		private DateTime m_NextCastTime;
 		private DateTime m_NextHealTime;
-		private DateTime m_NextAnimateTime = DateTime.Now;
+		private DateTime m_NextAnimateTime = DateTime.UtcNow;
 		private double m_AnimateDelay = 5.0;
 		private double m_AnimateFinish = 2.0;
 
@@ -61,7 +61,7 @@ namespace Server.Mobiles
 
 				m_Mobile.Combatant = m_Mobile.FocusMob;
 				Action = ActionType.Combat;
-				m_NextCastTime = DateTime.Now;
+				m_NextCastTime = DateTime.UtcNow;
 			}
 			else if( SmartAI && m_Mobile.Mana < m_Mobile.ManaMax )
 			{
@@ -84,12 +84,12 @@ namespace Server.Mobiles
 					if( spell != null )
 					{
 						spell.Cast();
-						if( DateTime.Now > m_NextAnimateTime && m_Mobile.HasBreath == false && !m_Mobile.Mounted )
+						if( DateTime.UtcNow > m_NextAnimateTime && m_Mobile.HasBreath == false && !m_Mobile.Mounted )
 						{
 							m_Mobile.PlaySound( m_Mobile.GetAngerSound());
 							m_Mobile.Animate( 12, 5, 1, true, false, 0 );
-							m_NextAnimateTime = DateTime.Now + TimeSpan.FromSeconds( m_AnimateDelay );
-							NextMove = DateTime.Now + TimeSpan.FromSeconds( m_AnimateFinish );
+							m_NextAnimateTime = DateTime.UtcNow + TimeSpan.FromSeconds( m_AnimateDelay );
+							NextMove = DateTime.UtcNow + TimeSpan.FromSeconds( m_AnimateFinish );
 						}
 					}
 				}
@@ -110,7 +110,7 @@ namespace Server.Mobiles
 
 			if( m_Mobile.Controlled && !(m_Mobile is HenchmanMonster) && !(m_Mobile is HenchmanArcher) && !(m_Mobile is HenchmanWizard) && !(m_Mobile is HenchmanFighter) ) // WIZARD ADDED FOR HENCHMAN
 			{
-				if( DateTime.Now < m_NextHealTime )
+				if( DateTime.UtcNow < m_NextHealTime )
 					return null;
 			}
 
@@ -144,7 +144,7 @@ namespace Server.Mobiles
 			else
 				delay = Math.Sqrt( 600 - m_Mobile.Int );
 
-			m_NextHealTime = DateTime.Now + TimeSpan.FromSeconds( delay );
+			m_NextHealTime = DateTime.UtcNow + TimeSpan.FromSeconds( delay );
 
 			return spell;
 		}
@@ -663,7 +663,7 @@ namespace Server.Mobiles
 				}
 			}
 
-			if( m_Mobile.Spell == null && DateTime.Now > m_NextCastTime && m_Mobile.InRange( c, Core.ML ? 10 : 12 ) )
+			if( m_Mobile.Spell == null && DateTime.UtcNow > m_NextCastTime && m_Mobile.InRange( c, Core.ML ? 10 : 12 ) )
 			{
 				// We are ready to cast a spell
 
@@ -713,12 +713,12 @@ namespace Server.Mobiles
 				if( spell != null )
 				{
 					spell.Cast();
-					if( DateTime.Now > m_NextAnimateTime && m_Mobile.HasBreath == false && !m_Mobile.Mounted )
+					if( DateTime.UtcNow > m_NextAnimateTime && m_Mobile.HasBreath == false && !m_Mobile.Mounted )
 					{
 						m_Mobile.PlaySound( m_Mobile.GetAngerSound());
 						m_Mobile.Animate( 12, 5, 1, true, false, 0 );
-						m_NextAnimateTime = DateTime.Now + TimeSpan.FromSeconds( m_AnimateDelay );
-						NextMove = DateTime.Now + TimeSpan.FromSeconds( m_AnimateFinish );
+						m_NextAnimateTime = DateTime.UtcNow + TimeSpan.FromSeconds( m_AnimateDelay );
+						NextMove = DateTime.UtcNow + TimeSpan.FromSeconds( m_AnimateFinish );
 					}
 				}
 
@@ -729,7 +729,7 @@ namespace Server.Mobiles
 				else
 					delay = GetDelay();
 
-				m_NextCastTime = DateTime.Now;
+				m_NextCastTime = DateTime.UtcNow;
 			}
 			else if( m_Mobile.Spell == null || !m_Mobile.Spell.IsCasting )
 			{
@@ -759,12 +759,12 @@ namespace Server.Mobiles
 					if( spell != null )
 					{
 						spell.Cast();
-						if( DateTime.Now > m_NextAnimateTime && m_Mobile.HasBreath == false && !m_Mobile.Mounted )
+						if( DateTime.UtcNow > m_NextAnimateTime && m_Mobile.HasBreath == false && !m_Mobile.Mounted )
 						{
 							m_Mobile.PlaySound( m_Mobile.GetAngerSound());
 							m_Mobile.Animate( 12, 5, 1, true, false, 0 );
-							m_NextAnimateTime = DateTime.Now + TimeSpan.FromSeconds( m_AnimateDelay );
-							NextMove = DateTime.Now + TimeSpan.FromSeconds( m_AnimateFinish );
+							m_NextAnimateTime = DateTime.UtcNow + TimeSpan.FromSeconds( m_AnimateDelay );
+							NextMove = DateTime.UtcNow + TimeSpan.FromSeconds( m_AnimateFinish );
 						}
 					}
 				}

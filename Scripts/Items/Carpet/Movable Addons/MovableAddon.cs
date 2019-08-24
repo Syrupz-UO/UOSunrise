@@ -139,8 +139,8 @@ namespace Solaris.Addons
 		{
 			get
 			{
-				_ExhaustPowerTimeSpan -= ( DateTime.Now - _LastTimeCheck );
-				_LastTimeCheck = DateTime.Now;
+				_ExhaustPowerTimeSpan -= ( DateTime.UtcNow - _LastTimeCheck );
+				_LastTimeCheck = DateTime.UtcNow;
 				
 				if( _ExhaustPowerTimeSpan < TimeSpan.Zero )
 				{
@@ -154,7 +154,7 @@ namespace Solaris.Addons
 				
 				_ExhaustPowerTimeSpan = value;
 				
-				_LastTimeCheck = DateTime.Now;
+				_LastTimeCheck = DateTime.UtcNow;
 			}
 			
 		}

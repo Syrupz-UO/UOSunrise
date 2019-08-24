@@ -74,7 +74,7 @@ namespace Server
 			: this( iconID, titleCliloc, secondaryCliloc )
 		{
 			m_TimeLength = length;
-			m_TimeStart = DateTime.Now;
+			m_TimeStart = DateTime.UtcNow;
 
 			m_Timer = Timer.DelayCall( length, new TimerCallback(
 				delegate
@@ -176,59 +176,186 @@ namespace Server
 
 	public enum BuffIcon : short
 	{
-		DismountPrevention=0x3E9,
-		NoRearm=0x3EA,
+		DismountPrevention = 0x3E9,
+		NoRearm = 0x3EA,
 		//Currently, no 0x3EB or 0x3EC
-		NightSight=0x3ED,	//*
+		NightSight = 0x3ED, //*
 		DeathStrike,
 		EvilOmen,
-		UnknownStandingSwirl,	//Which is healing throttle & Stamina throttle?
-		UnknownKneelingSword,
-		DivineFury,			//*
-		EnemyOfOne,			//*
-		HidingAndOrStealth,	//*
-		ActiveMeditation,	//*
-		BloodOathCaster,	//*
-		BloodOathCurse,		//*
-		CorpseSkin,			//*
-		Mindrot,			//*
-		PainSpike,			//*
+		HonoredDebuff,
+		AchievePerfection,
+		DivineFury,         //*
+		EnemyOfOne,         //*
+		HidingAndOrStealth, //*
+		ActiveMeditation,   //*
+		BloodOathCaster,    //*
+		BloodOathCurse,     //*
+		CorpseSkin,         //*
+		Mindrot,            //*
+		PainSpike,          //*
 		Strangle,
-		GiftOfRenewal,		//*
-		AttuneWeapon,		//*
-		Thunderstorm,		//*
-		EssenceOfWind,		//*
-		EtherealVoyage,		//*
-		GiftOfLife,			//*
-		ArcaneEmpowerment,	//*
+		GiftOfRenewal,      //*
+		AttuneWeapon,       //*
+		Thunderstorm,       //*
+		EssenceOfWind,      //*
+		EtherealVoyage,     //*
+		GiftOfLife,         //*
+		ArcaneEmpowerment,  //*
 		MortalStrike,
-		ReactiveArmor,		//*
-		Protection,			//*
+		ReactiveArmor,      //*
+		Protection,         //*
 		ArchProtection,
-		MagicReflection,	//*
-		Incognito,			//*
+		MagicReflection,    //*
+		Incognito,          //*
 		Disguised,
 		AnimalForm,
 		Polymorph,
-		Invisibility,		//*
-		Paralyze,			//*
+		Invisibility,       //*
+		Paralyze,           //*
 		Poison,
 		Bleed,
-		Clumsy,				//*
-		FeebleMind,			//*
-		Weaken,				//*
-		Curse,				//*
+		Clumsy,             //*
+		FeebleMind,         //*
+		Weaken,             //*
+		Curse,              //*
 		MassCurse,
-		Agility,			//*
-		Cunning,			//*
-		Strength,			//*
-		Bless				//*
+		Agility,            //*
+		Cunning,            //*
+		Strength,           //*
+		Bless,              //*
+		Sleep,
+		StoneForm,
+		SpellPlague,
+		Berserk,
+		MassSleep,
+		Fly,
+		Inspire,
+		Invigorate,
+		Resilience,
+		Perseverance,
+		TribulationTarget,
+		DespairTarget,
+		FishPie = 0x426,
+		HitLowerAttack,
+		HitLowerDefense,
+		DualWield,
+		Block,
+		DefenseMastery,
+		DespairCaster,
+		Healing,
+		SpellFocusingBuff,
+		SpellFocusingDebuff,
+		RageFocusingDebuff,
+		RageFocusingBuff,
+		Warding,
+		TribulationCaster,
+		ForceArrow,
+		Disarm,
+		Surge,
+		Feint,
+		TalonStrike,
+		PsychicAttack,
+		ConsecrateWeapon,
+		GrapesOfWrath,
+		EnemyOfOneDebuff,
+		HorrificBeast,
+		LichForm,
+		VampiricEmbrace,
+		CurseWeapon,
+		ReaperForm,
+		ImmolatingWeapon,
+		Enchant,
+		HonorableExecution,
+		Confidence,
+		Evasion,
+		CounterAttack,
+		LightningStrike,
+		MomentumStrike,
+		OrangePetals,
+		RoseOfTrinsic,
+		PoisonImmunity,
+		Veterinary,
+		Perfection,
+		Honored,
+		ManaPhase,
+		FanDancerFanFire,
+		Rage,
+		Webbing,
+		MedusaStone,
+		TrueFear,
+		AuraOfNausea,
+		HowlOfCacophony,
+		GazeDespair,
+		HiryuPhysicalResistance,
+		RuneBeetleCorruption,
+		BloodwormAnemia,
+		RotwormBloodDisease,
+		SkillUseDelay,
+		FactionStatLoss,
+		HeatOfBattleStatus,
+		CriminalStatus,
+		ArmorPierce,
+		SplinteringEffect,
+		SwingSpeedDebuff,
+		WraithForm,
+		CityTradeDeal = 0x466,
+		HumilityDebuff = 0x467,
+		Spirituality,
+		Humility,
+		// Skill Masteries
+		Rampage,
+		Stagger, // Debuff
+		Toughness,
+		Thrust,
+		Pierce,   // Debuff
+		PlayingTheOdds,
+		FocusedEye,
+		Onslaught, // Debuff
+		ElementalFury,
+		ElementalFuryDebuff, // Debuff
+		CalledShot,
+		Knockout,
+		SavingThrow,
+		Conduit,
+		EtherealBurst,
+		MysticWeapon,
+		ManaShield,
+		AnticipateHit,
+		Warcry,
+		Shadow,
+		WhiteTigerForm,
+		Bodyguard,
+		HeightenedSenses,
+		Tolerance,
+		DeathRay,
+		DeathRayDebuff,
+		Intuition,
+		EnchantedSummoning,
+		ShieldBash,
+		Whispering,
+		CombatTraining,
+		InjectedStrikeDebuff,
+		InjectedStrike,
+		UnknownTomato,
+		PlayingTheOddsDebuff,
+		DragonTurtleDebuff,
+		Boarding,
+		Potency,
+		ThrustDebuff,
+		FistsOfFury, // 1169
+		BarrabHemolymphConcentrate,
+		JukariBurnPoiltice,
+		KurakAmbushersEssence,
+		BarakoDraftOfMight,
+		UraliTranceTonic,
+		SakkhraProphylaxis,
+		MysticalPolymorphTotem = 1188
 	}
 
 	public sealed class AddBuffPacket : Packet
 	{
 		public AddBuffPacket( Mobile m, BuffInfo info )
-			: this( m, info.ID, info.TitleCliloc, info.SecondaryCliloc, info.Args, (info.TimeStart != DateTime.MinValue) ? ((info.TimeStart + info.TimeLength) - DateTime.Now) : TimeSpan.Zero )
+			: this( m, info.ID, info.TitleCliloc, info.SecondaryCliloc, info.Args, (info.TimeStart != DateTime.MinValue) ? ((info.TimeStart + info.TimeLength) - DateTime.UtcNow) : TimeSpan.Zero )
 		{
 		}
 		public AddBuffPacket( Mobile mob, BuffIcon iconID, int titleCliloc, int secondaryCliloc, TextDefinition args, TimeSpan length )

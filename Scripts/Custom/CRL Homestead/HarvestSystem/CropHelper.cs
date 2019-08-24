@@ -258,7 +258,7 @@ namespace Server.Items.Crops
 				Movable = false;
 				Name = "Weed";
 				m_sower = sower;
-				planted = DateTime.Now;
+				planted = DateTime.UtcNow;
 			}
 			public override void OnDoubleClick(Mobile from)
 			{
@@ -269,7 +269,7 @@ namespace Server.Items.Crops
 				}
 				if ( from.InRange( this.GetWorldLocation(), 1 ) )
 				{
-					if (( from == m_sower ) || ( DateTime.Now >= planted.AddDays(3) ))
+					if (( from == m_sower ) || ( DateTime.UtcNow >= planted.AddDays(3) ))
 					{
 						from.Direction = from.GetDirectionTo( this );
 						from.Animate( from.Mounted ? 29:32, 5, 1, true, false, 0 );

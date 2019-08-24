@@ -29,7 +29,7 @@ namespace Server.Items
 
 		public override void OnDoubleClick( Mobile from )
 		{
-			DateTime TimeNow = DateTime.Now;
+			DateTime TimeNow = DateTime.UtcNow;
 			long ticksThen = TimeUsed.Ticks;
 			long ticksNow = TimeNow.Ticks;
 			int minsThen = (int)TimeSpan.FromTicks(ticksThen).TotalMinutes;
@@ -59,7 +59,7 @@ namespace Server.Items
 					from.PlaySound( 0x240 );
 					from.AddToBackpack( new BottleOfAcid() );
 					from.SendMessage( "You squeeze some acid from the cloth of the robe." );
-					TimeUsed = DateTime.Now;
+					TimeUsed = DateTime.UtcNow;
 				}
 			}
 		}

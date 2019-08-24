@@ -16,13 +16,13 @@ namespace Server.Items
 		{
 			if( m is PlayerMobile )
 			{
-				if ( DateTime.Now >= m_NextSound && Utility.InRange( m.Location, this.Location, 10 ) )
+				if ( DateTime.UtcNow >= m_NextSound && Utility.InRange( m.Location, this.Location, 10 ) )
 				{
 					if ( Utility.RandomMinMax( 1, 4 ) == 1 )
 					{
 						m.PlaySound( 0x54C );
 					}
-					m_NextSound = (DateTime.Now + TimeSpan.FromSeconds( 60 ));
+					m_NextSound = (DateTime.UtcNow + TimeSpan.FromSeconds( 60 ));
 				}
 			}
 		}

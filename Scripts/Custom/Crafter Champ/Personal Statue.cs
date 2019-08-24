@@ -109,9 +109,9 @@ namespace Server.Items
 
 		public override void OnDoubleClick( Mobile from )
 		{
-			if (Deleted || m_NextActive > DateTime.Now)
+			if (Deleted || m_NextActive > DateTime.UtcNow)
 				return;
-			m_NextActive = DateTime.Now + TimeSpan.FromSeconds( 2.0 );
+			m_NextActive = DateTime.UtcNow + TimeSpan.FromSeconds( 2.0 );
 			if (from.Body.IsMale)
 				switch (Utility.Random(10))
 				{

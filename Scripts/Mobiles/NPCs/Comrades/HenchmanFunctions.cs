@@ -94,7 +94,7 @@ namespace Server.Misc
 			bool GoAway = false;
 			bool monster = false;
 
-			if ( DateTime.Now >= m_NextMorale && from.InRange( m, 20 ) )
+			if ( DateTime.UtcNow >= m_NextMorale && from.InRange( m, 20 ) )
 			{
 				HenchmanFunctions.BandageMySelf( from );
 				if ( HenchmanFunctions.IsInRestRegion( from ) == true ){} else

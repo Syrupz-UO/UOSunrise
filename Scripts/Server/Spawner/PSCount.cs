@@ -27,7 +27,7 @@ namespace Server.Commands
 		public static void Clearall_OnCommand( CommandEventArgs e ) 
 		{ 
 			Mobile from = e.Mobile; 
-			DateTime time = DateTime.Now;
+			DateTime time = DateTime.UtcNow;
 
 			List<Item> pspawnerlist = new List<Item>();
 

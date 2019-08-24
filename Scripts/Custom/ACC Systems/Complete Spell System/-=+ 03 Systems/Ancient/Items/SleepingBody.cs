@@ -236,7 +236,7 @@ namespace Server.ACC.CSS.Systems.Ancient
                         break;
                     }
             }
-            m_NextSnoreTrigger = DateTime.Now;
+            m_NextSnoreTrigger = DateTime.UtcNow;
 
             // Delete on Server restart if spell action
             if (m_spell)
@@ -260,9 +260,9 @@ namespace Server.ACC.CSS.Systems.Ancient
             if (m.Location == oldLocation)
                 return;
 
-            if (CheckRange(m.Location, oldLocation, 5) && DateTime.Now >= m_NextSnoreTrigger)
+            if (CheckRange(m.Location, oldLocation, 5) && DateTime.UtcNow >= m_NextSnoreTrigger)
             {
-                m_NextSnoreTrigger = DateTime.Now + TimeSpan.FromSeconds(Utility.Random(5, 10));
+                m_NextSnoreTrigger = DateTime.UtcNow + TimeSpan.FromSeconds(Utility.Random(5, 10));
 
                 if (this != null && this.Owner != null)
                 {

@@ -96,7 +96,7 @@ namespace Arya.Auction
 
 		private static void OnTimer()
 		{
-			if ( m_Deadline < DateTime.Now )
+			if ( m_Deadline < DateTime.UtcNow )
 			{
 				m_Timer.Stop();
 

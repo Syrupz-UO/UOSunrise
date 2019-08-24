@@ -74,11 +74,16 @@ namespace Server.Items
 			}
 		}
 
-// modified by alari for new food system
+		public virtual bool CheckHunger(Mobile from)
+		{
+			return FillHunger( from, m_FillFactor, HitsBonus, ManaBonus );
+		}
+
+		// modified by alari for new food system
 		public virtual bool Eat( Mobile from )
 		{
 			// Fill the Mobile with FillFactor
-			if ( FillHunger( from, m_FillFactor, HitsBonus, ManaBonus ) )  // added HitsBonus, ManaBonus - alari
+			if ( CheckHunger( from ) )  // added HitsBonus, ManaBonus - alari
 			{
 				// Play a random "eat" sound
 				from.PlaySound( Utility.Random( 0x3A, 3 ) );

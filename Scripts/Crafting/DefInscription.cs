@@ -40,7 +40,7 @@ namespace Server.Engines.Craft
 		{
 		}
 
-		public override int CanCraft(Mobile from, BaseTool tool, Type typeItem)
+		public override object CanCraft(Mobile from, BaseTool tool, Type typeItem)
 		{
 			if (tool == null || tool.Deleted || tool.UsesRemaining < 0)
 				return 1044038; // You have worn out your tool!

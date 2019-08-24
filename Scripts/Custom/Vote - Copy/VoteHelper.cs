@@ -97,15 +97,15 @@ namespace Server.Voting
 			if (m == null || m.Deleted || voteSite == null)
 			{
 				canVote = false;
-				return DateTime.Now;
+				return DateTime.UtcNow;
 			}
 
-			DateTime now = DateTime.Now;
+			DateTime now = DateTime.UtcNow;
 			DateTime lastVoteTime = now.Subtract(voteSite.CoolDown);
 			Account a = (Account)m.Account;
 
 			if (a == null)
-			{ return DateTime.Now; }
+			{ return DateTime.UtcNow; }
 
 			string tag = a.GetTag("VS_LAST_VOTE_" + voteSite.Name.ToUpper());
 
@@ -158,7 +158,7 @@ namespace Server.Voting
 			if (a == null)
 			{ return; }
 
-			DateTime now = DateTime.Now;
+			DateTime now = DateTime.UtcNow;
 			string tag = now.ToString();
 
 			a.SetTag("VS_LAST_VOTE_" + voteSite.Name.ToUpper(), tag);

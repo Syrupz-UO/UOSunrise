@@ -146,7 +146,7 @@ namespace Server.Mobiles
 			}
 		
 			base.OnThink();
-			if ( DateTime.Now < m_NextPickup )
+			if ( DateTime.UtcNow < m_NextPickup )
 				return;
 
         	if (m_SmallBoat == null)
@@ -154,7 +154,7 @@ namespace Server.Mobiles
 				return;
 			} 
 
-			m_NextPickup = DateTime.Now + TimeSpan.FromSeconds( Utility.RandomMinMax( 1, 2 ) );
+			m_NextPickup = DateTime.UtcNow + TimeSpan.FromSeconds( Utility.RandomMinMax( 1, 2 ) );
 		}
 		
 		public override void OnDelete()

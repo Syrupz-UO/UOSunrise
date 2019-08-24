@@ -20,7 +20,7 @@ namespace Server.Mobiles
 		{
 			if( m is PlayerMobile )
 			{
-				if ( DateTime.Now >= m_NextTalk && InRange( m, 4 ) && InLOS( m ) )
+				if ( DateTime.UtcNow >= m_NextTalk && InRange( m, 4 ) && InLOS( m ) )
 				{
 					switch ( Utility.Random( 45 ))
 					{
@@ -70,7 +70,7 @@ namespace Server.Mobiles
 						case 43: Say("The orange donkey shall not gutter at the bridge."); break;
 						case 44: Say("The word to the dark mage depths is 'bravoka'."); break;
 					};
-					m_NextTalk = (DateTime.Now + TimeSpan.FromSeconds( 30 ));
+					m_NextTalk = (DateTime.UtcNow + TimeSpan.FromSeconds( 30 ));
 				}
 			}
 		}

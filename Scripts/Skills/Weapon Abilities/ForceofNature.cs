@@ -76,7 +76,7 @@ namespace Server.Items
 				m_MaxBaseDamage = spiritLevel + 1;
 
 				m_HitDelay = 5;
-				m_NextHit = DateTime.Now + TimeSpan.FromSeconds(m_HitDelay);
+				m_NextHit = DateTime.UtcNow + TimeSpan.FromSeconds(m_HitDelay);
 
 				m_Count = (int)spiritLevel;
 
@@ -94,7 +94,7 @@ namespace Server.Items
 					Stop();
 				}
 
-				if (!m_Target.Alive || DateTime.Now < m_NextHit)
+				if (!m_Target.Alive || DateTime.UtcNow < m_NextHit)
 					return;
 
 				--m_Count;
@@ -124,7 +124,7 @@ namespace Server.Items
 				}
 				else
 				{
-					m_NextHit = DateTime.Now + TimeSpan.FromSeconds(m_HitDelay);
+					m_NextHit = DateTime.UtcNow + TimeSpan.FromSeconds(m_HitDelay);
 
 					double damage = m_MinBaseDamage + (Utility.RandomDouble() * (m_MaxBaseDamage - m_MinBaseDamage));
 

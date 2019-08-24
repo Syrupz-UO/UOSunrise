@@ -18,7 +18,7 @@ namespace Server.Mobiles
 		{
 			bool GoAway = HenchmanFunctions.OnMoving( m, oldLocation, this, m_NextMorale );
 			if ( GoAway == true ){ Timer.DelayCall( TimeSpan.FromSeconds( 2.0 ), new TimerCallback( Delete ) ); }
-			else { m_NextMorale = (DateTime.Now + TimeSpan.FromSeconds( 60 )); }
+			else { m_NextMorale = (DateTime.UtcNow + TimeSpan.FromSeconds( 60 )); }
 		}
 
 		[Constructable] 

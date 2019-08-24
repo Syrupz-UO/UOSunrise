@@ -66,7 +66,7 @@ namespace Server.Spells.HolyMan
 				Name = "Hammer of Faith";
 
 				double time = ( owner.Skills[SkillName.Healing].Value / 5.0 );
-				m_Expire = DateTime.Now + TimeSpan.FromMinutes( (int)time );
+				m_Expire = DateTime.UtcNow + TimeSpan.FromMinutes( (int)time );
 				m_Timer = new InternalTimer( this, m_Expire );
 
 				m_Timer.Start();
@@ -133,7 +133,7 @@ namespace Server.Spells.HolyMan
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					m_Hammer.Remove();
 					Stop();

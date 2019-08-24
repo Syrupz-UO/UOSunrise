@@ -43,13 +43,13 @@ namespace Server
         ////////////////////////////////////////////////////////////////////////////
 
         // Both Accounts need to have logged in during the last x days set here:
-        public static readonly DateTime mindate = DateTime.Now - TimeSpan.FromDays( 14.0 );
+        public static readonly DateTime mindate = DateTime.UtcNow - TimeSpan.FromDays( 14.0 );
         // New Player Account has this many days to enter a referrer & also requires to be this old before a reward is given to the referrer:
-        //public static readonly DateTime age = DateTime.Now - TimeSpan.FromDays( 3.0 );
+        //public static readonly DateTime age = DateTime.UtcNow - TimeSpan.FromDays( 3.0 );
 
         //////////////////////////////////////////////////////////////////////////////
 
-        public static readonly DateTime age = DateTime.Now - TimeSpan.FromMinutes(5.0);
+        public static readonly DateTime age = DateTime.UtcNow - TimeSpan.FromMinutes(5.0);
 
         ///////////////////////////////////////////////////////////////////////////////
 

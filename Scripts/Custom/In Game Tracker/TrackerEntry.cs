@@ -40,7 +40,7 @@ namespace Server.Engines.Tracker
 				if ( m_Status.Delay == TimeSpan.MaxValue )
 					return false;
 
-				return DateTime.Now >= (m_LastUpdatedTime + m_Status.Delay);
+				return DateTime.UtcNow >= (m_LastUpdatedTime + m_Status.Delay);
 			}
 		}
 
@@ -103,7 +103,7 @@ namespace Server.Engines.Tracker
 			m_Message = message;
 
 			m_IssueID = TrackerPersistance.NewIssue;
-			m_CreationTime = DateTime.Now;
+			m_CreationTime = DateTime.UtcNow;
 			m_LastUpdatedTime = m_CreationTime;
 
 			m_AssignUser = TrackerSystem.FindUser( 0 );
@@ -118,7 +118,7 @@ namespace Server.Engines.Tracker
 		public void AddComment(string submitter, string comment)
 		{
 			m_Comments.Add( new CommentEntry( this, submitter, comment ) );
-			m_LastUpdatedTime = DateTime.Now;
+			m_LastUpdatedTime = DateTime.UtcNow;
 		}
 
 		public void Delete()
@@ -136,19 +136,19 @@ namespace Server.Engines.Tracker
 		public void Assign( ITrackerUser user )
 		{
 			m_AssignUser = user;
-			m_LastUpdatedTime = DateTime.Now;
+			m_LastUpdatedTime = DateTime.UtcNow;
 		}
 
 		public void UpdateStatus( TrackerStatus status )
 		{
 			m_Status = status;
-			m_LastUpdatedTime = DateTime.Now;
+			m_LastUpdatedTime = DateTime.UtcNow;
 		}
 
 		public void SetPriority( TrackerPriority priority )
 		{
 			m_Priority = priority;
-			m_LastUpdatedTime = DateTime.Now;
+			m_LastUpdatedTime = DateTime.UtcNow;
 		}
 
 		public void Serilize(GenericWriter writer)
@@ -232,9 +232,9 @@ namespace Server.Engines.Tracker
 		public void Invalidate()
 		{
 			// process any status that is marked "IsStatusToClose" to become closed status and set the last update time to now
-			if ( IsStatusToClose && DateTime.Now >= (m_LastUpdatedTime + m_Status.Delay) )
+			if ( IsStatusToClose && DateTime.UtcNow >= (m_LastUpdatedTime + m_Status.Delay) )
 			{
-				m_LastUpdatedTime = DateTime.Now;
+				m_LastUpdatedTime = DateTime.UtcNow;
 				m_Status = TrackerStatus.Closed;
 			}
 		}

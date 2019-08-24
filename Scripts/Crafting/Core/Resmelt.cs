@@ -20,9 +20,9 @@ namespace Server.Engines.Craft
 
 		public static void Do( Mobile from, CraftSystem craftSystem, BaseTool tool )
 		{
-			int num = craftSystem.CanCraft( from, tool, null );
+			object num = craftSystem.CanCraft( from, tool, null );
 
-			if ( num > 0 && num != 1044267 )
+			if( ( num is int && (int)num > 0 && (int)num != 1044267 ) || ( num is string && !string.IsNullOrWhiteSpace( (string)num ) ) )
 			{
 				from.SendGump( new CraftGump( from, craftSystem, tool, num ) );
 			}
@@ -114,11 +114,11 @@ namespace Server.Engines.Craft
 
 			protected override void OnTarget( Mobile from, object targeted )
 			{
-				int num = m_CraftSystem.CanCraft( from, m_Tool, null );
+				object num = m_CraftSystem.CanCraft( from, m_Tool, null );
 
-				if ( num > 0 )
+				if ( ( num is int && (int)num > 0 ) || ( num is string && !string.IsNullOrWhiteSpace( (string)num ) ) )
 				{
-					if ( num == 1044267 )
+					if ( num is int && (int)num == 1044267 )
 					{
 						bool anvil, forge;
 			

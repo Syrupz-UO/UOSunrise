@@ -58,7 +58,7 @@ namespace Server.ACC.CSS.Systems.Cleric
 				Caster.FixedParticles( 0x3709, 10, 30, 5052, 0x480, 0, EffectLayer.LeftFoot );
 				Caster.PlaySound( 0x208 );
 
-				DateTime Expire = DateTime.Now + TimeSpan.FromMinutes( Caster.Skills[SkillName.Magery].Value / 10.0 );
+				DateTime Expire = DateTime.UtcNow + TimeSpan.FromMinutes( Caster.Skills[SkillName.Magery].Value / 10.0 );
 				new InternalTimer( Caster, Expire ).Start();
 
 			}
@@ -107,7 +107,7 @@ namespace Server.ACC.CSS.Systems.Cleric
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= Expire || !Source.CheckAlive() )
+				if ( DateTime.UtcNow >= Expire || !Source.CheckAlive() )
 				{
 					Source.EndAction( typeof( ClericTrialByFireSpell ) );
 					Stop();

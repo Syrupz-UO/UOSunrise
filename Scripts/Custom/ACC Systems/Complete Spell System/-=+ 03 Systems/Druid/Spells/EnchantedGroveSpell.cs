@@ -220,7 +220,7 @@ namespace Server.ACC.CSS.Systems.Druid
 				m_Bless = new BlessTimer( this, m_Caster );
 				m_Bless.Start();
 
-				m_End = DateTime.Now + TimeSpan.FromSeconds( 30.0 );
+				m_End = DateTime.UtcNow + TimeSpan.FromSeconds( 30.0 );
 			}
 
 			public InternalItem( Serial serial ) : base( serial )
@@ -231,7 +231,7 @@ namespace Server.ACC.CSS.Systems.Druid
 			{
 				base.Serialize( writer );
 				writer.Write( (int) 0 ); // version
-				writer.Write( m_End - DateTime.Now );
+				writer.Write( m_End - DateTime.UtcNow );
 			}
 
 			public override void Deserialize( GenericReader reader )
@@ -243,7 +243,7 @@ namespace Server.ACC.CSS.Systems.Druid
 				m_Timer = new InternalTimer( this, duration );
 				m_Timer.Start();
 
-				m_End = DateTime.Now + duration;
+				m_End = DateTime.UtcNow + duration;
 			}
 
 			public override void OnAfterDelete()
@@ -303,7 +303,7 @@ namespace Server.ACC.CSS.Systems.Druid
 
 				m_DruidEnchantedGrove = ap;
 				m_Caster=ca;
-				m_Duration = DateTime.Now + TimeSpan.FromSeconds( 15.0 + ( Utility.RandomDouble() * 15.0 ) );
+				m_Duration = DateTime.UtcNow + TimeSpan.FromSeconds( 15.0 + ( Utility.RandomDouble() * 15.0 ) );
 			}
 
 			protected override void OnTick()
@@ -311,7 +311,7 @@ namespace Server.ACC.CSS.Systems.Druid
 				if ( m_DruidEnchantedGrove.Deleted )
 					return;
 
-				if ( DateTime.Now > m_Duration )
+				if ( DateTime.UtcNow > m_Duration )
 				{
 
 					Stop();

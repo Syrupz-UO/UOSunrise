@@ -76,7 +76,7 @@ namespace Server.Items
 
         public override void OnTravel()
         {
-            NextUse = DateTime.Now;
+            NextUse = DateTime.UtcNow;
         }
     }
 }

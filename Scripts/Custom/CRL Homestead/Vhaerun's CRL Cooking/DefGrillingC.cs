@@ -44,7 +44,7 @@ namespace Server.Engines.Craft
 		{
 		}
 
-		public override int CanCraft( Mobile from, BaseTool tool, Type itemType )
+		public override object CanCraft( Mobile from, BaseTool tool, Type itemType )
 		{
 			if ( tool.Deleted || tool.UsesRemaining < 0 )
 				return 1044038;

@@ -44,7 +44,7 @@ namespace Server.Gumps
             if (from is PlayerMobile)
             {
                 PlayerMobile pm = (PlayerMobile)from;
-                if (DateTime.Now > pm.NextCaptchaTime)
+                if (DateTime.UtcNow > pm.NextCaptchaTime)
                 {
 					pm.CloseGump(typeof(CaptchaGump));
                     pm.SendGump(new CaptchaGump(pm, act, actionObject));
@@ -481,7 +481,7 @@ namespace Server.Gumps
                     if (from is PlayerMobile)
                     {
                         PlayerMobile pm = (PlayerMobile)from;
-                        pm.NextCaptchaTime = DateTime.Now + TimeSpan.FromMinutes(Utility.RandomMinMax(30,45));
+                        pm.NextCaptchaTime = DateTime.UtcNow + TimeSpan.FromMinutes(Utility.RandomMinMax(30,45));
                     }
 
                     //call our delegate and pass it our mobile & argument

@@ -248,12 +248,12 @@ namespace Server.Mobiles
 
 		public override void OnThink()
         {
-            if (this.Region.IsPartOf(typeof(HouseRegion))) m_NextUse = DateTime.Now + TimeSpan.FromSeconds(2.5);
-            else if (this.Alive && this.m_Mine && this.m_NextUse <= DateTime.Now && Loyalty > 50)
+            if (this.Region.IsPartOf(typeof(HouseRegion))) m_NextUse = DateTime.UtcNow + TimeSpan.FromSeconds(2.5);
+            else if (this.Alive && this.m_Mine && this.m_NextUse <= DateTime.UtcNow && Loyalty > 50)
             {
                 Container backpack = this.Backpack;
-                if (backpack == null) { m_NextUse = DateTime.Now + TimeSpan.FromSeconds(2.5); base.OnThink(); return; }
-                if (backpack.TotalWeight >= backpack.MaxWeight || backpack.TotalItems >= backpack.MaxItems) { m_NextUse = DateTime.Now + TimeSpan.FromSeconds(2.5); base.OnThink(); return; }
+                if (backpack == null) { m_NextUse = DateTime.UtcNow + TimeSpan.FromSeconds(2.5); base.OnThink(); return; }
+                if (backpack.TotalWeight >= backpack.MaxWeight || backpack.TotalItems >= backpack.MaxItems) { m_NextUse = DateTime.UtcNow + TimeSpan.FromSeconds(2.5); base.OnThink(); return; }
                 IBShovel ibshovel = (IBShovel)backpack.FindItemByType(typeof(IBShovel));
                 //Shovel shovel = (Shovel)backpack.FindItemByType(typeof(Shovel));
                 if (ibshovel != null)
@@ -272,7 +272,7 @@ namespace Server.Mobiles
                         if (ibshovel != null && !ibshovel.Deleted && ibshovel.UsesRemaining <= 0) ibshovel.Delete();
                     }
                 }
-                m_NextUse = DateTime.Now + TimeSpan.FromSeconds(2.5);
+                m_NextUse = DateTime.UtcNow + TimeSpan.FromSeconds(2.5);
             }
             base.OnThink();
         }
@@ -571,12 +571,12 @@ namespace Server.Mobiles
 
 		public override void OnThink()
         {
-            if (this.Region.IsPartOf(typeof(HouseRegion))) m_NextUse = DateTime.Now + TimeSpan.FromSeconds(2.5);
-            else if (this.Alive && this.m_Ljack && this.m_NextUse <= DateTime.Now && Loyalty > 50)
+            if (this.Region.IsPartOf(typeof(HouseRegion))) m_NextUse = DateTime.UtcNow + TimeSpan.FromSeconds(2.5);
+            else if (this.Alive && this.m_Ljack && this.m_NextUse <= DateTime.UtcNow && Loyalty > 50)
             {
                 Container backpack = this.Backpack;
-                if (backpack == null) { m_NextUse = DateTime.Now + TimeSpan.FromSeconds(2.5); base.OnThink(); return; }
-                if (backpack.TotalWeight >= backpack.MaxWeight || backpack.TotalItems >= backpack.MaxItems) { m_NextUse = DateTime.Now + TimeSpan.FromSeconds(2.5); base.OnThink(); return; }
+                if (backpack == null) { m_NextUse = DateTime.UtcNow + TimeSpan.FromSeconds(2.5); base.OnThink(); return; }
+                if (backpack.TotalWeight >= backpack.MaxWeight || backpack.TotalItems >= backpack.MaxItems) { m_NextUse = DateTime.UtcNow + TimeSpan.FromSeconds(2.5); base.OnThink(); return; }
                 IBAxe ibaxe = (IBAxe)backpack.FindItemByType(typeof(IBAxe));
                 //Shovel shovel = (Shovel)backpack.FindItemByType(typeof(Shovel));
                 if (ibaxe != null)
@@ -595,7 +595,7 @@ namespace Server.Mobiles
                         if (ibaxe != null && !ibaxe.Deleted && ibaxe.UsesRemaining <= 0) ibaxe.Delete();
                     }
                 }
-                m_NextUse = DateTime.Now + TimeSpan.FromSeconds(2.5);
+                m_NextUse = DateTime.UtcNow + TimeSpan.FromSeconds(2.5);
             }
             base.OnThink();
         }

@@ -95,7 +95,7 @@ namespace Server.ACC
 			string filename = "acc.sav";
 			string path =@"Saves/ACC/";
 			string pathNfile = path+filename;
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 
 			Console.WriteLine();
 			Console.WriteLine();
@@ -131,7 +131,7 @@ namespace Server.ACC
 					m_FileStream.Close();
 				}
 
-				Console.WriteLine( "Done in {0:F1} seconds.", (DateTime.Now-start).TotalSeconds );
+				Console.WriteLine( "Done in {0:F1} seconds.", (DateTime.UtcNow-start).TotalSeconds );
 				Console.WriteLine( "----------" );
 				Console.WriteLine();
 			}
@@ -149,7 +149,7 @@ namespace Server.ACC
 			string filename = "acc.sav";
 			string path = @"Saves/ACC/";
 			string pathNfile = path+filename;
-			DateTime start = DateTime.Now;
+			DateTime start = DateTime.UtcNow;
 
 			Console.WriteLine();
 			Console.WriteLine( "----------" );
@@ -189,7 +189,7 @@ namespace Server.ACC
 					m_FileStream.Close();
 				}
 
-				Console.WriteLine( "Done in {0:F1} seconds.", (DateTime.Now-start).TotalSeconds );
+				Console.WriteLine( "Done in {0:F1} seconds.", (DateTime.UtcNow-start).TotalSeconds );
 				Console.WriteLine( "----------" );
 				Console.WriteLine();
 			}

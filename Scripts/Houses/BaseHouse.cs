@@ -135,11 +135,11 @@ namespace Server.Multis
 			{
 				if ( !CanDecay )
 				{
-					m_LastRefreshed = DateTime.Now;
+					m_LastRefreshed = DateTime.UtcNow;
 					return DecayLevel.Ageless;
 				}
 
-				TimeSpan timeAfterRefresh = DateTime.Now - m_LastRefreshed;
+				TimeSpan timeAfterRefresh = DateTime.UtcNow - m_LastRefreshed;
 				int percent = (int) ((timeAfterRefresh.Ticks * 1000) / DecayPeriod.Ticks);
 
 				if ( percent >= 1000 ) // 100.0%
@@ -166,7 +166,7 @@ namespace Server.Multis
 
 			DecayLevel oldLevel = this.DecayLevel;
 
-			m_LastRefreshed = DateTime.Now;
+			m_LastRefreshed = DateTime.UtcNow;
 
 			return ( oldLevel > DecayLevel.LikeNew );
 		}
@@ -1110,9 +1110,9 @@ namespace Server.Multis
 		{
 			m_AllHouses.Add( this );
 
-			m_LastRefreshed = DateTime.Now;
+			m_LastRefreshed = DateTime.UtcNow;
 
-			m_BuiltOn = DateTime.Now;
+			m_BuiltOn = DateTime.UtcNow;
 			m_LastTraded = DateTime.MinValue;
 
 			m_Doors = new ArrayList();
@@ -1763,7 +1763,7 @@ namespace Server.Multis
 				m_House.Friends.Clear();
 				m_House.CoOwners.Clear();
 				m_House.ChangeLocks( to );
-				m_House.LastTraded = DateTime.Now;
+				m_House.LastTraded = DateTime.UtcNow;
 			}
 		}
 
@@ -2019,7 +2019,7 @@ namespace Server.Multis
 				Guild attackerGuild = m.Guild as Guild;
 				Guild defenderGuild = info.Defender.Guild as Guild;
 
-				if ( info.Defender.Player && info.Defender.Alive && (DateTime.Now - info.LastCombatTime) < HouseRegion.CombatHeatDelay && (attackerGuild == null || defenderGuild == null || defenderGuild != attackerGuild && !defenderGuild.IsEnemy( attackerGuild )) )
+				if ( info.Defender.Player && info.Defender.Alive && (DateTime.UtcNow - info.LastCombatTime) < HouseRegion.CombatHeatDelay && (attackerGuild == null || defenderGuild == null || defenderGuild != attackerGuild && !defenderGuild.IsEnemy( attackerGuild )) )
 					return true;
 			}
 
@@ -2490,7 +2490,7 @@ namespace Server.Multis
 					{
 						Item child = children[j];
 
-						if ( child.Decays && !child.IsLockedDown && !child.IsSecure && (child.LastMoved + child.DecayTime) <= DateTime.Now )
+						if ( child.Decays && !child.IsLockedDown && !child.IsSecure && (child.LastMoved + child.DecayTime) <= DateTime.UtcNow )
 							Timer.DelayCall( TimeSpan.Zero, new TimerCallback( child.Delete ) );
 					}
 				}
@@ -2699,7 +2699,7 @@ namespace Server.Multis
 			}
 
 			if ( version < 11 )
-				m_LastRefreshed = DateTime.Now + TimeSpan.FromHours( 24 * Utility.RandomDouble() );
+				m_LastRefreshed = DateTime.UtcNow + TimeSpan.FromHours( 24 * Utility.RandomDouble() );
 
 			if ( !CheckDecay() )
 			{

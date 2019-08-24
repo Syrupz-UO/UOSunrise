@@ -32,7 +32,7 @@ namespace Server.Items
 			Name = "Special Message System";
 			Visible = false;
 			Movable = false;
-			t_NextMessageTime = DateTime.Now;
+			t_NextMessageTime = DateTime.UtcNow;
 		}
 
 		private void Restart_Message_Func()
@@ -84,14 +84,14 @@ namespace Server.Items
 			if (item == null || item.Deleted ) { this.Stop(); return;}
 			if (item.b_specialmessageint == null || item.b_specialmessageint < 1)  { this.Stop(); return; }
 			else if (((SpecialMessageSystem)item).b_switchon == false) { this.Stop(); return; }
-			if (DateTime.Now >= item.t_NextMessageTime)
+			if (DateTime.UtcNow >= item.t_NextMessageTime)
 			{
 				
 				
 				World.Broadcast( 0x22, true, item.b_specialmessage1 );
 				World.Broadcast( 0x22, true, item.b_specialmessage2 );
 				World.Broadcast( 0x22, true, item.b_specialmessage3 );
-				item.t_NextMessageTime = DateTime.Now + TimeSpan.FromMinutes( item.b_specialmessageint );
+				item.t_NextMessageTime = DateTime.UtcNow + TimeSpan.FromMinutes( item.b_specialmessageint );
 			}
 		}
 	}

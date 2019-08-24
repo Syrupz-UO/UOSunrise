@@ -34,10 +34,11 @@ namespace Server
 {
 	public abstract class GenericReader
 	{
-		protected GenericReader() { }
+		public abstract int PeekInt();
 
 		public abstract string ReadString();
 		public abstract DateTime ReadDateTime();
+		public abstract DateTimeOffset ReadDateTimeOffset();
 		public abstract TimeSpan ReadTimeSpan();
 		public abstract DateTime ReadDeltaTime();
 		public abstract decimal ReadDecimal();
@@ -98,6 +99,7 @@ namespace Server
 
 		public abstract void Write( string value );
 		public abstract void Write( DateTime value );
+		public abstract void Write( DateTimeOffset value );
 		public abstract void Write( TimeSpan value );
 		public abstract void Write( decimal value );
 		public abstract void Write( long value );
@@ -336,11 +338,17 @@ namespace Server
 		{
 			Write( value.Ticks );
 		}
+		
+		public override void Write( DateTimeOffset value )
+		{
+			Write( value.Ticks );
+			Write( value.Offset.Ticks );
+		}
 
 		public override void WriteDeltaTime( DateTime value )
 		{
 			long ticks = value.Ticks;
-			long now = DateTime.Now.Ticks;
+			long now = DateTime.UtcNow.Ticks;
 
 			TimeSpan d;
 
@@ -822,6 +830,15 @@ namespace Server
 		{
 			return m_File.BaseStream.Seek( offset, origin );
 		}
+		
+		public override int PeekInt()
+		{
+			var peek = m_File.ReadInt32();
+
+			m_File.BaseStream.Seek( -4, SeekOrigin.Current );
+
+			return peek;
+		}
 
 		public override string ReadString()
 		{
@@ -834,7 +851,7 @@ namespace Server
 		public override DateTime ReadDeltaTime()
 		{
 			long ticks = m_File.ReadInt64();
-			long now = DateTime.Now.Ticks;
+			long now = DateTime.UtcNow.Ticks;
 
 			if( ticks > 0 && (ticks+now) < 0 )
 				return DateTime.MaxValue;
@@ -868,6 +885,14 @@ namespace Server
 		public override DateTime ReadDateTime()
 		{
 			return new DateTime( m_File.ReadInt64() );
+		}
+		
+		public override DateTimeOffset ReadDateTimeOffset()
+		{
+			var ticks = m_File.ReadInt64();
+			var offset = new TimeSpan( m_File.ReadInt64() );
+
+			return new DateTimeOffset( ticks, offset );
 		}
 
 		public override TimeSpan ReadTimeSpan()
@@ -1302,7 +1327,7 @@ namespace Server
 		public override void WriteDeltaTime( DateTime value )
 		{
 			long ticks = value.Ticks;
-			long now = DateTime.Now.Ticks;
+			long now = DateTime.UtcNow.Ticks;
 
 			TimeSpan d;
 
@@ -1315,6 +1340,13 @@ namespace Server
 		public override void Write( DateTime value )
 		{
 			m_Bin.Write( value.Ticks );
+			OnWrite();
+		}
+		
+		public override void Write( DateTimeOffset value )
+		{
+			m_Bin.Write( value.Ticks );
+			m_Bin.Write( value.Offset.Ticks );
 			OnWrite();
 		}
 

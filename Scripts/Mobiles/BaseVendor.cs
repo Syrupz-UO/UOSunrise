@@ -107,7 +107,7 @@ namespace Server.Mobiles
 		}
 
 		#region Faction
-		public virtual int GetPriceScalar()
+		public virtual int GetPriceScalar( Mobile buyer )
 		{
 			Town town = Town.FromRegion( this.Region );
 
@@ -117,9 +117,9 @@ namespace Server.Mobiles
 			return 100;
 		}
 
-		public void UpdateBuyInfo()
+		public void UpdateBuyInfo( Mobile buyer )
 		{
-			int priceScalar = GetPriceScalar();
+			int priceScalar = GetPriceScalar( buyer );
 
 			IBuyItemInfo[] buyinfo = (IBuyItemInfo[])m_ArmorBuyInfo.ToArray( typeof( IBuyItemInfo ) );
 
@@ -212,7 +212,7 @@ namespace Server.Mobiles
 			pack.Visible = false;
 			AddItem( pack );
 
-			m_LastRestock = DateTime.Now;
+			m_LastRestock = DateTime.UtcNow;
 		}
 
 		public BaseVendor( Serial serial ): base( serial )
@@ -307,7 +307,7 @@ namespace Server.Mobiles
 
 		protected void LoadSBInfo()
 		{
-			m_LastRestock = DateTime.Now;
+			m_LastRestock = DateTime.UtcNow;
 
 			for ( int i = 0; i < m_ArmorBuyInfo.Count; ++i )
 			{
@@ -516,7 +516,7 @@ namespace Server.Mobiles
 
 		public virtual void Restock()
 		{
-			m_LastRestock = DateTime.Now;
+			m_LastRestock = DateTime.UtcNow;
 
 			LoadSBInfo();
 
@@ -629,13 +629,13 @@ namespace Server.Mobiles
 				return;
 			}
 
-			if (	DateTime.Now - m_LastRestock > RestockDelay || 
-					( from.Region.IsPartOf( typeof( PublicRegion ) ) && DateTime.Now - m_LastRestock > RestockDelayFull ) || 
-					( this is BaseGuildmaster && DateTime.Now - m_LastRestock > RestockDelayFull ) 
+			if (	DateTime.UtcNow - m_LastRestock > RestockDelay || 
+					( from.Region.IsPartOf( typeof( PublicRegion ) ) && DateTime.UtcNow - m_LastRestock > RestockDelayFull ) || 
+					( this is BaseGuildmaster && DateTime.UtcNow - m_LastRestock > RestockDelayFull ) 
 			) // WIZARD WANTS PUBLIC REGION TO RESTOCK QUICKER
 				Restock();
 
-			UpdateBuyInfo();
+			UpdateBuyInfo( from );
 
 			int count = 0;
 			List<BuyItemState> list;
@@ -681,7 +681,7 @@ namespace Server.Mobiles
 
 				Item item = playerItems[i];
 
-				if ( ( item.LastMoved + InventoryDecayTime ) <= DateTime.Now )
+				if ( ( item.LastMoved + InventoryDecayTime ) <= DateTime.UtcNow )
 					item.Delete();
 			}
 
@@ -814,7 +814,7 @@ namespace Server.Mobiles
 			{
 				IShopSellInfo[] info = GetSellInfo();
 
-				Hashtable table = new Hashtable();
+				List<SellItemState> table = new List<SellItemState>();
 
 				foreach ( IShopSellInfo ssi in info )
 				{
@@ -846,7 +846,7 @@ namespace Server.Mobiles
 								barter = (int)from.Skills[SkillName.Begging].Value;
 							}
 
-							table[item] = new SellItemState( item, ssi.GetSellPriceFor( item, barter ), ssi.GetNameFor( item ) );
+							table.Add( new SellItemState( item, ssi.GetSellPriceFor( item, barter ), ssi.GetNameFor( item ) ) );
 						}
 					}
 				}
@@ -1374,7 +1374,7 @@ namespace Server.Mobiles
 			{
 				if( Core.ML )
 				{
-					if( ((PlayerMobile)from).NextBODTurnInTime > DateTime.Now )
+					if( ((PlayerMobile)from).NextBODTurnInTime > DateTime.UtcNow )
 					{
 						SayTo( from, 1079976 );	//
 						return false;
@@ -1418,7 +1418,7 @@ namespace Server.Mobiles
 
 				if( Core.ML )
 				{
-					((PlayerMobile)from).NextBODTurnInTime = DateTime.Now + TimeSpan.FromSeconds( 10.0 );
+					((PlayerMobile)from).NextBODTurnInTime = DateTime.UtcNow + TimeSpan.FromSeconds( 10.0 );
 				}
 
 				dropped.Delete();
@@ -1464,7 +1464,7 @@ namespace Server.Mobiles
 
 					if( Core.ML )
 					{
-						((PlayerMobile)from).NextBODTurnInTime = DateTime.Now + TimeSpan.FromSeconds( 10.0 );
+						((PlayerMobile)from).NextBODTurnInTime = DateTime.UtcNow + TimeSpan.FromSeconds( 10.0 );
 					}
 
 					dropped.Delete();
@@ -1601,7 +1601,7 @@ namespace Server.Mobiles
 				return false;
 			}
 
-			UpdateBuyInfo();
+			UpdateBuyInfo( buyer );
 
 			IBuyItemInfo[] buyInfo = this.GetBuyInfo();
 			IShopSellInfo[] info = GetSellInfo();
@@ -2209,7 +2209,7 @@ namespace Server
 		string GetNameFor( Item item );
 
 		//get price for an item which the player is selling
-		int GetSellPriceFor( Item item, int barter );
+		int GetSellPriceFor( Item item, int barter = 0 );
 
 		//get price for an item which the player is buying
 		int GetBuyPriceFor( Item item );

@@ -25,6 +25,7 @@ namespace Server.Accounting
 	public interface IAccount
 	{
 		string Username { get; set; }
+		string Email { get; set; }
 		AccessLevel AccessLevel { get; set; }
 
 		int Length { get; }

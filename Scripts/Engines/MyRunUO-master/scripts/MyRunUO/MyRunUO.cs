@@ -556,7 +556,7 @@ namespace Server.Engines.MyRunUO
                 if (shouldExit)
 				{
                     Console.WriteLine("MyRunUO: Database statements compiled in {0:F2} seconds", (DateTime.UtcNow - this.m_StartTime).TotalSeconds);
-					DateTime rightNow = DateTime.Now;
+					DateTime rightNow = DateTime.UtcNow;
 					TimeStamp(rightNow); // Write a time stamp
 				}
             }

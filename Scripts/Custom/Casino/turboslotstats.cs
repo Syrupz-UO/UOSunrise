@@ -10,7 +10,7 @@ namespace Server.Items
     {
         public enum PaybackType { Loose, Normal, Tight, ExtremelyTight, CasinoCheats, Random }
         private TimeSpan m_UpdateTimer = TimeSpan.FromHours(24); // Minimum time to regenerate the slot array
-        private DateTime m_LastBuild = DateTime.Now;
+        private DateTime m_LastBuild = DateTime.UtcNow;
         private TimeSpan m_TimeOut;
         private bool m_refresh = false;
         ArrayList itemarray = null;
@@ -30,7 +30,7 @@ namespace Server.Items
         [CommandProperty(AccessLevel.GameMaster)]
         public TimeSpan NextRefresh
         {
-            get { return (m_UpdateTimer - (DateTime.Now - m_LastBuild)); }
+            get { return (m_UpdateTimer - (DateTime.UtcNow - m_LastBuild)); }
         }
 
         [Constructable]
@@ -49,7 +49,7 @@ namespace Server.Items
                 from.SendLocalizedMessage(500446); // That is too far away.
                 return;
             }
-            m_TimeOut = DateTime.Now - m_LastBuild;
+            m_TimeOut = DateTime.UtcNow - m_LastBuild;
             if (m_UpdateTimer < m_TimeOut || itemarray == null)
                 BuildArrayList(from);
             else if (turboslotsarray != null)
@@ -75,7 +75,7 @@ namespace Server.Items
             try
             {
                 itemarray = new ArrayList(World.Items.Values);
-                m_LastBuild = DateTime.Now;
+                m_LastBuild = DateTime.UtcNow;
                 if (turboslotsarray == null || turboslotsarray.Count > 0)
                     turboslotsarray.Clear();
                 foreach (Item i in itemarray)

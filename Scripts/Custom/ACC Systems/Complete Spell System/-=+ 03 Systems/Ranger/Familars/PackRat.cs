@@ -62,10 +62,10 @@ namespace Server.ACC.CSS.Systems.Ranger
         {
             base.OnThink();
 
-            if (DateTime.Now < m_NextPickup)
+            if (DateTime.UtcNow < m_NextPickup)
                 return;
 
-            m_NextPickup = DateTime.Now + TimeSpan.FromSeconds(Utility.RandomMinMax(5, 10));
+            m_NextPickup = DateTime.UtcNow + TimeSpan.FromSeconds(Utility.RandomMinMax(5, 10));
 
             Container pack = this.Backpack;
 
@@ -92,7 +92,7 @@ namespace Server.ACC.CSS.Systems.Ranger
                 bool rejected;
                 LRReason reject;
 
-                NextActionTime = DateTime.Now;
+                NextActionTime = DateTime.UtcNow;
 
                 Lift(item, item.Amount, out rejected, out reject);
 

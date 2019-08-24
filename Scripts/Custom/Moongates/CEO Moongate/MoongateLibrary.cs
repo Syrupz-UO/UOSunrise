@@ -169,7 +169,7 @@ namespace Server.Items
 			get
 			{
 				if (m_DecayRunning)
-					return m_DecayEnd - DateTime.Now;
+					return m_DecayEnd - DateTime.UtcNow;
 				else
 					return TimeSpan.FromSeconds(0);
 			}
@@ -281,7 +281,7 @@ namespace Server.Items
 			//bool active, ArrayList runebooks, bool decays, bool decayrunning, Timespan decaytimer, TimeSpan timeleft)
 			try
 			{
-				m.AddToBackpack(new MoongateLibraryDeed(m_Active, m_RuneBooks, m_Decays, m_DecayTime, m_Decays ? m_DecayEnd - DateTime.Now : TimeSpan.FromSeconds(0), m_Cost, m_AmountCollected));
+				m.AddToBackpack(new MoongateLibraryDeed(m_Active, m_RuneBooks, m_Decays, m_DecayTime, m_Decays ? m_DecayEnd - DateTime.UtcNow : TimeSpan.FromSeconds(0), m_Cost, m_AmountCollected));
 			}
 			catch
 			{
@@ -313,7 +313,7 @@ namespace Server.Items
 
 		public void UpdateDate()
 		{
-			m_LastChanged = DateTime.Now;
+			m_LastChanged = DateTime.UtcNow;
 		}
 
 		private class InternalTarget : Target
@@ -493,7 +493,7 @@ namespace Server.Items
 				writer.Write(false);
 			writer.Write(m_DecayRunning);
 			if (m_DecayRunning)
-				writer.Write(this.m_DecayEnd - DateTime.Now);
+				writer.Write(this.m_DecayEnd - DateTime.UtcNow);
 
 			if (m_Active && m_RuneBooks != null && m_RuneBooks.Count > 0)
 			{
@@ -547,7 +547,7 @@ namespace Server.Items
 			m_DecayTimer = new DecayTimer(this, delay);
 			m_DecayTimer.Start();
 			m_DecayRunning = true;
-			m_DecayEnd = DateTime.Now + delay;
+			m_DecayEnd = DateTime.UtcNow + delay;
 		}
 
 		private class DecayTimer : Timer

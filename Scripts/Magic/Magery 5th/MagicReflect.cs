@@ -49,6 +49,11 @@ namespace Server.Spells.Fifth
 
 		private static Hashtable m_Table = new Hashtable();
 
+		public static void Dispel(Mobile m)
+		{
+			m_Table.Remove(m);
+		}
+
 		public override void OnCast()
 		{
 			if ( Caster.MagicDamageAbsorb > 0 )

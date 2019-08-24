@@ -16,10 +16,10 @@ namespace Server.Items
 		{
 			if( m is PlayerMobile )
 			{
-				if ( DateTime.Now >= m_NextTalk && Utility.InRange( m.Location, this.Location, 5 ) )
+				if ( DateTime.UtcNow >= m_NextTalk && Utility.InRange( m.Location, this.Location, 5 ) )
 				{
 					m.PrivateOverheadMessage(MessageType.Regular, 1150, false, this.Name, m.NetState);
-					m_NextTalk = (DateTime.Now + TimeSpan.FromSeconds( 30 ));
+					m_NextTalk = (DateTime.UtcNow + TimeSpan.FromSeconds( 30 ));
 				}
 			}
 		}

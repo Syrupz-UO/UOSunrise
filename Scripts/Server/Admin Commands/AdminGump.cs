@@ -921,7 +921,7 @@ namespace Server.Gumps
                             }
                             else
                             {
-                                TimeSpan remaining = (DateTime.Now - banTime);
+                                TimeSpan remaining = (DateTime.UtcNow - banTime);
 
                                 if (remaining < TimeSpan.Zero)
                                     remaining = TimeSpan.Zero;

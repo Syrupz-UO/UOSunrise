@@ -16,7 +16,7 @@ namespace Server.Items
 		{
 			if( m is PlayerMobile )
 			{
-				if ( DateTime.Now >= m_NextSound && Utility.InRange( m.Location, this.Location, 15 ) )
+				if ( DateTime.UtcNow >= m_NextSound && Utility.InRange( m.Location, this.Location, 15 ) )
 				{
 					if ( Utility.RandomMinMax( 1, 4 ) == 1 )
 					{
@@ -25,7 +25,7 @@ namespace Server.Items
 						Effects.SendLocationEffect( bolt, m.Map, 0x2A4E, 30, 10, 0, 0 );
 						m.PlaySound( sound );
 					}
-					m_NextSound = (DateTime.Now + TimeSpan.FromSeconds( 60 ));
+					m_NextSound = (DateTime.UtcNow + TimeSpan.FromSeconds( 60 ));
 				}
 			}
 		}

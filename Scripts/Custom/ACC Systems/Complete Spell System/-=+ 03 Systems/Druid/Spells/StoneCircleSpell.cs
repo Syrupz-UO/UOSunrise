@@ -192,7 +192,7 @@ namespace Server.ACC.CSS.Systems.Druid
 				m_Timer = new InternalTimer( this, TimeSpan.FromSeconds( 30.0 ) );
 				m_Timer.Start();
 
-				m_End = DateTime.Now + TimeSpan.FromSeconds( 30.0 );
+				m_End = DateTime.UtcNow + TimeSpan.FromSeconds( 30.0 );
 			}
 
 			public InternalItem( Serial serial ) : base( serial )
@@ -210,7 +210,7 @@ namespace Server.ACC.CSS.Systems.Druid
 
 				writer.Write( (int) 1 ); // version
 
-				writer.Write( m_End - DateTime.Now );
+				writer.Write( m_End - DateTime.UtcNow );
 			}
 
 			public override void Deserialize( GenericReader reader )
@@ -228,7 +228,7 @@ namespace Server.ACC.CSS.Systems.Druid
 							m_Timer = new InternalTimer( this, duration );
 							m_Timer.Start();
 
-							m_End = DateTime.Now + duration;
+							m_End = DateTime.UtcNow + duration;
 
 							break;
 						}
@@ -239,7 +239,7 @@ namespace Server.ACC.CSS.Systems.Druid
 							m_Timer = new InternalTimer( this, duration );
 							m_Timer.Start();
 
-							m_End = DateTime.Now + duration;
+							m_End = DateTime.UtcNow + duration;
 
 							break;
 						}

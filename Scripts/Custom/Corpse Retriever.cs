@@ -214,14 +214,14 @@ namespace Server.CorpseSystem
             {
                 m_CorpseMinion = mobile;
 
-                m_End = DateTime.Now + delay;
+                m_End = DateTime.UtcNow + delay;
 
                 Priority = TimerPriority.TwoFiftyMS;
             }
 
             protected override void OnTick()
             {
-                if (m_CorpseMinion.Deleted || DateTime.Now >= m_End)
+                if (m_CorpseMinion.Deleted || DateTime.UtcNow >= m_End)
                 {
                     Effects.SendLocationParticles(EffectItem.Create(m_CorpseMinion.Location, m_CorpseMinion.Map, EffectItem.DefaultDuration), 0x37CC, 1, 40, 97, 3, 9917, 0);
                     //m_CorpseMinion.FixedParticles(0x374A, 1, 15, 9502, 97, 3, (EffectLayer)255);
@@ -652,7 +652,7 @@ namespace Server.CorpseSystem
             TimeSpan lapsed;
             String readOut;
 
-            lapsed = (DateTime.Now).Subtract(c.TimeOfDeath);
+            lapsed = (DateTime.UtcNow).Subtract(c.TimeOfDeath);
             hue = ReadOutHue(lapsed.Minutes);
 
             readOut = "   " + (14 - lapsed.Minutes) + "    Items: "

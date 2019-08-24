@@ -92,7 +92,7 @@ namespace Server.ACC.CSS.Systems.Ranger
 				Name = "Nox Bow";
 
 				double time = ( owner.Skills[SkillName.Archery].Value / 20.0 ) * RangerHuntersAimSpell.GetScalar( owner );
-				m_Expire = DateTime.Now + TimeSpan.FromMinutes( (int)time );
+				m_Expire = DateTime.UtcNow + TimeSpan.FromMinutes( (int)time );
 				m_Timer = new InternalTimer( this, m_Expire );
 
 				m_Timer.Start();
@@ -178,7 +178,7 @@ namespace Server.ACC.CSS.Systems.Ranger
 
 			protected override void OnTick()
 			{
-				if ( DateTime.Now >= m_Expire )
+				if ( DateTime.UtcNow >= m_Expire )
 				{
 					m_Bow.Remove();
 					Stop();
