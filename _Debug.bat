@@ -1,3 +1,3 @@
 @ECHO OFF
-Odyssey.exe -debug
+Sunrise.exe -debug
 @ECHO ON
