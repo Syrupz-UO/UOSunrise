@@ -3845,14 +3845,6 @@
     <Compile Include="Custom\Universal Storage Keys Version 2.0.6\Main Data Management\StoreEntries.cs" />
     <Compile Include="Custom\USAFlagGump.cs" />
     <Compile Include="Custom\Utility\AutoSpeedBoost.cs" />
-    <Compile Include="Custom\Vote - Copy\VoteCommand.cs" />
-    <Compile Include="Custom\Vote - Copy\VoteConfig.cs" />
-    <Compile Include="Custom\Vote - Copy\VoteEvents.cs" />
-    <Compile Include="Custom\Vote - Copy\VoteHelper.cs" />
-    <Compile Include="Custom\Vote - Copy\VoteItem.cs" />
-    <Compile Include="Custom\Vote - Copy\VoteSite.cs" />
-    <Compile Include="Custom\Vote - Copy\VoteStatus.cs" />
-    <Compile Include="Custom\Vote - Copy\VoteStone.cs" />
     <Compile Include="Custom\xmlcustomattacks\TestCustomShield.cs" />
     <Compile Include="Custom\xmlcustomattacks\TestCustomWeapon.cs" />
     <Compile Include="Custom\xmlcustomattacks\XmlAttachments\XmlCustomAttacks.cs" />
