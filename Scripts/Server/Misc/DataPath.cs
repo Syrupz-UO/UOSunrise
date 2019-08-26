@@ -29,7 +29,7 @@ namespace Server.Misc
 			}
 			else if (!Core.Unix)
 			{
-				path = Client.Directories.Find(Directory.Exists);
+				path = Files.LoadDirectory();
 			}
 			else
 			{
@@ -63,9 +63,9 @@ namespace Server.Misc
 			{
 				Core.DataDirectories.Add(CustomPath);
 			}
-			else if (Client.Directories.Count > 0 && !Core.Unix)
+			else if (Files.LoadDirectory() != null && !Core.Unix)
 			{
-				Core.DataDirectories.AddRange(Client.Directories);
+				Core.DataDirectories.Add(Files.LoadDirectory());
 			}
 
 			if (Core.DataDirectories.Count == 0 && !Core.Service)
@@ -76,11 +76,13 @@ namespace Server.Misc
 				Core.DataDirectories.Add(Console.ReadLine());
 			}
 
-			Client.Directories.Clear();
-			Client.Directories.AddRange(Core.DataDirectories);
+			foreach (var path in Core.DataDirectories)
+			{
+				Files.SetMulPath(path);
+			}
 
 			Utility.PushColor(ConsoleColor.DarkYellow);
-			Console.WriteLine("DataPath:\n" + String.Join("\n", Core.DataDirectories[0]));
+			Console.WriteLine("DataPath:\n" + String.Join("\n", Core.DataDirectories));
 			Utility.PopColor();
 		}
 

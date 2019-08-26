@@ -73,9 +73,6 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Ultima">
-      <HintPath>..\Ultima.dll</HintPath>
-    </Reference>
     <Reference Include="UOArchitectInterface">
       <HintPath>..\UOArchitectInterface.dll</HintPath>
     </Reference>
@@ -84,6 +81,10 @@
     <ProjectReference Include="..\Server\Server.csproj">
       <Project>{0b33ceeb-88e1-49a6-8d7d-af6a5a357087}</Project>
       <Name>Server</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ultima\Ultima.csproj">
+      <Project>{e08cfbe4-e013-44ee-8829-426d05bc083f}</Project>
+      <Name>Ultima</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -70,10 +70,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Xml" />
-    <Reference Include="Ultima, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Ultima.dll</HintPath>
-    </Reference>
     <Reference Include="UOArchitectInterface, Version=1.0.1487.35809, Culture=neutral">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\UOArchitectInterface.dll</HintPath>
@@ -224,6 +220,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="runuo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ultima\Ultima.csproj">
+      <Project>{e08cfbe4-e013-44ee-8829-426d05bc083f}</Project>
+      <Name>Ultima</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.Targets" />
   <ProjectExtensions>

@@ -77,16 +77,6 @@ namespace Arya.Auction
 		public static AccessLevel AuctionAdminAcessLevel = AccessLevel.Administrator;
 
 		/// <summary>
-		/// If you don't have a valid UO installation on the server, or have trouble with the system
-		/// specify the location of the cliloc.enu file here:
-		/// 
-		/// Example - Make sure you use the @ before the string:
-		/// 
-		/// public static string ClilocLocation = @"C:\RunUO\Misc\cliloc.enu";
-		/// </summary>
-        public static string ClilocLocation = null;
-
-		/// <summary>
 		/// Set this to false if you don't want to the system to produce a log file in \Logs\Auction.txt
 		/// </summary>
 		public static bool EnableLogging = true;
@@ -168,9 +158,6 @@ namespace Arya.Auction
 
 				else if ( child.TagName == "AuctionAdminAcessLevel" && child.GetAccessLevelValue( out tempAccessLevel ))
 					AuctionAdminAcessLevel = tempAccessLevel;
-
-				else if ( child.TagName == "ClilocLocation" && ( null != child.Text && "" != child.Text ))
-					ClilocLocation = child.Text;
 
 				else if ( child.TagName == "EnableLogging" && child.GetBoolValue( out tempBool ))
 					EnableLogging = tempBool;

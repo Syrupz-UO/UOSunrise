@@ -17,6 +17,9 @@ using Server.Network;
 using Server.Accounting;
 using Server.Items;
 using Server.Mobiles;
+
+using VitaNex;
+
 using Xanthos.Utilities;
 using Xanthos.Interfaces;
 
@@ -126,7 +129,7 @@ namespace Arya.Auction
 				if ( item.Name != null )
 					m_Name = item.Name;
 				else
-					m_Name = m_StringList.Table[ item.LabelNumber ] as string;
+					m_Name = Clilocs.GetString( item.LabelNumber );
 
 				if ( item.Amount > 1 )
 				{
@@ -223,43 +226,8 @@ namespace Arya.Auction
 
 		#region Item Properties
 
-		private static StringList m_StringList;
-
 		static AuctionItem()
 		{
-			Console.WriteLine( "AuctionItem.cs: AuctionItem(): DEBUG: Beginning AuctionItem()" );
-
-			string clilocFolder = null;
-
-			if ( AuctionConfig.ClilocLocation != null && AuctionConfig.ClilocLocation != "" )  // TESTING by Alari - 4/20/2008
-			{
-				Console.WriteLine( "AuctionItem.cs: AuctionItem(): DEBUG: AuctionConfig.ClilocLocation NOT null! Value: \"{0}\"", AuctionConfig.ClilocLocation );
-				clilocFolder = Path.GetDirectoryName( AuctionConfig.ClilocLocation );
-                Ultima.Client.Directories.Insert(0, clilocFolder);
-				Console.WriteLine( "AuctionItem.cs: AuctionItem(): DEBUG: clilocFolder set to {0}", clilocFolder );
-				
-			}
-			else  // TESTING by Alari - 4:20 AM 4/19/2007
-			{
-				Console.WriteLine( "AuctionItem.cs: AuctionItem(): DEBUG: AuctionConfig.ClilocLocation is NULL, proceeding with auto-detection..." );
-				clilocFolder = Core.FindDataFile( "cliloc.enu" );
-				if ( clilocFolder != null )
-				{
-					Ultima.Client.Directories.Insert( 0, clilocFolder );
-					Console.WriteLine( "AuctionItem.cs: AuctionItem(): DEBUG: Cliloc detection worked! {0}", clilocFolder );
-				}
-				else
-				{
-					Console.WriteLine( "AuctionItem.cs: AuctionItem(): DEBUG: Cliloc detection failed." );
-				}
-			}
-
-			m_StringList = new StringList( "ENU" );
-
-			if ( clilocFolder != null )
-			{
-				Ultima.Client.Directories.RemoveAt( 0 );
-			}
 		}
 
 		/// <summary>
@@ -275,66 +243,7 @@ namespace Arya.Auction
 
 			if ( Core.AOS )
 			{
-				#region AoS
-				ObjectPropertyList plist = new ObjectPropertyList( item );
-				item.GetProperties( plist );
-
-				byte[] data = plist.UnderlyingStream.UnderlyingStream.ToArray();
-				ArrayList list = new ArrayList();
-
-				int index = 15; // First localization number index
-
-				while ( true )
-				{
-					uint number = 0;
-
-					if ( index + 4 >= data.Length )
-					{
-						break;
-					}
-
-					number = (uint) ( data[ index++ ] << 24 | data[ index++ ] << 16 | data[ index++ ] << 8 | data[ index++ ] );
-					ushort length = 0;
-
-					if ( index + 2 > data.Length )
-					{
-						break;
-					}
-
-					length = (ushort) ( data[ index++ ] << 8 | data[ index++ ] );
-
-					// Read the string
-					int end = index + length;
-
-					if ( end >= data.Length )
-					{
-						end = data.Length - 1;
-					}
-
-					System.Text.StringBuilder s = new System.Text.StringBuilder();
-					while ( index + 2 <= end + 1 )
-					{
-						short next = (short) ( data[ index++ ] | data[ index++ ] << 8 );
-
-						if ( next == 0 )
-							break;
-
-						s.Append( System.Text.Encoding.Unicode.GetString( BitConverter.GetBytes( next ) ) );
-					}
-
-					list.Add( ComputeProperty( (int) number, s.ToString() ) );
-				}
-
-				System.Text.StringBuilder sb = new System.Text.StringBuilder();
-				sb.Append( "<basefont color=#FFFFFF><p>" );
-
-				foreach( string prop in list )
-				{
-					sb.AppendFormat( "{0}<br>", prop );
-				}
-
-				return sb.ToString();
-				#endregion
+				return item.GetOPLString();
 			}
 			else
 			{
@@ -349,7 +258,7 @@ namespace Arya.Auction
 				}
 				else
 				{
-					sb.AppendFormat( "{0}<br>", Capitalize( m_StringList.Table[ item.LabelNumber ] as string ) );
+					sb.AppendFormat( "{0}<br>", Capitalize( Clilocs.GetString( item.LabelNumber ) ) );
 				}
 
 				// Amount
@@ -508,7 +417,7 @@ namespace Arya.Auction
 					else
 						number = 502258; // The keg is completely full.
 
-					sb.AppendFormat( Capitalize( m_StringList.Table[ number ] as string ) );
+					sb.AppendFormat( Capitalize( Clilocs.GetString( number ) ) );
 					#endregion
 				}
 
@@ -555,7 +464,7 @@ namespace Arya.Auction
 		/// <returns>The translated string</returns>
 		private static string ComputeProperty( int number, string arguments )
 		{
-			string prop = m_StringList.Table[ number ] as string;
+			string prop = Clilocs.GetString( number );
 
 			if ( prop == null )
 			{
@@ -588,7 +497,7 @@ namespace Arya.Auction
 
 						if ( loc != -1 )
 						{
-							args[ i ] = m_StringList.Table[ loc ] as string;
+							args[ i ] = Clilocs.GetString( loc );
 						}
 					}
 
@@ -1187,7 +1096,7 @@ namespace Arya.Auction
 			}
 			else
 			{
-				m_ItemName = m_StringList.Table[ m_Item.LabelNumber ] as string;
+				m_ItemName = Clilocs.GetString( m_Item.LabelNumber );
 			}
 
 			if ( m_Item.Amount > 1 )

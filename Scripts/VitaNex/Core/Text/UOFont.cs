@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 //   Vorspire    _,-'/-'/  UOFont.cs
 //   .      __,-; ,'( '/
 //    \.    `-.__`-._`:_,-._       _ , . ``
@@ -416,7 +416,11 @@ namespace VitaNex.Text
 
 	public sealed class UOFont
 	{
+#if MONO
+		public const PixelFormat PixelFormat = System.Drawing.Imaging.PixelFormat.Format16bppRgb555;
+#else
 		public const PixelFormat PixelFormat = System.Drawing.Imaging.PixelFormat.Format16bppArgb1555;
+#endif
 
 		public static Size DefaultCharSize = new Size(8, 10);
 
