@@ -438,6 +438,7 @@ namespace VitaNex.Text
 			}
 		}
 
+		[CallPriority(int.MaxValue - ushort.MaxValue)]
 		public static void Configure()
 		{ }
 
