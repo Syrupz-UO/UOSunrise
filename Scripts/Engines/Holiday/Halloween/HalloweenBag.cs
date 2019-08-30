@@ -48,7 +48,7 @@ namespace Server.Items
 			}}
 		}
 		
-		public override void OnRemoved( object parent )
+		public override void OnRemoved( IEntity parent )
 		{      	
 			Mobile owner = parent as Mobile;
 	

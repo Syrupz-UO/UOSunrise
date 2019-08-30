@@ -170,8 +170,6 @@ namespace Server.Menus.Questions
 				m_Mobile.SendLocalizedMessage( 1010589 ); // You will be teleported within the next two minutes.
 
 				new TeleportTimer( m_Mobile, entry, TimeSpan.FromSeconds( 10.0 + (Utility.RandomDouble() * 110.0) ), m_Map ).Start();
-
-				m_Mobile.UsedStuckMenu();
 			}
 			else
 			{

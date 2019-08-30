@@ -11,8 +11,8 @@ PHONY : default build clean run
 default: run
 
 debug: 
-	${MCS} -target:library -out:${CURPATH}/Ultima.dll -r:${REFS} -nowarn:${NOWARNS} -d:DEBUG -d:MONO -nologo -debug -unsafe -recurse:${SDKPATH}/*.cs
-	${MCS} -win32icon:${SRVPATH}/runuo.ico -r:${CURPATH}/Ultima.dll,${REFS} -nowarn:${NOWARNS} -target:exe -out:${CURPATH}/${EXENAME}.exe -d:DEBUG -d:MONO -nologo -debug -unsafe -recurse:${SRVPATH}/*.cs
+	${MCS} -target:library -out:${CURPATH}/Ultima.dll -r:${REFS} -nowarn:${NOWARNS} -d:DEBUG -d:MONO -d:NEWTIMERS -d:NEWPARENT -nologo -debug -unsafe -recurse:${SDKPATH}/*.cs
+	${MCS} -win32icon:${SRVPATH}/runuo.ico -r:${CURPATH}/Ultima.dll,${REFS} -nowarn:${NOWARNS} -target:exe -out:${CURPATH}/${EXENAME}.exe -d:DEBUG -d:MONO -d:NEWTIMERS -d:NEWPARENT -nologo -debug -unsafe -recurse:${SRVPATH}/*.cs
 	sed -i.bak -e 's/<!--//g; s/-->//g' ${EXENAME}.exe.config
 
 run: build
@@ -29,10 +29,10 @@ clean:
 	rm -f *.bin
 
 Ultima.dll: Ultima/*.cs
-	${MCS} -target:library -out:${CURPATH}/Ultima.dll -r:${REFS} -nowarn:${NOWARNS} -d:MONO -nologo -optimize -unsafe -recurse:${SDKPATH}/*.cs
+	${MCS} -target:library -out:${CURPATH}/Ultima.dll -r:${REFS} -nowarn:${NOWARNS} -d:MONO -d:NEWTIMERS -d:NEWPARENT -nologo -optimize -unsafe -recurse:${SDKPATH}/*.cs
 
 ${EXENAME}.exe: Ultima.dll Server/*.cs
-	${MCS} -win32icon:${SRVPATH}/runuo.ico -r:${CURPATH}/Ultima.dll,${REFS} -nowarn:${NOWARNS} -target:exe -out:${CURPATH}/${EXENAME}.exe -d:MONO -nologo -optimize -unsafe -recurse:${SRVPATH}/*.cs
+	${MCS} -win32icon:${SRVPATH}/runuo.ico -r:${CURPATH}/Ultima.dll,${REFS} -nowarn:${NOWARNS} -target:exe -out:${CURPATH}/${EXENAME}.exe -d:MONO -d:NEWTIMERS -d:NEWPARENT -nologo -optimize -unsafe -recurse:${SRVPATH}/*.cs
 
 ${EXENAME}.sh: ${EXENAME}.exe
 	echo "#!/bin/sh" > ${CURPATH}/${EXENAME}.sh

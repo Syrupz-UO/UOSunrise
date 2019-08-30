@@ -92,7 +92,7 @@ namespace Server.ACC.CSS.Systems.Ranger
                 bool rejected;
                 LRReason reject;
 
-                NextActionTime = DateTime.UtcNow;
+                NextActionTime = Core.TickCount;
 
                 Lift(item, item.Amount, out rejected, out reject);
 

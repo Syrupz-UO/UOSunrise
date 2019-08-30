@@ -157,7 +157,7 @@ XmlSockets.ConfigureRandom(this, 2.0, 0.1, 0.5, 3.0, 15.0, 50.0);
 			m_HitPoints = m_MaxHitPoints = Utility.RandomMinMax( InitMinHits, InitMaxHits );
 		}
 
-		public override void OnAdded( object parent )
+		public override void OnAdded( IEntity parent )
 		{
 			if ( Core.AOS && parent is Mobile )
 			{
@@ -201,7 +201,7 @@ XmlSockets.ConfigureRandom(this, 2.0, 0.1, 0.5, 3.0, 15.0, 50.0);
 			return true;
 		}
 
-		public override void OnRemoved( object parent )
+		public override void OnRemoved( IEntity parent )
 		{
 			if ( Core.AOS && parent is Mobile )
 			{

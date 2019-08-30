@@ -247,7 +247,17 @@ namespace Server.Items
 
 			Effects.SendLocationEffect(loc, map, 0x36B0, 9, 10, 0, 0);
 
-			IPooledEnumerable eable = LeveledExplosion ? map.GetObjectsInRange( loc, ExplosionRange ) : map.GetMobilesInRange( loc, ExplosionRange );
+			IPooledEnumerable eable;
+
+			if (LeveledExplosion)
+			{
+				eable = map.GetObjectsInRange(loc, ExplosionRange);
+			}
+			else
+			{
+				eable = map.GetMobilesInRange(loc, ExplosionRange);
+			}
+
 			ArrayList toExplode = new ArrayList();
 
 			int toDamage = 0;

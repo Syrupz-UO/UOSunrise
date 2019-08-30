@@ -85,21 +85,24 @@ namespace Server.Items
          return base.OnEquip(from);
       }
 
-      public override void OnRemoved( Object o )
+      public override void OnRemoved(IEntity o)
       {
-      if( o is Mobile )
-      {
-          ((Mobile)o).NameMod = null;
-      }
-      if( o is Mobile && ((Mobile)o).Kills >= 5)
-               {
-               ((Mobile)o).Criminal = true;
-                }
-      if( o is Mobile && ((Mobile)o).GuildTitle != null )
-               {
-          ((Mobile)o).DisplayGuildTitle = true;
-                }
-      base.OnRemoved( o );
+         if (o is Mobile)
+         {
+            ((Mobile)o).NameMod = null;
+         }
+
+         if (o is Mobile && ((Mobile)o).Kills >= 5)
+         {
+            ((Mobile)o).Criminal = true;
+         }
+
+         if (o is Mobile && ((Mobile)o).GuildTitle != null)
+         {
+            ((Mobile)o).DisplayGuildTitle = true;
+         }
+
+         base.OnRemoved(o);
       }
 
       public StevesRobe( Serial serial ) : base( serial )

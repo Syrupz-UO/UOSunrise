@@ -89,7 +89,7 @@ namespace Server.ACC.CSS.Systems.Druid
 				bool rejected;
 				LRReason reject;
 
-				NextActionTime = DateTime.UtcNow;
+				NextActionTime = Core.TickCount;
 
 				Lift( item, item.Amount, out rejected, out reject );
 

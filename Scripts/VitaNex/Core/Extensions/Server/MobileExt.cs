@@ -1,4 +1,4 @@
-﻿#region Header
+#region Header
 //   Vorspire    _,-'/-'/  MobileExt.cs
 //   .      __,-; ,'( '/
 //    \.    `-.__`-._`:_,-._       _ , . ``
@@ -447,7 +447,7 @@ namespace Server
 
 		public static void TryParalyze(this Mobile m, TimeSpan duration, TimerStateCallback<Mobile> callback = null)
 		{
-			m.Paralyze(m, duration.TotalSeconds);
+			m.Paralyze(duration);
 
 			if (callback != null)
 			{

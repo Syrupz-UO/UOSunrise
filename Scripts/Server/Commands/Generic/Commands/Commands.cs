@@ -571,7 +571,7 @@ namespace Server.Commands.Generic
 			{
 				CommandLogging.WriteLine( e.Mobile, "{0} {1} restocking {2}", e.Mobile.AccessLevel, CommandLogging.Format( e.Mobile ), CommandLogging.Format( obj ) );
 
-				((BaseVendor)obj).Restock();
+				((BaseVendor)obj).Restock( e.Mobile );
 				AddResponse( "The vendor has been restocked." );
 			}
 			else

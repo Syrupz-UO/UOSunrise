@@ -498,7 +498,7 @@ namespace Server.Items
 			from.Send( new DisplayEquipmentInfo( this, eqInfo ) );
 		}
 
-		public override void OnAdded( object parent )
+		public override void OnAdded( IEntity parent )
 		{
 			if ( Core.AOS && parent is Mobile )
 			{
@@ -528,7 +528,7 @@ namespace Server.Items
 			}
 		}
 
-		public override void OnRemoved( object parent )
+		public override void OnRemoved( IEntity parent )
 		{
 			if ( Core.AOS && parent is Mobile )
 			{

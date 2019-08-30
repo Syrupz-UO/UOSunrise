@@ -27,7 +27,7 @@ namespace Server.SkillHandlers
 			from.RevealingAction();
 			from.SendLocalizedMessage( 1049541 ); // Choose the target for your song of discordance.
 			from.Target = new DiscordanceTarget( from, instrument );
-			from.NextSkillTime = DateTime.UtcNow + TimeSpan.FromSeconds( 6.0 );
+			from.NextSkillTime = Core.TickCount + 6000;
 		}
 
 		private class DiscordanceInfo
@@ -152,7 +152,7 @@ namespace Server.SkillHandlers
 			protected override void OnTarget( Mobile from, object target )
 			{
 				from.RevealingAction();
-				from.NextSkillTime = DateTime.UtcNow + TimeSpan.FromSeconds( 1.0 );
+				from.NextSkillTime = Core.TickCount + 1000;
 
 				if ( m_Instrument.Parent != from && !m_Instrument.IsChildOf( from.Backpack ) )
 				{
@@ -230,7 +230,7 @@ namespace Server.SkillHandlers
 							m_Instrument.ConsumeUse( from );
 						}
 
-						from.NextSkillTime = DateTime.UtcNow + TimeSpan.FromSeconds( 12.0 );
+						from.NextSkillTime = Core.TickCount + 12000;
 					}
 					else
 					{

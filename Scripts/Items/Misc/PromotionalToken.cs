@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Server;
 using Server.Gumps;
 using Server.Network;
@@ -44,7 +44,7 @@ namespace Server.Items
 			}
 		}
 
-		public override void OnRemoved( object parent )
+		public override void OnRemoved( IEntity parent )
 		{
 			Mobile m = null;
 

@@ -187,7 +187,8 @@ namespace Server.Mobiles
 			}
 		}
 
-		public BaseVendor( string title ) : base( AIType.AI_Melee, FightMode.Closest, 15, 1, 0.1, 0.2 ) // WIZARD
+		public BaseVendor( string title ) 
+			: base( AIType.AI_Melee, FightMode.Closest, 15, 1, 0.1, 0.2 ) // WIZARD
 		{
 			LoadSBInfo();
 
@@ -215,7 +216,8 @@ namespace Server.Mobiles
 			m_LastRestock = DateTime.UtcNow;
 		}
 
-		public BaseVendor( Serial serial ): base( serial )
+		public BaseVendor( Serial serial )
+			: base( serial )
 		{
 		}
 
@@ -501,26 +503,26 @@ namespace Server.Mobiles
 				}
 			}
 
-				// WIZARD FOR THE GOLD STONE LIMITER ////////////////////////////////////
-				int money1 = 30;
-				int money2 = 120;
+			// WIZARD FOR THE GOLD STONE LIMITER ////////////////////////////////////
+			int money1 = 30;
+			int money2 = 120;
 
-				double w1 = money1 * (DifficultyLevel.GetGoldCutRate() * .01);
-				double w2 = money2 * (DifficultyLevel.GetGoldCutRate() * .01);
+			double w1 = money1 * (DifficultyLevel.GetGoldCutRate() * .01);
+			double w2 = money2 * (DifficultyLevel.GetGoldCutRate() * .01);
 
-				money1 = (int)w1;
-				money2 = (int)w2;
-				/////////////////////////////////////////////////////////////////////////
+			money1 = (int)w1;
+			money2 = (int)w2;
+			/////////////////////////////////////////////////////////////////////////
 			PackGold( money1, money2 );
 		}
 
-		public virtual void Restock()
+		public virtual void Restock( Mobile from )
 		{
 			m_LastRestock = DateTime.UtcNow;
 
 			LoadSBInfo();
 
-			//IBuyItemInfo[] buyInfo = this.GetBuyInfo();
+			//IBuyItemInfo[] buyInfo = this.GetBuyInfo( from );
 
 			// WIZARD
 			Container cont = this.Backpack;
@@ -633,7 +635,7 @@ namespace Server.Mobiles
 					( from.Region.IsPartOf( typeof( PublicRegion ) ) && DateTime.UtcNow - m_LastRestock > RestockDelayFull ) || 
 					( this is BaseGuildmaster && DateTime.UtcNow - m_LastRestock > RestockDelayFull ) 
 			) // WIZARD WANTS PUBLIC REGION TO RESTOCK QUICKER
-				Restock();
+				Restock( from );
 
 			UpdateBuyInfo( from );
 
@@ -822,12 +824,12 @@ namespace Server.Mobiles
 
 					foreach ( Item item in items )
 					{
-						LockableContainer parentcon = item.ParentEntity as LockableContainer;
-
 						if ( item is Container && ( (Container)item ).Items.Count != 0 )
 							continue;
 
-						if ( parentcon != null && parentcon.Locked == true )
+						LockableContainer parentcon = item.Parent as LockableContainer;
+
+						if ( parentcon != null && parentcon.Locked )
 							continue;
 
 						if ( item.IsStandardLoot() && item.Movable && ssi.IsSellable( item ) )
@@ -864,615 +866,904 @@ namespace Server.Mobiles
 			}
 		}
 
-		public override bool OnDragDrop( Mobile from, Item dropped )
+		public override bool OnDragDrop(Mobile from, Item dropped)
 		{
-			if ( from.Blessed )
+			if (from.Blessed)
 			{
 				string sSay = "I cannot deal with you while you are in that state.";
 				this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sSay, from.NetState);
 				return false;
 			}
-			else if ( DifficultyLevel.GetMyEnemies( from, this, false ) == true )
+
+			if (DifficultyLevel.GetMyEnemies(from, this, false))
 			{
 				string sSay = "I don't think I should accept that from you.";
 				this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sSay, from.NetState);
 				return false;
 			}
-			else
+
+			int RelicValue = 0;
+
+			if (Server.Misc.RelicItems.RelicValue(dropped, this) > 0)
 			{
-				PlayerMobile pm = (PlayerMobile)from;
+				RelicValue = Server.Misc.RelicItems.RelicValue(dropped, this);
+			}
+			else if (dropped is GolemManual && (this is Tinker || this is TinkerGuildmaster))
+			{
+				return Server.Items.GolemManual.ProcessGolemBook(from, this, dropped);
+			}
+			else if (dropped is RobotSchematics && (this is Tinker || this is TinkerGuildmaster))
+			{
+				return Server.Items.RobotSchematics.ProcessRobotBook(from, this, dropped);
+			}
+			else if (dropped is AlienEgg && (this is AnimalTrainer || this is Veterinarian))
+			{
+				return Server.Items.AlienEgg.ProcessAlienEgg(from, this, dropped);
+			}
+			else if (dropped is DragonEgg && (this is AnimalTrainer || this is Veterinarian))
+			{
+				return Server.Items.DragonEgg.ProcessDragonEgg(from, this, dropped);
+			}
 
-				int RelicValue = 0;
+			if (RelicValue > 0)
+			{
+				int GuildMember = 0;
 
-				if ( Server.Misc.RelicItems.RelicValue( dropped, this ) > 0 )
+				int gBonus = (int)Math.Round(((from.Skills[SkillName.ItemID].Value * RelicValue) / 100), 0);
+
+				if (this.NpcGuild != NpcGuild.None && from is PlayerMobile &&
+					this.NpcGuild == ((PlayerMobile)from).NpcGuild)
 				{
-					RelicValue = Server.Misc.RelicItems.RelicValue( dropped, this );
+					gBonus = gBonus + (int)Math.Round(((100.00 * RelicValue) / 100), 0);
+					GuildMember = 1;
+				} // FOR GUILD MEMBERS
+
+				if (BeggingPose(from) > 0 && GuildMember == 0) // LET US SEE IF THEY ARE BEGGING - WIZARD
+				{
+					Titles.AwardKarma(from, -BeggingKarma(from), true);
+					from.Say(BeggingWords());
+					gBonus = (int)Math.Round(((from.Skills[SkillName.Begging].Value * RelicValue) / 100), 0);
 				}
-				else if ( dropped is GolemManual && ( this is Tinker || this is TinkerGuildmaster ) )
+
+				gBonus = gBonus + RelicValue;
+				from.SendSound(0x3D);
+				from.AddToBackpack(new Gold(gBonus));
+				string sMessage = "";
+				switch (Utility.RandomMinMax(0, 9))
 				{
-					Server.Items.GolemManual.ProcessGolemBook( from, this, dropped );
-				}
-				else if ( dropped is RobotSchematics && ( this is Tinker || this is TinkerGuildmaster ) )
-				{
-					Server.Items.RobotSchematics.ProcessRobotBook( from, this, dropped );
-				}
-				else if ( dropped is AlienEgg && ( this is AnimalTrainer || this is Veterinarian ) )
-				{
-					Server.Items.AlienEgg.ProcessAlienEgg( from, this, dropped );
-				}
-				else if ( dropped is DragonEgg && ( this is AnimalTrainer || this is Veterinarian ) )
-				{
-					Server.Items.DragonEgg.ProcessDragonEgg( from, this, dropped );
+					case 0:
+						sMessage = "I have been looking for something like this. Here is " + gBonus.ToString() +
+								   " gold for you.";
+						break;
+					case 1:
+						sMessage = "I have heard of this item before. Here is " + gBonus.ToString() + " gold for you.";
+						break;
+					case 2:
+						sMessage = "I never thought I would see one of these. Here is " + gBonus.ToString() +
+								   " gold for you.";
+						break;
+					case 3:
+						sMessage = "I have never seen one of these. Here is " + gBonus.ToString() + " gold for you.";
+						break;
+					case 4:
+						sMessage = "What a rare item. Here is " + gBonus.ToString() + " gold for you.";
+						break;
+					case 5:
+						sMessage = "This is quite rare. Here is " + gBonus.ToString() + " gold for you.";
+						break;
+					case 6:
+						sMessage = "This will go nicely in my collection. Here is " + gBonus.ToString() +
+								   " gold for you.";
+						break;
+					case 7:
+						sMessage = "I have only heard tales about such items. Here is " + gBonus.ToString() +
+								   " gold for you.";
+						break;
+					case 8:
+						sMessage = "How did you come across this? Here is " + gBonus.ToString() + " gold for you.";
+						break;
+					case 9:
+						sMessage = "Where did you find this? Here is " + gBonus.ToString() + " gold for you.";
+						break;
 				}
 
-				if ( RelicValue > 0 )
+				this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
+				dropped.Delete();
+				return true;
+			}
+
+			if (dropped is Gold && this is Mapmaker)
+			{
+				if (dropped.Amount == 1000)
 				{
-					int GuildMember = 0;
+					if (from.Map == Map.Trammel && from.X > 5124 && from.Y > 3041 && from.X < 6147 && from.Y < 4092)
+						from.AddToBackpack(new WorldMapAmbrosia());
+					else if (from.Map == Map.Trammel && from.X > 859 && from.Y > 3181 && from.X < 2133 && from.Y < 4092)
+						from.AddToBackpack(new WorldMapUmber());
+					else if (from.Map == Map.Malas && from.X < 1870)
+						from.AddToBackpack(new WorldMapSerpent());
+					else if (from.Map == Map.Tokuno)
+						from.AddToBackpack(new WorldMapIslesOfDread());
+					else if (from.Map == Map.TerMur && from.X > 132 && from.Y > 4 && from.X < 1165 && from.Y < 1798)
+						from.AddToBackpack(new WorldMapSavage());
+					else if (from.Map == Map.Trammel && from.X < 6125 && from.Y < 824 && from.X < 7175 && from.Y < 2746)
+						from.AddToBackpack(new WorldMapBottle());
+					else if (from.Map == Map.Felucca && from.X < 5420 && from.Y < 4096)
+						from.AddToBackpack(new WorldMapLodor());
+					else
+						from.AddToBackpack(new WorldMapSosaria());
 
-					int gBonus = (int)Math.Round((( from.Skills[SkillName.ItemID].Value * RelicValue ) / 100), 0);
-
-					if ( this.NpcGuild != NpcGuild.None && this.NpcGuild == pm.NpcGuild ){ gBonus = gBonus + (int)Math.Round((( 100.00 * RelicValue ) / 100), 0); GuildMember = 1; } // FOR GUILD MEMBERS
-
-					if ( BeggingPose(from) > 0 && GuildMember == 0 ) // LET US SEE IF THEY ARE BEGGING - WIZARD
-					{
-						Titles.AwardKarma( from, -BeggingKarma( from ), true );
-						from.Say( BeggingWords() );
-						gBonus = (int)Math.Round((( from.Skills[SkillName.Begging].Value * RelicValue ) / 100), 0);
-					}
-					gBonus = gBonus + RelicValue;
-					from.SendSound( 0x3D );
-					from.AddToBackpack ( new Gold( gBonus ) );
-					string sMessage = "";
-					switch ( Utility.RandomMinMax( 0, 9 ) )
-					{
-						case 0:	sMessage = "I have been looking for something like this. Here is " + gBonus.ToString() + " gold for you.";		break;
-						case 1:	sMessage = "I have heard of this item before. Here is " + gBonus.ToString() + " gold for you.";		break;
-						case 2:	sMessage = "I never thought I would see one of these. Here is " + gBonus.ToString() + " gold for you.";		break;
-						case 3:	sMessage = "I have never seen one of these. Here is " + gBonus.ToString() + " gold for you.";		break;
-						case 4:	sMessage = "What a rare item. Here is " + gBonus.ToString() + " gold for you.";		break;
-						case 5:	sMessage = "This is quite rare. Here is " + gBonus.ToString() + " gold for you.";		break;
-						case 6:	sMessage = "This will go nicely in my collection. Here is " + gBonus.ToString() + " gold for you.";		break;
-						case 7:	sMessage = "I have only heard tales about such items. Here is " + gBonus.ToString() + " gold for you.";		break;
-						case 8:	sMessage = "How did you come across this? Here is " + gBonus.ToString() + " gold for you.";		break;
-						case 9:	sMessage = "Where did you find this? Here is " + gBonus.ToString() + " gold for you.";		break;
-					}
+					string sMessage = "Thank you. Here is your world map.";
 					this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
 					dropped.Delete();
 					return true;
 				}
-				else if ( dropped is Gold && this is Mapmaker )
-				{
-					if ( dropped.Amount == 1000 )
-					{
-						if ( from.Map == Map.Trammel && from.X>5124 && from.Y>3041 && from.X<6147 && from.Y<4092 )
-							from.AddToBackpack ( new WorldMapAmbrosia() );
-						else if ( from.Map == Map.Trammel && from.X>859 && from.Y>3181 && from.X<2133 && from.Y<4092 )
-							from.AddToBackpack ( new WorldMapUmber() );
-						else if ( from.Map == Map.Malas && from.X<1870 )
-							from.AddToBackpack ( new WorldMapSerpent() );
-						else if ( from.Map == Map.Tokuno )
-							from.AddToBackpack ( new WorldMapIslesOfDread() );
-						else if ( from.Map == Map.TerMur && from.X>132 && from.Y>4 && from.X<1165 && from.Y<1798 )
-							from.AddToBackpack ( new WorldMapSavage() );
-						else if ( from.Map == Map.Trammel && from.X<6125 && from.Y<824 && from.X<7175 && from.Y<2746 )
-							from.AddToBackpack ( new WorldMapBottle() );
-						else if ( from.Map == Map.Felucca && from.X<5420 && from.Y<4096)
-							from.AddToBackpack ( new WorldMapLodor() );
-						else
-							from.AddToBackpack ( new WorldMapSosaria() );
 
-						string sMessage = "Thank you. Here is your world map.";
-						this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
-						dropped.Delete();
-						return true;
-					}
-					return false;
+				return false;
+			}
+
+			if (dropped is DugUpCoal && this is Blacksmith &&
+				Server.Misc.Worlds.GetMyWorld(from.Map, from.Location, from.X, from.Y) == "the Savaged Empire")
+			{
+				string sMessage = "";
+
+				if (!(Server.Items.DugUpCoal.CheckForDugUpCoal(from, dropped.Amount, false)))
+				{
+					sMessage = "You don't have enought iron ore for me to make steel from this.";
+					this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
 				}
-				else if ( dropped is DugUpCoal && this is Blacksmith && Server.Misc.Worlds.GetMyWorld( from.Map, from.Location, from.X, from.Y ) == "the Savaged Empire" )
+				else
 				{
-					string sMessage = "";
+					sMessage = "Let's turn this into bars of steel you can use.";
+					Server.Items.DugUpCoal.CheckForDugUpCoal(from, dropped.Amount, true);
+					from.AddToBackpack(new SteelIngot(dropped.Amount));
+					dropped.Delete();
+					from.PlaySound(0x208);
+					this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
+					return true;
+				}
 
-					if ( !(Server.Items.DugUpCoal.CheckForDugUpCoal( from, dropped.Amount, false ) ) )
+				return false;
+			}
+
+			if (dropped is DugUpZinc && this is Blacksmith &&
+				Server.Misc.Worlds.GetMyWorld(from.Map, from.Location, from.X, from.Y) == "the Island of Umber Veil")
+			{
+				string sMessage = "";
+
+				if (!(Server.Items.DugUpZinc.CheckForDugUpZinc(from, dropped.Amount, false)))
+				{
+					sMessage = "You don't have enought iron ore for me to make brass from this.";
+					this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
+				}
+				else
+				{
+					sMessage = "Let's turn this into bars of brass you can use.";
+					Server.Items.DugUpZinc.CheckForDugUpZinc(from, dropped.Amount, true);
+					from.AddToBackpack(new BrassIngot(dropped.Amount));
+					dropped.Delete();
+					from.PlaySound(0x208);
+					this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
+					return true;
+				}
+
+				return false;
+			}
+
+			if ((dropped is DDCopper || dropped is DDSilver) && (this is Minter || this is Banker))
+			{
+				int nRate = 5;
+				string sCoin = "silver";
+				if (dropped is DDCopper)
+				{
+					nRate = 10;
+					sCoin = "copper";
+				}
+
+				int nCoins = dropped.Amount;
+				int nGold = (int)Math.Floor((decimal)(dropped.Amount / nRate));
+				int nChange = dropped.Amount - (nGold * nRate);
+
+				string sMessage = "Sorry, you do not have enough here to exchange for even a single gold coin.";
+
+				if ((nGold > 0) && (nChange > 0))
+				{
+					sMessage = "Here is " + nGold.ToString() + " gold for you, and " + nChange.ToString() + " " +
+							   sCoin + " back in change.";
+					from.AddToBackpack(new Gold(nGold));
+				}
+				else if (nGold > 0)
+				{
+					sMessage = "Here is " + nGold.ToString() + " gold for you.";
+					from.AddToBackpack(new Gold(nGold));
+				}
+
+				this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
+
+				if ((nChange > 0) && (dropped is DDCopper))
+				{
+					from.AddToBackpack(new DDCopper(nChange));
+				}
+				else if ((nChange > 0) && (dropped is DDSilver))
+				{
+					from.AddToBackpack(new DDSilver(nChange));
+				}
+
+				dropped.Delete();
+				return true;
+			}
+
+			if ((dropped is DDXormite) && (this is Minter || this is Banker))
+			{
+				int nGold = dropped.Amount * 3;
+
+				string sMessage = "Here is " + nGold.ToString() + " gold for you.";
+				from.AddToBackpack(new Gold(nGold));
+
+				this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
+
+				dropped.Delete();
+				return true;
+			}
+
+			if ((dropped is Crystals) && (this is Minter || this is Banker))
+			{
+				int nGold = dropped.Amount * 5;
+
+				string sMessage = "Here is " + nGold.ToString() + " gold for you.";
+				from.AddToBackpack(new Gold(nGold));
+
+				this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
+
+				dropped.Delete();
+				return true;
+			}
+
+			if ((dropped is DDJewels) && (this is Minter || this is Banker))
+			{
+				int nGold = dropped.Amount * 2;
+
+				string sMessage = "Here is " + nGold.ToString() + " gold for you.";
+				from.AddToBackpack(new Gold(nGold));
+
+				this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
+
+				dropped.Delete();
+				return true;
+			}
+
+			if (dropped is BottleOfParts && (this is Alchemist || this is Witches))
+			{
+				int GuildMember = 0;
+
+				int iForensics = (int)from.Skills[SkillName.Forensics].Value / 3;
+				int iAnatomy = (int)from.Skills[SkillName.Anatomy].Value / 3;
+				int nBottle = Utility.RandomMinMax(2, 10) + Utility.RandomMinMax(0, iForensics) +
+							  Utility.RandomMinMax(0, iAnatomy);
+
+				int gBonus = (int)Math.Round(((from.Skills[SkillName.ItemID].Value * nBottle) / 100), 0);
+
+				if (this.NpcGuild != NpcGuild.None && from is PlayerMobile &&
+					this.NpcGuild == ((PlayerMobile)from).NpcGuild)
+				{
+					gBonus = gBonus + (int)Math.Round(((100.0 * nBottle) / 100), 0);
+					GuildMember = 1;
+				} // FOR GUILD MEMBERS
+
+				if (BeggingPose(from) > 0 && GuildMember == 0) // LET US SEE IF THEY ARE BEGGING - WIZARD
+				{
+					Titles.AwardKarma(from, -BeggingKarma(from), true);
+					from.Say(BeggingWords());
+					gBonus = (int)Math.Round(((from.Skills[SkillName.Begging].Value * nBottle) / 100), 0);
+				}
+
+				gBonus = (gBonus + nBottle) * dropped.Amount;
+				from.AddToBackpack(new Gold(gBonus));
+				string sMessage = "";
+				switch (Utility.RandomMinMax(0, 9))
+				{
+					case 0:
+						sMessage = "Hmmmm...I needed some of this. Here is " + gBonus.ToString() + " gold for you.";
+						break;
+					case 1:
+						sMessage = "I'll take that. Here is " + gBonus.ToString() + " gold for you.";
+						break;
+					case 2:
+						sMessage = "I assume this is fresh? Here is " + gBonus.ToString() + " gold for you.";
+						break;
+					case 3:
+						sMessage = "You are better than some of the undertakers I know. Here is " + gBonus.ToString() +
+								   " gold for you.";
+						break;
+					case 4:
+						sMessage = "This is a good bottle you found here. Here is " + gBonus.ToString() +
+								   " gold for you.";
+						break;
+					case 5:
+						sMessage = "Keep this up and my lab will be stocked. Here is " + gBonus.ToString() +
+								   " gold for you.";
+						break;
+					case 6:
+						sMessage = "How did you manage to get this bottle? Here is " + gBonus.ToString() +
+								   " gold for you.";
+						break;
+					case 7:
+						sMessage = "You seem to be good with a surgeons knife. Here is " + gBonus.ToString() +
+								   " gold for you.";
+						break;
+					case 8:
+						sMessage = "I have seen bottles like this before. Here is " + gBonus.ToString() +
+								   " gold for you.";
+						break;
+					case 9:
+						sMessage = "I have never seen such a nice bottle of this before. Here is " + gBonus.ToString() +
+								   " gold for you.";
+						break;
+				}
+
+				this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
+				dropped.Delete();
+				return true;
+			}
+
+			if (this is ThiefGuildmaster && from is PlayerMobile &&
+				((PlayerMobile)from).NpcGuild == NpcGuild.ThievesGuild && ( // TOMB RAIDING
+					dropped is RockArtifact || dropped is SkullCandleArtifact || dropped is BottleArtifact ||
+					dropped is DamagedBooksArtifact || dropped is StretchedHideArtifact || dropped is BrazierArtifact ||
+					dropped is LampPostArtifact || dropped is BooksNorthArtifact || dropped is BooksWestArtifact ||
+					dropped is BooksFaceDownArtifact || dropped is StuddedLeggingsArtifact ||
+					dropped is EggCaseArtifact || dropped is SkinnedGoatArtifact ||
+					dropped is GruesomeStandardArtifact || dropped is BloodyWaterArtifact ||
+					dropped is TarotCardsArtifact || dropped is BackpackArtifact || dropped is StuddedTunicArtifact ||
+					dropped is CocoonArtifact || dropped is SkinnedDeerArtifact || dropped is SaddleArtifact ||
+					dropped is LeatherTunicArtifact || dropped is RuinedPaintingArtifact))
+			{
+				int TombRaid = 8000;
+
+				if (dropped is RockArtifact || dropped is SkullCandleArtifact || dropped is BottleArtifact ||
+					dropped is DamagedBooksArtifact)
+				{
+					TombRaid = 5000;
+				}
+				else if (dropped is StretchedHideArtifact || dropped is BrazierArtifact)
+				{
+					TombRaid = 6000;
+				}
+				else if (dropped is LampPostArtifact || dropped is BooksNorthArtifact || dropped is BooksWestArtifact ||
+						 dropped is BooksFaceDownArtifact)
+				{
+					TombRaid = 7000;
+				}
+				else if (dropped is StuddedTunicArtifact || dropped is CocoonArtifact)
+				{
+					TombRaid = 9000;
+				}
+				else if (dropped is SkinnedDeerArtifact)
+				{
+					TombRaid = 10000;
+				}
+				else if (dropped is SaddleArtifact || dropped is LeatherTunicArtifact)
+				{
+					TombRaid = 11000;
+				}
+				else if (dropped is RuinedPaintingArtifact)
+				{
+					TombRaid = 12000;
+				}
+
+				from.AddToBackpack(new Gold(TombRaid));
+				string sMessage = "";
+				switch (Utility.RandomMinMax(0, 9))
+				{
+					case 0:
+						sMessage = "Hmmmm...someone has been busy. Here is " + TombRaid.ToString() + " gold for you.";
+						break;
+					case 1:
+						sMessage = "I'll take that. Here is " + TombRaid.ToString() + " gold for you.";
+						break;
+					case 2:
+						sMessage = "I assume the traps were well avoided? Here is " + TombRaid.ToString() +
+								   " gold for you.";
+						break;
+					case 3:
+						sMessage = "You are better than some of the thieves I have met. Here is " +
+								   TombRaid.ToString() + " gold for you.";
+						break;
+					case 4:
+						sMessage = "This is a good one you stole here. Here is " + TombRaid.ToString() +
+								   " gold for you.";
+						break;
+					case 5:
+						sMessage = "Keep this up and we will both be rich. Here is " + TombRaid.ToString() +
+								   " gold for you.";
+						break;
+					case 6:
+						sMessage = "How did you manage to steal this one? Here is " + TombRaid.ToString() +
+								   " gold for you.";
+						break;
+					case 7:
+						sMessage = "You seem to be avoiding the dangers out there. Here is " + TombRaid.ToString() +
+								   " gold for you.";
+						break;
+					case 8:
+						sMessage = "I haven't seen one like this before. Here is " + TombRaid.ToString() +
+								   " gold for you.";
+						break;
+					case 9:
+						sMessage = "Why earn when you can take? Here is " + TombRaid.ToString() + " gold for you.";
+						break;
+				}
+
+				this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
+
+				Titles.AwardFame(from, TombRaid, true);
+				Titles.AwardKarma(from, -TombRaid, true);
+
+				dropped.Delete();
+				return true;
+			}
+
+			if (dropped is Item && this is Thief)
+			{
+				int GuildMember = 0;
+
+				int iAmThief = (int)from.Skills[SkillName.Stealing].Value;
+
+				if (iAmThief < 10)
+				{
+					this.PrivateOverheadMessage(
+						MessageType.Regular,
+						1153,
+						false,
+						"I only deal with fellow thieves.",
+						from.NetState);
+				}
+				else if (dropped is StealBox || dropped is StealMetalBox || dropped is StealBag)
+				{
+					int gBonus = (int)Math.Round(((from.Skills[SkillName.ItemID].Value * 500) / 100), 0);
+					if (this.NpcGuild != NpcGuild.None && from is PlayerMobile &&
+						this.NpcGuild == ((PlayerMobile)from).NpcGuild)
 					{
-						sMessage = "You don't have enought iron ore for me to make steel from this.";
-						this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
+						gBonus = gBonus + (int)Math.Round(((100.00 * 500) / 100), 0);
+						GuildMember = 1;
+					} // FOR GUILD MEMBERS
+
+					if (BeggingPose(from) > 0 && GuildMember == 0) // LET US SEE IF THEY ARE BEGGING - WIZARD
+					{
+						Titles.AwardKarma(from, -BeggingKarma(from), true);
+						from.Say(BeggingWords());
+						gBonus = (int)Math.Round(((from.Skills[SkillName.Begging].Value * 500) / 100), 0);
+					}
+
+					gBonus = gBonus + 500;
+					from.AddToBackpack(new Gold(gBonus));
+					string sMessage = "";
+					switch (Utility.RandomMinMax(0, 9))
+					{
+						case 0:
+							sMessage = "Hmmmm...someone has been busy. Here is " + gBonus.ToString() + " gold for you.";
+							break;
+						case 1:
+							sMessage = "I'll take that. Here is " + gBonus.ToString() + " gold for you.";
+							break;
+						case 2:
+							sMessage = "I assume the traps were well avoided? Here is " + gBonus.ToString() +
+									   " gold for you.";
+							break;
+						case 3:
+							sMessage = "You are better than some of the thieves I have met. Here is " +
+									   gBonus.ToString() + " gold for you.";
+							break;
+						case 4:
+							sMessage = "This is a good one you stole here. Here is " + gBonus.ToString() +
+									   " gold for you.";
+							break;
+						case 5:
+							sMessage = "Keep this up and we will both be rich. Here is " + gBonus.ToString() +
+									   " gold for you.";
+							break;
+						case 6:
+							sMessage = "How did you manage to steal this one? Here is " + gBonus.ToString() +
+									   " gold for you.";
+							break;
+						case 7:
+							sMessage = "You seem to be avoiding the dangers out there. Here is " + gBonus.ToString() +
+									   " gold for you.";
+							break;
+						case 8:
+							sMessage = "I have seen one like this before. Here is " + gBonus.ToString() +
+									   " gold for you.";
+							break;
+						case 9:
+							sMessage = "Why earn when you can take? Here is " + gBonus.ToString() + " gold for you.";
+							break;
+					}
+
+					this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
+					dropped.Delete();
+					return true;
+				}
+
+				if (dropped is StolenChest)
+				{
+					StolenChest sRipoff = (StolenChest)dropped;
+					int vRipoff = sRipoff.ContainerValue;
+					int gBonus = (int)Math.Round(((from.Skills[SkillName.ItemID].Value * vRipoff) / 100), 0);
+					if (this.NpcGuild != NpcGuild.None && from is PlayerMobile &&
+						this.NpcGuild == ((PlayerMobile)from).NpcGuild)
+					{
+						gBonus = gBonus + (int)Math.Round(((100.00 * vRipoff) / 100), 0);
+						GuildMember = 1;
+					} // FOR GUILD MEMBERS
+
+					if (BeggingPose(from) > 0 && GuildMember == 0) // LET US SEE IF THEY ARE BEGGING - WIZARD
+					{
+						Titles.AwardKarma(from, -BeggingKarma(from), true);
+						from.Say(BeggingWords());
+						gBonus = (int)Math.Round(((from.Skills[SkillName.Begging].Value * vRipoff) / 100), 0);
+					}
+
+					gBonus = gBonus + vRipoff;
+					from.AddToBackpack(new Gold(gBonus));
+					string sMessage = "";
+					switch (Utility.RandomMinMax(0, 9))
+					{
+						case 0:
+							sMessage = "Hmmmm...someone has been busy. Here is " + gBonus.ToString() + " gold for you.";
+							break;
+						case 1:
+							sMessage = "I'll take that. Here is " + gBonus.ToString() + " gold for you.";
+							break;
+						case 2:
+							sMessage = "I assume the traps were well avoided? Here is " + gBonus.ToString() +
+									   " gold for you.";
+							break;
+						case 3:
+							sMessage = "You are better than some of the thieves I have met. Here is " +
+									   gBonus.ToString() + " gold for you.";
+							break;
+						case 4:
+							sMessage = "This is a good one you stole here. Here is " + gBonus.ToString() +
+									   " gold for you.";
+							break;
+						case 5:
+							sMessage = "Keep this up and we will both be rich. Here is " + gBonus.ToString() +
+									   " gold for you.";
+							break;
+						case 6:
+							sMessage = "How did you manage to steal this one? Here is " + gBonus.ToString() +
+									   " gold for you.";
+							break;
+						case 7:
+							sMessage = "You seem to be avoiding the dangers out there. Here is " + gBonus.ToString() +
+									   " gold for you.";
+							break;
+						case 8:
+							sMessage = "I have seen one like this before. Here is " + gBonus.ToString() +
+									   " gold for you.";
+							break;
+						case 9:
+							sMessage = "Why earn when you can take? Here is " + gBonus.ToString() + " gold for you.";
+							break;
+					}
+
+					this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
+					dropped.Delete();
+					return true;
+				}
+			}
+			else if ((dropped is HenchmanFighterItem || dropped is HenchmanArcherItem ||
+					  dropped is HenchmanWizardItem) &&
+					 (this is InnKeeper || this is TavernKeeper || this is Barkeeper))
+			{
+				int fairTrade = 1;
+				string sMessage = "";
+				switch (Utility.RandomMinMax(0, 7))
+				{
+					case 0:
+						sMessage = "So, this follower is not working out for you?";
+						break;
+					case 1:
+						sMessage = "Looking for a replacement henchman eh?";
+						break;
+					case 2:
+						sMessage = "Well...this one is looking for fame and fortune.";
+						break;
+					case 3:
+						sMessage = "Maybe this one will be a better fit in your group.";
+						break;
+					case 4:
+						sMessage = "Not all relationships work out.";
+						break;
+					case 5:
+						sMessage = "At you least you parted ways amiably.";
+						break;
+					case 6:
+						sMessage = "This one has been hanging out around here.";
+						break;
+					case 7:
+						sMessage = "This one also seeks great treasure.";
+						break;
+				}
+
+				if (dropped is HenchmanFighterItem)
+				{
+					HenchmanFighterItem myFollower = (HenchmanFighterItem)dropped;
+					if (myFollower.HenchDead > 0)
+					{
+						fairTrade = 0;
 					}
 					else
 					{
-						sMessage = "Let's turn this into bars of steel you can use.";
-						Server.Items.DugUpCoal.CheckForDugUpCoal( from, dropped.Amount, true );
-						from.AddToBackpack ( new SteelIngot( dropped.Amount ) );
-						dropped.Delete();
-						from.PlaySound( 0x208 );
-						this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
-						return true;
+						HenchmanFighterItem newFollower = new HenchmanFighterItem();
+						newFollower.HenchTimer = myFollower.HenchTimer;
+						newFollower.HenchBandages = myFollower.HenchBandages;
+						from.AddToBackpack(newFollower);
 					}
-
-					return false;
 				}
-				else if ( dropped is DugUpZinc && this is Blacksmith && Server.Misc.Worlds.GetMyWorld( from.Map, from.Location, from.X, from.Y ) == "the Island of Umber Veil" )
+				else if (dropped is HenchmanWizardItem)
 				{
-					string sMessage = "";
-
-					if ( !(Server.Items.DugUpZinc.CheckForDugUpZinc( from, dropped.Amount, false ) ) )
+					HenchmanWizardItem myFollower = (HenchmanWizardItem)dropped;
+					if (myFollower.HenchDead > 0)
 					{
-						sMessage = "You don't have enought iron ore for me to make brass from this.";
-						this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
+						fairTrade = 0;
 					}
 					else
 					{
-						sMessage = "Let's turn this into bars of brass you can use.";
-						Server.Items.DugUpZinc.CheckForDugUpZinc( from, dropped.Amount, true );
-						from.AddToBackpack ( new BrassIngot( dropped.Amount ) );
-						dropped.Delete();
-						from.PlaySound( 0x208 );
-						this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
-						return true;
+						HenchmanWizardItem newFollower = new HenchmanWizardItem();
+						newFollower.HenchTimer = myFollower.HenchTimer;
+						newFollower.HenchBandages = myFollower.HenchBandages;
+						from.AddToBackpack(newFollower);
 					}
-
-					return false;
 				}
-				else if (	( dropped is DDCopper || dropped is DDSilver ) && 
-							( this is Minter || this is Banker )	)
+				else if (dropped is HenchmanArcherItem)
 				{
-					int nRate = 5;
-					string sCoin = "silver";
-					if ( dropped is DDCopper ){ nRate = 10; sCoin = "copper";}
-
-					int nCoins = dropped.Amount;
-					int nGold = (int)Math.Floor((decimal)(dropped.Amount / nRate));
-					int nChange = dropped.Amount - ( nGold * nRate );
-
-					string sMessage = "Sorry, you do not have enough here to exchange for even a single gold coin.";
-
-					if ( ( nGold > 0 ) && ( nChange > 0 ) )
+					HenchmanArcherItem myFollower = (HenchmanArcherItem)dropped;
+					if (myFollower.HenchDead > 0)
 					{
-						sMessage = "Here is " + nGold.ToString() + " gold for you, and " + nChange.ToString() + " " + sCoin + " back in change.";
-						from.AddToBackpack ( new Gold( nGold ) );
+						fairTrade = 0;
 					}
-					else if ( nGold > 0 )
+					else
 					{
-						sMessage = "Here is " + nGold.ToString() + " gold for you.";
-						from.AddToBackpack ( new Gold( nGold ) );
+						HenchmanArcherItem newFollower = new HenchmanArcherItem();
+						newFollower.HenchTimer = myFollower.HenchTimer;
+						newFollower.HenchBandages = myFollower.HenchBandages;
+						from.AddToBackpack(newFollower);
 					}
-
-					this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
-
-					if ( ( nChange > 0 ) && ( dropped is DDCopper ) ){ from.AddToBackpack ( new DDCopper( nChange ) ); }
-					else if ( ( nChange > 0 ) && ( dropped is DDSilver ) ){ from.AddToBackpack ( new DDSilver( nChange ) ); }
-
-					dropped.Delete();
-					return true;
 				}
-				else if ( ( dropped is DDXormite ) && ( this is Minter || this is Banker ) )
+
+				if (fairTrade == 1)
 				{
-					int nGold = dropped.Amount * 3;
-
-					string sMessage = "Here is " + nGold.ToString() + " gold for you.";
-					from.AddToBackpack ( new Gold( nGold ) );
-
-					this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
-
-					dropped.Delete();
-					return true;
-				}
-				else if ( ( dropped is Crystals ) && ( this is Minter || this is Banker ) )
-				{
-					int nGold = dropped.Amount * 5;
-
-					string sMessage = "Here is " + nGold.ToString() + " gold for you.";
-					from.AddToBackpack ( new Gold( nGold ) );
-
-					this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
-
-					dropped.Delete();
-					return true;
-				}
-				else if ( ( dropped is DDJewels ) && ( this is Minter || this is Banker ) )
-				{
-					int nGold = dropped.Amount * 2;
-
-					string sMessage = "Here is " + nGold.ToString() + " gold for you.";
-					from.AddToBackpack ( new Gold( nGold ) );
-
-					this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
-
-					dropped.Delete();
-					return true;
-				}
-				else if ( dropped is BottleOfParts && ( this is Alchemist || this is Witches ) )
-				{
-					int GuildMember = 0;
-
-					int iForensics = (int)from.Skills[SkillName.Forensics].Value / 3;
-					int iAnatomy = (int)from.Skills[SkillName.Anatomy].Value / 3;
-					int nBottle = Utility.RandomMinMax( 2, 10 ) + Utility.RandomMinMax( 0, iForensics ) + Utility.RandomMinMax( 0, iAnatomy );
-
-					int gBonus = (int)Math.Round((( from.Skills[SkillName.ItemID].Value * nBottle ) / 100), 0);
-
-					if ( this.NpcGuild != NpcGuild.None && this.NpcGuild == pm.NpcGuild ){ gBonus = gBonus + (int)Math.Round((( 100.0 * nBottle ) / 100), 0); GuildMember = 1; } // FOR GUILD MEMBERS
-
-					if ( BeggingPose(from) > 0 && GuildMember == 0 ) // LET US SEE IF THEY ARE BEGGING - WIZARD
-					{
-						Titles.AwardKarma( from, -BeggingKarma( from ), true );
-						from.Say( BeggingWords() );
-						gBonus = (int)Math.Round((( from.Skills[SkillName.Begging].Value * nBottle ) / 100), 0);
-					}
-					gBonus = (gBonus + nBottle) * dropped.Amount;
-					from.AddToBackpack ( new Gold( gBonus ) );
-					string sMessage = "";
-					switch ( Utility.RandomMinMax( 0, 9 ) )
-					{
-						case 0:	sMessage = "Hmmmm...I needed some of this. Here is " + gBonus.ToString() + " gold for you.";						break;
-						case 1:	sMessage = "I'll take that. Here is " + gBonus.ToString() + " gold for you.";										break;
-						case 2:	sMessage = "I assume this is fresh? Here is " + gBonus.ToString() + " gold for you.";								break;
-						case 3:	sMessage = "You are better than some of the undertakers I know. Here is " + gBonus.ToString() + " gold for you.";	break;
-						case 4:	sMessage = "This is a good bottle you found here. Here is " + gBonus.ToString() + " gold for you.";					break;
-						case 5:	sMessage = "Keep this up and my lab will be stocked. Here is " + gBonus.ToString() + " gold for you.";				break;
-						case 6:	sMessage = "How did you manage to get this bottle? Here is " + gBonus.ToString() + " gold for you.";				break;
-						case 7:	sMessage = "You seem to be good with a surgeons knife. Here is " + gBonus.ToString() + " gold for you.";			break;
-						case 8:	sMessage = "I have seen bottles like this before. Here is " + gBonus.ToString() + " gold for you.";					break;
-						case 9:	sMessage = "I have never seen such a nice bottle of this before. Here is " + gBonus.ToString() + " gold for you.";	break;
-					}
 					this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
 					dropped.Delete();
 					return true;
 				}
-				else if ( this is ThiefGuildmaster && pm.NpcGuild == NpcGuild.ThievesGuild && ( // TOMB RAIDING
-					dropped is RockArtifact || 
-					dropped is SkullCandleArtifact || 
-					dropped is BottleArtifact || 
-					dropped is DamagedBooksArtifact || 
-					dropped is StretchedHideArtifact || 
-					dropped is BrazierArtifact || 
-					dropped is LampPostArtifact || 
-					dropped is BooksNorthArtifact || 
-					dropped is BooksWestArtifact || 
-					dropped is BooksFaceDownArtifact || 
-					dropped is StuddedLeggingsArtifact || 
-					dropped is EggCaseArtifact || 
-					dropped is SkinnedGoatArtifact || 
-					dropped is GruesomeStandardArtifact || 
-					dropped is BloodyWaterArtifact || 
-					dropped is TarotCardsArtifact || 
-					dropped is BackpackArtifact || 
-					dropped is StuddedTunicArtifact || 
-					dropped is CocoonArtifact || 
-					dropped is SkinnedDeerArtifact || 
-					dropped is SaddleArtifact || 
-					dropped is LeatherTunicArtifact || 
-					dropped is RuinedPaintingArtifact ) )
-				{
-					int TombRaid = 8000;
 
-					if ( dropped is RockArtifact || dropped is SkullCandleArtifact || dropped is BottleArtifact || dropped is DamagedBooksArtifact ){ TombRaid = 5000; }
-					else if ( dropped is StretchedHideArtifact || dropped is BrazierArtifact ){ TombRaid = 6000; }
-					else if ( dropped is LampPostArtifact || dropped is BooksNorthArtifact || dropped is BooksWestArtifact || dropped is BooksFaceDownArtifact ){ TombRaid = 7000; }
-					else if ( dropped is StuddedTunicArtifact || dropped is CocoonArtifact ){ TombRaid = 9000; }
-					else if ( dropped is SkinnedDeerArtifact ){ TombRaid = 10000; }
-					else if ( dropped is SaddleArtifact || dropped is LeatherTunicArtifact ){ TombRaid = 11000; }
-					else if ( dropped is RuinedPaintingArtifact ){ TombRaid = 12000; }
+				this.PrivateOverheadMessage(
+					MessageType.Regular,
+					1153,
+					false,
+					"This is not a graveyard! Bury them somewhere else!",
+					from.NetState);
+				return false;
+			}
 
-					from.AddToBackpack ( new Gold( TombRaid ) );
-					string sMessage = "";
-					switch ( Utility.RandomMinMax( 0, 9 ) )
-					{
-						case 0:	sMessage = "Hmmmm...someone has been busy. Here is " + TombRaid.ToString() + " gold for you.";						break;
-						case 1:	sMessage = "I'll take that. Here is " + TombRaid.ToString() + " gold for you.";										break;
-						case 2:	sMessage = "I assume the traps were well avoided? Here is " + TombRaid.ToString() + " gold for you.";				break;
-						case 3:	sMessage = "You are better than some of the thieves I have met. Here is " + TombRaid.ToString() + " gold for you.";	break;
-						case 4:	sMessage = "This is a good one you stole here. Here is " + TombRaid.ToString() + " gold for you.";					break;
-						case 5:	sMessage = "Keep this up and we will both be rich. Here is " + TombRaid.ToString() + " gold for you.";				break;
-						case 6:	sMessage = "How did you manage to steal this one? Here is " + TombRaid.ToString() + " gold for you.";				break;
-						case 7:	sMessage = "You seem to be avoiding the dangers out there. Here is " + TombRaid.ToString() + " gold for you.";		break;
-						case 8:	sMessage = "I haven't seen one like this before. Here is " + TombRaid.ToString() + " gold for you.";				break;
-						case 9:	sMessage = "Why earn when you can take? Here is " + TombRaid.ToString() + " gold for you.";							break;
-					}
-					this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
-
-					Titles.AwardFame( from, TombRaid, true );
-					Titles.AwardKarma( from, -TombRaid, true );
-
-					dropped.Delete();
-					return true;
-				}
-				else if ( dropped is Item && this is Thief )
-				{
-					int GuildMember = 0;
-
-					int iAmThief = (int)from.Skills[SkillName.Stealing].Value;
-
-					if ( iAmThief < 10 ){ this.PrivateOverheadMessage(MessageType.Regular, 1153, false, "I only deal with fellow thieves.", from.NetState); }
-					else if ( dropped is StealBox || dropped is StealMetalBox || dropped is StealBag )
-					{
-						int gBonus = (int)Math.Round((( from.Skills[SkillName.ItemID].Value * 500 ) / 100), 0);
-						if ( this.NpcGuild != NpcGuild.None && this.NpcGuild == pm.NpcGuild ){ gBonus = gBonus + (int)Math.Round((( 100.00 * 500 ) / 100), 0); GuildMember = 1; } // FOR GUILD MEMBERS
-						if ( BeggingPose(from) > 0 && GuildMember == 0 ) // LET US SEE IF THEY ARE BEGGING - WIZARD
-						{
-							Titles.AwardKarma( from, -BeggingKarma( from ), true );
-							from.Say( BeggingWords() );
-							gBonus = (int)Math.Round((( from.Skills[SkillName.Begging].Value * 500 ) / 100), 0);
-						}
-						gBonus = gBonus + 500;
-						from.AddToBackpack ( new Gold( gBonus ) );
-						string sMessage = "";
-						switch ( Utility.RandomMinMax( 0, 9 ) )
-						{
-							case 0:	sMessage = "Hmmmm...someone has been busy. Here is " + gBonus.ToString() + " gold for you.";						break;
-							case 1:	sMessage = "I'll take that. Here is " + gBonus.ToString() + " gold for you.";										break;
-							case 2:	sMessage = "I assume the traps were well avoided? Here is " + gBonus.ToString() + " gold for you.";					break;
-							case 3:	sMessage = "You are better than some of the thieves I have met. Here is " + gBonus.ToString() + " gold for you.";	break;
-							case 4:	sMessage = "This is a good one you stole here. Here is " + gBonus.ToString() + " gold for you.";					break;
-							case 5:	sMessage = "Keep this up and we will both be rich. Here is " + gBonus.ToString() + " gold for you.";				break;
-							case 6:	sMessage = "How did you manage to steal this one? Here is " + gBonus.ToString() + " gold for you.";					break;
-							case 7:	sMessage = "You seem to be avoiding the dangers out there. Here is " + gBonus.ToString() + " gold for you.";		break;
-							case 8:	sMessage = "I have seen one like this before. Here is " + gBonus.ToString() + " gold for you.";						break;
-							case 9:	sMessage = "Why earn when you can take? Here is " + gBonus.ToString() + " gold for you.";							break;
-						}
-						this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
-						dropped.Delete();
-						return true;
-					}
-					else if ( dropped is StolenChest )
-					{
-						StolenChest sRipoff = (StolenChest)dropped;
-						int vRipoff = sRipoff.ContainerValue;
-						int gBonus = (int)Math.Round((( from.Skills[SkillName.ItemID].Value * vRipoff ) / 100), 0);
-						if ( this.NpcGuild != NpcGuild.None && this.NpcGuild == pm.NpcGuild ){ gBonus = gBonus + (int)Math.Round((( 100.00 * vRipoff ) / 100), 0); GuildMember = 1; } // FOR GUILD MEMBERS
-
-						if ( BeggingPose(from) > 0 && GuildMember == 0 ) // LET US SEE IF THEY ARE BEGGING - WIZARD
-						{
-							Titles.AwardKarma( from, -BeggingKarma( from ), true );
-							from.Say( BeggingWords() );
-							gBonus = (int)Math.Round((( from.Skills[SkillName.Begging].Value * vRipoff ) / 100), 0);
-						}
-						gBonus = gBonus + vRipoff;
-						from.AddToBackpack ( new Gold( gBonus ) );
-						string sMessage = "";
-						switch ( Utility.RandomMinMax( 0, 9 ) )
-						{
-							case 0:	sMessage = "Hmmmm...someone has been busy. Here is " + gBonus.ToString() + " gold for you.";						break;
-							case 1:	sMessage = "I'll take that. Here is " + gBonus.ToString() + " gold for you.";										break;
-							case 2:	sMessage = "I assume the traps were well avoided? Here is " + gBonus.ToString() + " gold for you.";					break;
-							case 3:	sMessage = "You are better than some of the thieves I have met. Here is " + gBonus.ToString() + " gold for you.";	break;
-							case 4:	sMessage = "This is a good one you stole here. Here is " + gBonus.ToString() + " gold for you.";					break;
-							case 5:	sMessage = "Keep this up and we will both be rich. Here is " + gBonus.ToString() + " gold for you.";				break;
-							case 6:	sMessage = "How did you manage to steal this one? Here is " + gBonus.ToString() + " gold for you.";					break;
-							case 7:	sMessage = "You seem to be avoiding the dangers out there. Here is " + gBonus.ToString() + " gold for you.";		break;
-							case 8:	sMessage = "I have seen one like this before. Here is " + gBonus.ToString() + " gold for you.";						break;
-							case 9:	sMessage = "Why earn when you can take? Here is " + gBonus.ToString() + " gold for you.";							break;
-						}
-						this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
-						dropped.Delete();
-						return true;
-					}
-				}
-				else if ( ( dropped is HenchmanFighterItem || dropped is HenchmanArcherItem || dropped is HenchmanWizardItem ) && ( this is InnKeeper || this is TavernKeeper || this is Barkeeper ) )
-				{
-					int fairTrade = 1;
-					string sMessage = "";
-					switch ( Utility.RandomMinMax( 0, 7 ) )
-					{
-						case 0:	sMessage = "So, this follower is not working out for you?"; break;
-						case 1:	sMessage = "Looking for a replacement henchman eh?"; break;
-						case 2:	sMessage = "Well...this one is looking for fame and fortune."; break;
-						case 3:	sMessage = "Maybe this one will be a better fit in your group."; break;
-						case 4:	sMessage = "Not all relationships work out."; break;
-						case 5:	sMessage = "At you least you parted ways amiably."; break;
-						case 6:	sMessage = "This one has been hanging out around here."; break;
-						case 7:	sMessage = "This one also seeks great treasure.";		break;
-					}
-					if ( dropped is HenchmanFighterItem )
-					{
-						HenchmanFighterItem myFollower = (HenchmanFighterItem)dropped;
-						if ( myFollower.HenchDead > 0 ){ fairTrade = 0; } else
-						{
-							HenchmanFighterItem newFollower = new HenchmanFighterItem();
-							newFollower.HenchTimer = myFollower.HenchTimer;
-							newFollower.HenchBandages = myFollower.HenchBandages;
-							from.AddToBackpack ( newFollower );
-						}
-					}
-					else if ( dropped is HenchmanWizardItem )
-					{
-						HenchmanWizardItem myFollower = (HenchmanWizardItem)dropped;
-						if ( myFollower.HenchDead > 0 ){ fairTrade = 0; } else
-						{
-							HenchmanWizardItem newFollower = new HenchmanWizardItem();
-							newFollower.HenchTimer = myFollower.HenchTimer;
-							newFollower.HenchBandages = myFollower.HenchBandages;
-							from.AddToBackpack ( newFollower );
-						}
-					}
-					else if ( dropped is HenchmanArcherItem )
-					{
-						HenchmanArcherItem myFollower = (HenchmanArcherItem)dropped;
-						if ( myFollower.HenchDead > 0 ){ fairTrade = 0; } else
-						{
-							HenchmanArcherItem newFollower = new HenchmanArcherItem();
-							newFollower.HenchTimer = myFollower.HenchTimer;
-							newFollower.HenchBandages = myFollower.HenchBandages;
-							from.AddToBackpack ( newFollower );
-						}
-					}
-					if ( fairTrade == 1 )
-					{
-						this.PrivateOverheadMessage(MessageType.Regular, 1153, false, sMessage, from.NetState);
-						dropped.Delete();
-						return true;
-					}
-					else { this.PrivateOverheadMessage(MessageType.Regular, 1153, false, "This is not a graveyard! Bury them somewhere else!", from.NetState); }
-				}
-				else if ( dropped is BookBox && ( this is Mage || this is KeeperOfChivalry || this is Witches || this is Necromancer || this is MageGuildmaster || this is HolyMage || this is NecroMage ) )
-				{
-					Container pack = (Container)dropped;
-						List<Item> items = new List<Item>();
-						foreach (Item item in pack.Items)
-						{
-							items.Add(item);
-						}
-						foreach (Item item in items)
-						{
-							from.AddToBackpack ( item );
-						}
-					this.PrivateOverheadMessage(MessageType.Regular, 1153, false, "The curse has been lifted from the books.", from.NetState);
-					dropped.Delete();
-					return true;
-				}
-				else if ( dropped is CurseItem && ( this is Mage || this is KeeperOfChivalry || this is Witches || this is Necromancer || this is MageGuildmaster || this is HolyMage || this is NecroMage ) )
-				{
-					Container pack = (Container)dropped;
-						List<Item> items = new List<Item>();
-						foreach (Item item in pack.Items)
-						{
-							items.Add(item);
-						}
-						foreach (Item item in items)
-						{
-							from.AddToBackpack ( item );
-						}
-					string curseName = dropped.Name;
-						if ( curseName == ""){ curseName = "item"; }
-					this.PrivateOverheadMessage(MessageType.Regular, 1153, false, "The curse has been lifted from the " + curseName + ".", from.NetState);
-					dropped.Delete();
-					return true;
-				}
-				else if ( ( dropped is SewageItem || dropped is SlimeItem ) && ( this is InnKeeper || this is TavernKeeper || this is Barkeeper || this is Waiter ) )
-				{
-					Container pack = (Container)dropped;
-						List<Item> items = new List<Item>();
-						foreach (Item item in pack.Items)
-						{
-							items.Add(item);
-						}
-						foreach (Item item in items)
-						{
-							from.AddToBackpack ( item );
-						}
-					this.PrivateOverheadMessage(MessageType.Regular, 1153, false, "The item has been cleaned.", from.NetState);
-					dropped.Delete();
-					return true;
-				}
-				else if ( dropped is WeededItem && ( this is Alchemist || this is Herbalist ) )
-				{
-					Container pack = (Container)dropped;
-						List<Item> items = new List<Item>();
-						foreach (Item item in pack.Items)
-						{
-							items.Add(item);
-						}
-						foreach (Item item in items)
-						{
-							from.AddToBackpack ( item );
-						}
-					this.PrivateOverheadMessage(MessageType.Regular, 1153, false, "The weeds have been removed.", from.NetState);
-					dropped.Delete();
-					return true;
-				}
-
-			if ( dropped is SmallBOD || dropped is LargeBOD )
+			if (dropped is BookBox && (this is Mage || this is KeeperOfChivalry || this is Witches ||
+									   this is Necromancer || this is MageGuildmaster || this is HolyMage ||
+									   this is NecroMage))
 			{
-				if( Core.ML )
+				Container pack = (Container)dropped;
+				List<Item> items = new List<Item>();
+				foreach (Item item in pack.Items)
 				{
-					if( ((PlayerMobile)from).NextBODTurnInTime > DateTime.UtcNow )
-					{
-						SayTo( from, 1079976 );	//
-						return false;
-					}
+					items.Add(item);
 				}
 
-				if ( !IsValidBulkOrder( dropped ) || !SupportsBulkOrders( from ) )
+				foreach (Item item in items)
 				{
-					SayTo( from, 1045130 ); // That order is for some other shopkeeper.
+					from.AddToBackpack(item);
+				}
+
+				this.PrivateOverheadMessage(
+					MessageType.Regular,
+					1153,
+					false,
+					"The curse has been lifted from the books.",
+					from.NetState);
+				dropped.Delete();
+				return true;
+			}
+
+			if (dropped is CurseItem && (this is Mage || this is KeeperOfChivalry || this is Witches ||
+										 this is Necromancer || this is MageGuildmaster || this is HolyMage ||
+										 this is NecroMage))
+			{
+				Container pack = (Container)dropped;
+				List<Item> items = new List<Item>();
+				foreach (Item item in pack.Items)
+				{
+					items.Add(item);
+				}
+
+				foreach (Item item in items)
+				{
+					from.AddToBackpack(item);
+				}
+
+				string curseName = dropped.Name;
+				if (curseName == "")
+				{
+					curseName = "item";
+				}
+
+				this.PrivateOverheadMessage(
+					MessageType.Regular,
+					1153,
+					false,
+					"The curse has been lifted from the " + curseName + ".",
+					from.NetState);
+				dropped.Delete();
+				return true;
+			}
+
+			if ((dropped is SewageItem || dropped is SlimeItem) &&
+				(this is InnKeeper || this is TavernKeeper || this is Barkeeper || this is Waiter))
+			{
+				Container pack = (Container)dropped;
+				List<Item> items = new List<Item>();
+				foreach (Item item in pack.Items)
+				{
+					items.Add(item);
+				}
+
+				foreach (Item item in items)
+				{
+					from.AddToBackpack(item);
+				}
+
+				this.PrivateOverheadMessage(
+					MessageType.Regular,
+					1153,
+					false,
+					"The item has been cleaned.",
+					from.NetState);
+				dropped.Delete();
+				return true;
+			}
+
+			if (dropped is WeededItem && (this is Alchemist || this is Herbalist))
+			{
+				Container pack = (Container)dropped;
+				List<Item> items = new List<Item>();
+				foreach (Item item in pack.Items)
+				{
+					items.Add(item);
+				}
+
+				foreach (Item item in items)
+				{
+					from.AddToBackpack(item);
+				}
+
+				this.PrivateOverheadMessage(
+					MessageType.Regular,
+					1153,
+					false,
+					"The weeds have been removed.",
+					from.NetState);
+				dropped.Delete();
+				return true;
+			}
+
+			if (dropped is SmallBOD || dropped is LargeBOD)
+			{
+				PlayerMobile pm = from as PlayerMobile;
+
+				if (Core.ML && pm != null && pm.NextBODTurnInTime > DateTime.UtcNow)
+				{
+					SayTo(from, 1079976); // You'll have to wait a few seconds while I inspect the last order.
 					return false;
 				}
-				else if ( ( dropped is SmallBOD && !( (SmallBOD)dropped ).Complete ) || ( dropped is LargeBOD && !( (LargeBOD)dropped ).Complete ) )
+
+				if (!IsValidBulkOrder(dropped) || !SupportsBulkOrders(from))
 				{
-					SayTo( from, 1045131 ); // You have not completed the order yet.
+					SayTo(from, 1045130); // That order is for some other shopkeeper.
+					return false;
+				}
+
+				if ((dropped is SmallBOD && !((SmallBOD)dropped).Complete) ||
+					(dropped is LargeBOD && !((LargeBOD)dropped).Complete))
+				{
+					SayTo(from, 1045131); // You have not completed the order yet.
 					return false;
 				}
 
 				Item reward;
 				int gold, fame;
 
-				if ( dropped is SmallBOD )
-					( (SmallBOD)dropped ).GetRewards( out reward, out gold, out fame );
+				if (dropped is SmallBOD)
+					((SmallBOD)dropped).GetRewards(out reward, out gold, out fame);
 				else
-					( (LargeBOD)dropped ).GetRewards( out reward, out gold, out fame );
+					((LargeBOD)dropped).GetRewards(out reward, out gold, out fame);
 
-				from.SendSound( 0x3D );
+				from.SendSound(0x3D);
 
-				SayTo( from, 1045132 ); // Thank you so much!  Here is a reward for your effort.
+				SayTo(from, 1045132); // Thank you so much!  Here is a reward for your effort.
 
-				if ( reward != null )
-					from.AddToBackpack( reward );
+				if (reward != null)
+					from.AddToBackpack(reward);
 
-				if ( gold > 1000 )
-					from.AddToBackpack( new BankCheck( gold ) );
-				else if ( gold > 0 )
-					from.AddToBackpack( new Gold( gold ) );
+				if (gold > 1000)
+					from.AddToBackpack(new BankCheck(gold));
+				else if (gold > 0)
+					from.AddToBackpack(new Gold(gold));
 
-				Titles.AwardFame( from, fame, true );
+				Titles.AwardFame(from, fame, true);
 
-				OnSuccessfulBulkOrderReceive( from );
+				OnSuccessfulBulkOrderReceive(from);
 
-				if( Core.ML )
-				{
-					((PlayerMobile)from).NextBODTurnInTime = DateTime.UtcNow + TimeSpan.FromSeconds( 10.0 );
-				}
+				if (Core.ML && pm != null)
+					pm.NextBODTurnInTime = DateTime.UtcNow + TimeSpan.FromSeconds(10.0);
 
 				dropped.Delete();
 				return true;
 			}
-			
-		 if ( dropped is SmallMobileBOD || dropped is LargeMobileBOD )
+
+			if (dropped is SmallMobileBOD || dropped is LargeMobileBOD)
 			{
-				if ( !IsValidBulkOrder( dropped ) || !SupportsBulkOrders( from ) )
+				PlayerMobile pm = from as PlayerMobile;
+
+				if (Core.ML && pm != null && pm.NextBODTurnInTime > DateTime.UtcNow)
 				{
-					SayTo( from, 1045130 ); // That order is for some other shopkeeper.
-					return false;
-				}
-				else if ( ( dropped is SmallMobileBOD && !( (SmallMobileBOD)dropped ).Complete ) || ( dropped is LargeMobileBOD && !( (LargeMobileBOD)dropped ).Complete ) )
-				{
-					SayTo( from, 1045131 ); // You have not completed the order yet.
+					SayTo(from, 1079976); // You'll have to wait a few seconds while I inspect the last order.
 					return false;
 				}
 
-					Item reward;
-					int gold, fame;
+				if (!IsValidBulkOrder(dropped) || !SupportsBulkOrders(from))
+				{
+					SayTo(from, 1045130); // That order is for some other shopkeeper.
+					return false;
+				}
 
-				if ( dropped is SmallMobileBOD )
-					( (SmallMobileBOD)dropped ).GetRewards( out reward, out gold, out fame );
+				if ((dropped is SmallMobileBOD && !((SmallMobileBOD)dropped).Complete) ||
+					(dropped is LargeMobileBOD && !((LargeMobileBOD)dropped).Complete))
+				{
+					SayTo(from, 1045131); // You have not completed the order yet.
+					return false;
+				}
+
+				Item reward;
+				int gold, fame;
+
+				if (dropped is SmallMobileBOD)
+					((SmallMobileBOD)dropped).GetRewards(out reward, out gold, out fame);
 				else
-					( (LargeMobileBOD)dropped ).GetRewards( out reward, out gold, out fame );
+					((LargeMobileBOD)dropped).GetRewards(out reward, out gold, out fame);
 
-					from.SendSound( 0x3D );
+				from.SendSound(0x3D);
 
-					SayTo( from, 1045132 ); // Thank you so much!  Here is a reward for your effort.
+				SayTo(from, 1045132); // Thank you so much!  Here is a reward for your effort.
 
-					if ( reward != null )
-						from.AddToBackpack( reward );
+				if (reward != null)
+					from.AddToBackpack(reward);
 
-					if ( gold > 1000 )
-						from.AddToBackpack( new BankCheck( gold ) );
-					else if ( gold > 0 )
-						from.AddToBackpack( new Gold( gold ) );
+				if (gold > 1000)
+					from.AddToBackpack(new BankCheck(gold));
+				else if (gold > 0)
+					from.AddToBackpack(new Gold(gold));
 
-					Titles.AwardFame( from, fame, true );
+				Titles.AwardFame(from, fame, true);
 
-					OnSuccessfulBulkOrderReceive( from );
+				OnSuccessfulBulkOrderReceive(from);
 
-					if( Core.ML )
-					{
-						((PlayerMobile)from).NextBODTurnInTime = DateTime.UtcNow + TimeSpan.FromSeconds( 10.0 );
-					}
+				if (Core.ML && pm != null)
+					pm.NextBODTurnInTime = DateTime.UtcNow + TimeSpan.FromSeconds(10.0);
 
-					dropped.Delete();
-					return true;
-				}
+				dropped.Delete();
+				return true;
 			}
 
-			return base.OnDragDrop( from, dropped );
+			return base.OnDragDrop(from, dropped);
 		}
 
 		private GenericBuyInfo LookupDisplayObject( object obj )
@@ -1568,7 +1859,10 @@ namespace Server.Mobiles
 				m.PlaySound( m.GetIdleSound() );
 
 				if ( m is BaseCreature )
+                {
 					( (BaseCreature)m ).SetControlMaster( buyer );
+                    ( (BaseCreature)m ).ControlOrder = OrderType.Stop;
+                }
 
 				for ( int i = 1; i < amount; ++i )
 				{
@@ -1580,7 +1874,10 @@ namespace Server.Mobiles
 						m.MoveToWorld( buyer.Location, buyer.Map );
 
 						if ( m is BaseCreature )
+                        {
 							( (BaseCreature)m ).SetControlMaster( buyer );
+                            ( (BaseCreature)m ).ControlOrder = OrderType.Stop;
+                        }
 					}
 				}
 			}
@@ -1683,7 +1980,7 @@ namespace Server.Mobiles
 				if ( cont.ConsumeTotal( typeof( Gold ), totalCost ) )
 					bought = true;
 				else if ( totalCost < 2000 )
-					SayTo( buyer, 500192 );//Begging thy pardon, but thou casnt afford that.
+					SayTo( buyer, 500192 ); // Begging thy pardon, but thou canst not afford that.
 			}
 
 			if ( !bought && totalCost >= 2000 )
@@ -1801,17 +2098,28 @@ namespace Server.Mobiles
 
 		public virtual bool CheckVendorAccess( Mobile from )
 		{
-			PlayerMobile pm = (PlayerMobile)from;
-
-			if ( from.Blessed )
+			if ( from == null || from.Blessed )
 				return false;
 
 			if ( DifficultyLevel.GetMyEnemies( from, this, false ) == true ) // WIZARD WANTS NO SLACK FOR ENEMIES
 				return false;
 
-			if ( this is BaseGuildmaster && this.NpcGuild != pm.NpcGuild ) // ONLY GUILD MEMBERS CAN BUY FROM GUILD MASTERS
+			if ( this is BaseGuildmaster && from is PlayerMobile && this.NpcGuild != ((PlayerMobile)from).NpcGuild ) // ONLY GUILD MEMBERS CAN BUY FROM GUILD MASTERS
+				return false;
+			/*
+			GuardedRegion reg = (GuardedRegion)this.Region.GetRegion( typeof( GuardedRegion ) );
+
+			if ( reg != null && !reg.CheckVendorAccess( this, from ) )
 				return false;
 
+			if ( this.Region != from.Region )
+			{
+				reg = (GuardedRegion)from.Region.GetRegion( typeof( GuardedRegion ) );
+
+				if ( reg != null && !reg.CheckVendorAccess( this, from ) )
+					return false;
+			}
+			*/
 			return true;
 		}
 
@@ -1873,7 +2181,6 @@ namespace Server.Mobiles
 					Titles.AwardKarma( seller, -BeggingKarma( seller ), true );
 				}
 
-				PlayerMobile pm = (PlayerMobile)seller;
 				int GuildMember = 0;
 
 				foreach ( IShopSellInfo ssi in info )
@@ -1935,7 +2242,12 @@ namespace Server.Mobiles
 						}
 
 						int barter = (int)seller.Skills[SkillName.ItemID].Value; // WIZARD ADDED THE barter INT TO CHECK ITEMID SKILL
-						if ( barter < 100 && this.NpcGuild != NpcGuild.None && this.NpcGuild == pm.NpcGuild ){ barter = 100; GuildMember = 1; } // FOR GUILD MEMBERS
+
+						if ( barter < 100 && this.NpcGuild != NpcGuild.None && seller is PlayerMobile && this.NpcGuild == ((PlayerMobile)seller).NpcGuild )
+						{ 
+							barter = 100; 
+							GuildMember = 1; 
+						} // FOR GUILD MEMBERS
 
 						if ( BeggingPose(seller) > 0 && GuildMember == 0 ) // LET US SEE IF THEY ARE BEGGING - WIZARD
 						{
@@ -2016,7 +2328,8 @@ namespace Server.Mobiles
 						case 320: doubled = 4; break;
 						case 640: doubled = 5; break;
 						case 999: doubled = 6; break;
-					} */
+					}
+					*/
 
 					if ( doubled > 0 )
 					{
@@ -2075,7 +2388,8 @@ namespace Server.Mobiles
 											case 4: amount = 320; break;
 											case 5: amount = 640; break;
 											case 6: amount = 999; break;
-										} */
+										}
+										*/
 
 										gbi.Amount = gbi.MaxAmount = amount;
 									}
@@ -2109,17 +2423,17 @@ namespace Server.Mobiles
 			}
 
 			if (
-				( from.Skills[SkillName.Forensics].Value >= 50 && ( this is NecroMage || this is Witches || this is Necromancer || this is NecromancerGuildmaster ) ) || 
-				( from.Skills[SkillName.Alchemy].Value >= 40 && from.Skills[SkillName.Cooking].Value >= 40 && from.Skills[SkillName.AnimalLore].Value >= 40 && ( this is Herbalist || this is DruidTree || this is Druid || this is DruidGuildmaster ) ) || 
-				( from.Skills[SkillName.Alchemy].Value >= 50 && ( this is Alchemist || this is AlchemistGuildmaster ) ) || 
-				( from.Skills[SkillName.Blacksmith].Value >= 50 && ( this is Blacksmith || this is BlacksmithGuildmaster ) ) || 
-				( from.Skills[SkillName.Fletching].Value >= 50 && ( this is Bowyer || this is ArcherGuildmaster ) ) || 
-				( from.Skills[SkillName.Carpentry].Value >= 50 && ( this is Carpenter || this is CarpenterGuildmaster ) ) || 
-				( from.Skills[SkillName.Cartography].Value >= 50 && ( this is Mapmaker || this is CartographersGuildmaster ) ) || 
-				( from.Skills[SkillName.Cooking].Value >= 50 && ( this is Cook || this is Baker || this is CulinaryGuildmaster ) ) || 
-				( from.Skills[SkillName.Inscribe].Value >= 50 && ( this is Scribe || this is Sage || this is LibrarianGuildmaster ) ) || 
-				( from.Skills[SkillName.Tailoring].Value >= 50 && ( this is Weaver || this is Tailor || this is LeatherWorker || this is TailorGuildmaster ) ) || 
-				( from.Skills[SkillName.Tinkering].Value >= 50 && ( this is Tinker || this is TinkerGuildmaster ) ) 
+				( from.Skills.Forensics.Value >= 50 && ( this is NecroMage || this is Witches || this is Necromancer || this is NecromancerGuildmaster ) ) || 
+				( from.Skills.Alchemy.Value >= 40 && from.Skills.Cooking.Value >= 40 && from.Skills.AnimalLore.Value >= 40 && ( this is Herbalist || this is DruidTree || this is Druid || this is DruidGuildmaster ) ) || 
+				( from.Skills.Alchemy.Value >= 50 && ( this is Alchemist || this is AlchemistGuildmaster ) ) || 
+				( from.Skills.Blacksmith.Value >= 50 && ( this is Blacksmith || this is BlacksmithGuildmaster ) ) || 
+				( from.Skills.Fletching.Value >= 50 && ( this is Bowyer || this is ArcherGuildmaster ) ) || 
+				( from.Skills.Carpentry.Value >= 50 && ( this is Carpenter || this is CarpenterGuildmaster ) ) || 
+				( from.Skills.Cartography.Value >= 50 && ( this is Mapmaker || this is CartographersGuildmaster ) ) || 
+				( from.Skills.Cooking.Value >= 50 && ( this is Cook || this is Baker || this is CulinaryGuildmaster ) ) || 
+				( from.Skills.Inscribe.Value >= 50 && ( this is Scribe || this is Sage || this is LibrarianGuildmaster ) ) || 
+				( from.Skills.Tailoring.Value >= 50 && ( this is Weaver || this is Tailor || this is LeatherWorker || this is TailorGuildmaster ) ) || 
+				( from.Skills.Tinkering.Value >= 50 && ( this is Tinker || this is TinkerGuildmaster ) ) 
 			)
 			{
 				list.Add( new SetupShoppeEntry( from, this ) );
@@ -2172,7 +2486,8 @@ namespace Server.ContextMenus
 	{
 		private BaseVendor m_Vendor;
 
-		public VendorBuyEntry( Mobile from, BaseVendor vendor ) : base( 6103, 8 )
+		public VendorBuyEntry( Mobile from, BaseVendor vendor )
+			: base( 6103, 8 )
 		{
 			m_Vendor = vendor;
 			Enabled = vendor.CheckVendorAccess( from );
@@ -2188,7 +2503,8 @@ namespace Server.ContextMenus
 	{
 		private BaseVendor m_Vendor;
 
-		public VendorSellEntry( Mobile from, BaseVendor vendor ) : base( 6104, 8 )
+		public VendorSellEntry( Mobile from, BaseVendor vendor )
+			: base( 6104, 8 )
 		{
 			m_Vendor = vendor;
 			Enabled = vendor.CheckVendorAccess( from );

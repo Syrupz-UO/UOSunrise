@@ -127,7 +127,7 @@ namespace Server
 		private static Type m_DefaultRegionType = typeof( Region );
 		public static Type DefaultRegionType{ get{ return m_DefaultRegionType; } set{ m_DefaultRegionType = value; } }
 
-		private static TimeSpan m_StaffLogoutDelay = TimeSpan.FromSeconds( 10.0 );
+		private static TimeSpan m_StaffLogoutDelay = TimeSpan.Zero;
 		private static TimeSpan m_DefaultLogoutDelay = TimeSpan.FromMinutes( 5.0 );
 
 		public static TimeSpan StaffLogoutDelay{ get{ return m_StaffLogoutDelay; } set{ m_StaffLogoutDelay = value; } }
@@ -1090,7 +1090,7 @@ namespace Server
 
 			try
 			{
-				value = XmlConvert.ToDateTime( s, XmlDateTimeSerializationMode.Local );
+				value = XmlConvert.ToDateTime( s, XmlDateTimeSerializationMode.Utc );
 			}
 			catch
 			{
@@ -1126,12 +1126,12 @@ namespace Server
 			return true;
 		}
 
-		public static bool ReadEnum<T>( XmlElement xml, string attribute, ref T value )
+		public static bool ReadEnum<T>( XmlElement xml, string attribute, ref T value ) where T : struct
 		{
 			return ReadEnum( xml, attribute, ref value, true );
 		}
 
-		public static bool ReadEnum<T>( XmlElement xml, string attribute, ref T value, bool mandatory )
+		public static bool ReadEnum<T>( XmlElement xml, string attribute, ref T value, bool mandatory ) where T : struct // We can't limit the where clause to Enums only
 		{
 			string s = GetAttribute( xml, attribute, mandatory );
 
@@ -1140,18 +1140,18 @@ namespace Server
 
 			Type type = typeof(T);
 
-			try
+			T tempVal;
+
+			if( type.IsEnum && Enum.TryParse( s, true, out tempVal ) )
 			{
-				value = (T)Enum.Parse(type, s, true);
-				//TODO: On .NET 4.0, use Enum.TryParse
+				value = tempVal;
+				return true;
 			}
-			catch
+			else
 			{
 				Console.WriteLine( "Could not parse {0} enum attribute '{1}' in element '{2}'", type, attribute, xml.Name );
 				return false;
 			}
-
-			return true;
 		}
 
 		public static bool ReadMap( XmlElement xml, string attribute, ref Map value )

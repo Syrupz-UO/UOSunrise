@@ -34,6 +34,8 @@ namespace Server
 {
 	public abstract class GenericReader
 	{
+		protected GenericReader() { }
+
 		public abstract int PeekInt();
 
 		public abstract string ReadString();
@@ -83,6 +85,15 @@ namespace Server
 
 		public abstract List<BaseGuild> ReadStrongGuildList();
 		public abstract List<T> ReadStrongGuildList<T>() where T : BaseGuild;
+
+		public abstract HashSet<Item> ReadItemSet();
+		public abstract HashSet<T> ReadItemSet<T>() where T: Item;
+
+		public abstract HashSet<Mobile> ReadMobileSet();
+		public abstract HashSet<T> ReadMobileSet<T>() where T : Mobile;
+
+		public abstract HashSet<BaseGuild> ReadGuildSet();
+		public abstract HashSet<T> ReadGuildSet<T>() where T : BaseGuild;
 
 		public abstract Race ReadRace();
 
@@ -150,11 +161,23 @@ namespace Server
 		public abstract void WriteItemList<T>( List<T> list ) where T : Item;
 		public abstract void WriteItemList<T>( List<T> list, bool tidy ) where T : Item;
 
+		public abstract void Write( HashSet<Item> list );
+		public abstract void Write( HashSet<Item> list, bool tidy );
+
+		public abstract void WriteItemSet<T>( HashSet<T> set ) where T : Item;
+		public abstract void WriteItemSet<T>( HashSet<T> set, bool tidy ) where T : Item;
+
 		public abstract void Write( List<Mobile> list );
 		public abstract void Write( List<Mobile> list, bool tidy );
 
 		public abstract void WriteMobileList<T>( List<T> list ) where T : Mobile;
 		public abstract void WriteMobileList<T>( List<T> list, bool tidy ) where T : Mobile;
+
+		public abstract void Write( HashSet<Mobile> list );
+		public abstract void Write( HashSet<Mobile> list, bool tidy );
+
+		public abstract void WriteMobileSet<T>( HashSet<T> set ) where T : Mobile;
+		public abstract void WriteMobileSet<T>( HashSet<T> set, bool tidy ) where T : Mobile;
 
 		public abstract void Write( List<BaseGuild> list );
 		public abstract void Write( List<BaseGuild> list, bool tidy );
@@ -162,7 +185,13 @@ namespace Server
 		public abstract void WriteGuildList<T>( List<T> list ) where T : BaseGuild;
 		public abstract void WriteGuildList<T>( List<T> list, bool tidy ) where T : BaseGuild;
 
-		//Stupid compiler won't notice there 'where' to differentiate the generic methods.
+		public abstract void Write( HashSet<BaseGuild> list );
+		public abstract void Write( HashSet<BaseGuild> list, bool tidy );
+
+		public abstract void WriteGuildSet<T>( HashSet<T> set ) where T : BaseGuild;
+		public abstract void WriteGuildSet<T>( HashSet<T> set, bool tidy ) where T : BaseGuild;
+
+		// Compiler won't notice their 'where' to differentiate the generic methods.
 	}
 
 	public class BinaryFileWriter : GenericWriter
@@ -457,10 +486,16 @@ namespace Server
 			if( (m_Index + 8) > m_Buffer.Length )
 				Flush();
 
+#if MONO
+			byte[] bytes = BitConverter.GetBytes(value);
+			for(int i = 0; i < bytes.Length; i++)
+				m_Buffer[m_Index++] = bytes[i];
+#else
 			fixed( byte* pBuffer = m_Buffer )
 				*((double*)(pBuffer + m_Index)) = value;
 
 			m_Index += 8;
+#endif
 		}
 
 		public unsafe override void Write( float value )
@@ -468,10 +503,16 @@ namespace Server
 			if( (m_Index + 4) > m_Buffer.Length )
 				Flush();
 
+#if MONO
+			byte[] bytes = BitConverter.GetBytes(value);
+			for(int i = 0; i < bytes.Length; i++)
+				m_Buffer[m_Index++] = bytes[i];
+#else
 			fixed( byte* pBuffer = m_Buffer )
 				*((float*)(pBuffer + m_Index)) = value;
 
 			m_Index += 4;
+#endif
 		}
 
 		private char[] m_SingleCharBuffer = new char[1];
@@ -540,6 +581,14 @@ namespace Server
 		{
 			if( value != null )
 				Write( (byte)value.MapIndex );
+			else
+				Write( (byte)0xFF );
+		}
+
+		public override void Write( Race value )
+		{
+			if( value != null )
+				Write( (byte)value.RaceIndex );
 			else
 				Write( (byte)0xFF );
 		}
@@ -683,6 +732,7 @@ namespace Server
 		{
 			WriteItemList<T>( list, false );
 		}
+
 		public override void WriteItemList<T>( List<T> list, bool tidy )
 		{
 			if( tidy )
@@ -700,6 +750,46 @@ namespace Server
 
 			for( int i = 0; i < list.Count; ++i )
 				Write( list[i] );
+		}
+
+		public override void Write( HashSet<Item> set )
+		{
+			Write( set, false );
+		}
+
+		public override void Write( HashSet<Item> set, bool tidy )
+		{
+			if( tidy )
+			{
+				set.RemoveWhere( item => item.Deleted );
+			}
+
+			Write( set.Count );
+
+			foreach( Item item in set )
+			{
+				Write( item );
+			}
+		}
+
+		public override void WriteItemSet<T>( HashSet<T> set )
+		{
+			WriteItemSet( set, false );
+		}
+
+		public override void WriteItemSet<T>( HashSet<T> set, bool tidy ) 
+		{
+			if( tidy )
+			{
+				set.RemoveWhere( item => item.Deleted );
+			}
+
+			Write( set.Count );
+
+			foreach( Item item in set )
+			{
+				Write( item );
+			}
 		}
 
 		public override void Write( List<Mobile> list )
@@ -750,6 +840,46 @@ namespace Server
 				Write( list[i] );
 		}
 
+		public override void Write( HashSet<Mobile> set )
+		{
+			Write( set, false );
+		}
+
+		public override void Write( HashSet<Mobile> set, bool tidy )
+		{
+			if( tidy )
+			{
+				set.RemoveWhere( mobile => mobile.Deleted );
+			}
+
+			Write( set.Count );
+
+			foreach( Mobile mob in set )
+			{
+				Write( mob );
+			}
+		}
+
+		public override void WriteMobileSet<T>( HashSet<T> set )
+		{
+			WriteMobileSet( set, false );
+		}
+
+		public override void WriteMobileSet<T>( HashSet<T> set, bool tidy )
+		{
+			if( tidy )
+			{
+				set.RemoveWhere( mob => mob.Deleted );
+			}
+
+			Write( set.Count );
+
+			foreach( Mobile mob in set )
+			{
+				Write( mob );
+			}
+		}
+
 		public override void Write( List<BaseGuild> list )
 		{
 			Write( list, false );
@@ -798,12 +928,44 @@ namespace Server
 				Write( list[i] );
 		}
 
-		public override void Write( Race value )
+		public override void Write( HashSet<BaseGuild> set )
 		{
-			if( value != null )
-				Write( (byte)value.RaceIndex );
-			else
-				Write( (byte)0xFF );
+			Write( set, false );
+		}
+
+		public override void Write( HashSet<BaseGuild> set, bool tidy )
+		{
+			if( tidy )
+			{
+				set.RemoveWhere( guild => guild.Disbanded );
+			}
+
+			Write( set.Count );
+
+			foreach( BaseGuild guild in set )
+			{
+				Write( guild );
+			}
+		}
+
+		public override void WriteGuildSet<T>( HashSet<T> set )
+		{
+			WriteGuildSet( set, false );
+		}
+
+		public override void WriteGuildSet<T>( HashSet<T> set, bool tidy )
+		{
+			if( tidy )
+			{
+				set.RemoveWhere( guild => guild.Disbanded );
+			}
+
+			Write( set.Count );
+
+			foreach( BaseGuild guild in set )
+			{
+				Write( guild );
+			}
 		}
 	}
 
@@ -889,8 +1051,8 @@ namespace Server
 		
 		public override DateTimeOffset ReadDateTimeOffset()
 		{
-			var ticks = m_File.ReadInt64();
-			var offset = new TimeSpan( m_File.ReadInt64() );
+			long ticks = m_File.ReadInt64();
+			TimeSpan offset = new TimeSpan( m_File.ReadInt64() );
 
 			return new DateTimeOffset( ticks, offset );
 		}
@@ -1109,6 +1271,37 @@ namespace Server
 			}
 		}
 
+		public override HashSet<Item> ReadItemSet()
+		{
+			return ReadItemSet<Item>();
+		}
+
+		public override HashSet<T> ReadItemSet<T>()
+		{
+			int count = ReadInt();
+
+			if( count > 0 )
+			{
+				HashSet<T> set = new HashSet<T>();
+
+				for( int i = 0; i < count; ++i )
+				{
+					T item = ReadItem() as T;
+
+					if( item != null )
+					{
+						set.Add( item );
+					}
+				}
+
+				return set;
+			}
+			else
+			{
+				return new HashSet<T>();
+			}
+		}
+
 		public override List<Mobile> ReadStrongMobileList()
 		{
 			return ReadStrongMobileList<Mobile>();
@@ -1132,6 +1325,37 @@ namespace Server
 				return list;
 			} else {
 				return new List<T>();
+			}
+		}
+
+		public override HashSet<Mobile> ReadMobileSet()
+		{
+			return ReadMobileSet<Mobile>();
+		}
+
+		public override HashSet<T> ReadMobileSet<T>()
+		{
+			int count = ReadInt();
+
+			if( count > 0 )
+			{
+				HashSet<T> set = new HashSet<T>();
+
+				for( int i = 0; i < count; ++i )
+				{
+					T item = ReadMobile() as T;
+
+					if( item != null )
+					{
+						set.Add( item );
+					}
+				}
+
+				return set;
+			}
+			else
+			{
+				return new HashSet<T>();
 			}
 		}
 
@@ -1161,14 +1385,45 @@ namespace Server
 			}
 		}
 
-		public override bool End()
+		public override HashSet<BaseGuild> ReadGuildSet()
 		{
-			return m_File.PeekChar() == -1;
+			return ReadGuildSet<BaseGuild>();
+		}
+
+		public override HashSet<T> ReadGuildSet<T>()
+		{
+			int count = ReadInt();
+
+			if( count > 0 )
+			{
+				HashSet<T> set = new HashSet<T>();
+
+				for( int i = 0; i < count; ++i )
+				{
+					T item = ReadGuild() as T;
+
+					if( item != null )
+					{
+						set.Add( item );
+					}
+				}
+
+				return set;
+			}
+			else
+			{
+				return new HashSet<T>();
+			}
 		}
 
 		public override Race ReadRace()
 		{
 			return Race.Races[ReadByte()];
+		}
+
+		public override bool End()
+		{
+			return m_File.PeekChar() == -1;
 		}
 	}
 
@@ -1176,7 +1431,6 @@ namespace Server
 	{
 		private static int m_ThreadCount = 0;
 		public static int ThreadCount { get { return m_ThreadCount; } }
-
 
 		private int BufferSize;
 
@@ -1188,7 +1442,7 @@ namespace Server
 		private BinaryWriter m_Bin;
 		private FileStream m_File;
 
-		private Queue m_WriteQueue;
+		private Queue<MemoryStream> m_WriteQueue;
 		private Thread m_WorkerThread;
 
 		public AsyncWriter( string filename, bool prefix )
@@ -1200,7 +1454,7 @@ namespace Server
 		{
 			PrefixStrings = prefix;
 			m_Closed = false;
-			m_WriteQueue = Queue.Synchronized( new Queue() );
+			m_WriteQueue = new Queue<MemoryStream>();
 			BufferSize = buffSize;
 
 			m_File = new FileStream( filename, FileMode.Create, FileAccess.Write, FileShare.None );
@@ -1210,7 +1464,8 @@ namespace Server
 
 		private void Enqueue( MemoryStream mem )
 		{
-			m_WriteQueue.Enqueue( mem );
+			lock (m_WriteQueue)
+				m_WriteQueue.Enqueue( mem );
 
 			if( m_WorkerThread == null || !m_WorkerThread.IsAlive )
 			{
@@ -1232,13 +1487,20 @@ namespace Server
 			public void Worker()
 			{
 				AsyncWriter.m_ThreadCount++;
-				while( m_Owner.m_WriteQueue.Count > 0 )
-				{
-					MemoryStream mem = (MemoryStream)m_Owner.m_WriteQueue.Dequeue();
+
+				int lastCount = 0;
+
+				do {
+					MemoryStream mem = null;
+
+					lock (m_Owner.m_WriteQueue) {
+						if ((lastCount = m_Owner.m_WriteQueue.Count) > 0)
+							mem = m_Owner.m_WriteQueue.Dequeue();
+					}
 
 					if( mem != null && mem.Length > 0 )
 						mem.WriteTo( m_Owner.m_File );
-				}
+				} while (lastCount > 1);
 
 				if( m_Owner.m_Closed )
 					m_Owner.m_File.Close();
@@ -1647,6 +1909,46 @@ namespace Server
 				Write( list[i] );
 		}
 
+		public override void Write( HashSet<Item> set )
+		{
+			Write( set, false );
+		}
+
+		public override void Write( HashSet<Item> set, bool tidy )
+		{
+			if( tidy )
+			{
+				set.RemoveWhere( item => item.Deleted );
+			}
+
+			Write( set.Count );
+
+			foreach( Item item in set )
+			{
+				Write( item );
+			}
+		}
+
+		public override void WriteItemSet<T>( HashSet<T> set )
+		{
+			WriteItemSet( set, false );
+		}
+
+		public override void WriteItemSet<T>( HashSet<T> set, bool tidy )
+		{
+			if( tidy )
+			{
+				set.RemoveWhere( item => item.Deleted );
+			}
+
+			Write( set.Count );
+
+			foreach( Item item in set )
+			{
+				Write( item );
+			}
+		}
+
 		public override void Write( List<Mobile> list )
 		{
 			Write( list, false );
@@ -1695,6 +1997,46 @@ namespace Server
 				Write( list[i] );
 		}
 
+		public override void Write( HashSet<Mobile> set )
+		{
+			Write( set, false );
+		}
+
+		public override void Write( HashSet<Mobile> set, bool tidy )
+		{
+			if( tidy )
+			{
+				set.RemoveWhere( mobile => mobile.Deleted );
+			}
+
+			Write( set.Count );
+
+			foreach( Mobile mob in set )
+			{
+				Write( mob );
+			}
+		}
+
+		public override void WriteMobileSet<T>( HashSet<T> set )
+		{
+			WriteMobileSet( set, false );
+		}
+
+		public override void WriteMobileSet<T>( HashSet<T> set, bool tidy )
+		{
+			if( tidy )
+			{
+				set.RemoveWhere( mob => mob.Deleted );
+			}
+
+			Write( set.Count );
+
+			foreach( Mobile mob in set )
+			{
+				Write( mob );
+			}
+		}
+
 		public override void Write( List<BaseGuild> list )
 		{
 			Write( list, false );
@@ -1741,6 +2083,46 @@ namespace Server
 
 			for( int i = 0; i < list.Count; ++i )
 				Write( list[i] );
+		}
+
+		public override void Write( HashSet<BaseGuild> set )
+		{
+			Write( set, false );
+		}
+
+		public override void Write( HashSet<BaseGuild> set, bool tidy )
+		{
+			if( tidy )
+			{
+				set.RemoveWhere( guild => guild.Disbanded );
+			}
+
+			Write( set.Count );
+
+			foreach( BaseGuild guild in set )
+			{
+				Write( guild );
+			}
+		}
+
+		public override void WriteGuildSet<T>( HashSet<T> set )
+		{
+			WriteGuildSet( set, false );
+		}
+
+		public override void WriteGuildSet<T>( HashSet<T> set, bool tidy )
+		{
+			if( tidy )
+			{
+				set.RemoveWhere( guild => guild.Disbanded );
+			}
+
+			Write( set.Count );
+
+			foreach( BaseGuild guild in set )
+			{
+				Write( guild );
+			}
 		}
 	}
 

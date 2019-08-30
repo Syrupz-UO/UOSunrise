@@ -1,4 +1,4 @@
-﻿/*
+/*
 .--.      .--.   ____    ,---.  ,---.   .-''-.     .-'''-.  
 |  |_     |  | .'  __ `. |   /  |   | .'_ _   \   / _     \ 
 | _( )_   |  |/   '  \  \|  |   |  .'/ ( ` )   ' (`' )/`--' 
@@ -113,7 +113,7 @@ namespace Server.Items
 			return base.OnEquip(from);
 		}
 
-		public override void OnRemoved( object parent )
+		public override void OnRemoved( IEntity parent )
 		{
 			// normal
 			if ( parent is Mobile )

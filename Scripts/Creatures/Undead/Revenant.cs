@@ -134,7 +134,7 @@ namespace Server.Mobiles
 				PlaySound( 0x37D );
 			}
 
-			if ( m_Target.Hidden && InRange( m_Target, 3 ) && DateTime.UtcNow >= this.NextSkillTime && UseSkill( SkillName.DetectHidden ) )
+			if ( m_Target.Hidden && InRange( m_Target, 3 ) && Core.TickCount >= this.NextSkillTime && UseSkill( SkillName.DetectHidden ) )
 			{
 				Target targ = this.Target;
 

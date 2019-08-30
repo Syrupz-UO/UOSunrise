@@ -498,7 +498,7 @@ namespace VitaNex.Text
 
 			WriteItemList(list);
 		}
-		/*
+		
 		public override void Write(HashSet<Item> list)
 		{
 			AddArray(list, o => o.Serial.Value);
@@ -528,7 +528,7 @@ namespace VitaNex.Text
 
 			WriteItemSet(set);
 		}
-		*/
+		
 		public override void Write(List<Mobile> list)
 		{
 			AddArray(list, o => o.Serial.Value);
@@ -558,7 +558,7 @@ namespace VitaNex.Text
 
 			WriteMobileList(list);
 		}
-		/*
+		
 		public override void Write(HashSet<Mobile> list)
 		{
 			AddArray(list, o => o.Serial.Value);
@@ -588,7 +588,7 @@ namespace VitaNex.Text
 
 			WriteMobileSet(set);
 		}
-		*/
+		
 		public override void Write(List<BaseGuild> list)
 		{
 			AddArray(list, o => o.Id);
@@ -618,7 +618,7 @@ namespace VitaNex.Text
 
 			WriteGuildList(list);
 		}
-		/*
+		
 		public override void Write(HashSet<BaseGuild> list)
 		{
 			AddArray(list, o => o.Id);
@@ -648,7 +648,7 @@ namespace VitaNex.Text
 
 			WriteGuildSet(set);
 		}
-		*/
+		
 #if ServUO
 		public override void Write(SaveData value)
 		{ }

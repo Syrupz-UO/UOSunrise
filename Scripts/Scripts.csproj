@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Output\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NEWTIMERS;NEWPARENT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -28,7 +28,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>Output\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;NEWTIMERS;NEWPARENT</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -8599,28 +8599,6 @@
     <None Include="Creatures\Dragons\Obsolete\desktop.ini" />
     <None Include="Creatures\Dragons\Wyrms\desktop.ini" />
     <None Include="Creatures\Elementals\Elementals\desktop.ini" />
-    <None Include="Custom\Auction System\AuctionItem.cs.bak" />
-    <None Include="Custom\Auction System\AuctionSystem.cs.bak" />
-    <None Include="Custom\Auction System\Bid.cs.bak" />
-    <None Include="Custom\Auction System\Commands.cs.bak" />
-    <None Include="Custom\Auction System\Gumps\AuctionAdminGump.cs.bak" />
-    <None Include="Custom\Auction System\Gumps\AuctionControlGump.cs.bak" />
-    <None Include="Custom\Auction System\Gumps\AuctionDeliveryGump.cs.bak" />
-    <None Include="Custom\Auction System\Gumps\AuctionGump.cs.bak" />
-    <None Include="Custom\Auction System\Gumps\AuctionListing.cs.bak" />
-    <None Include="Custom\Auction System\Gumps\AuctionMessageGump.cs.bak" />
-    <None Include="Custom\Auction System\Gumps\AuctionNoticeGump.cs.bak" />
-    <None Include="Custom\Auction System\Gumps\AuctionSearchGump.cs.bak" />
-    <None Include="Custom\Auction System\Gumps\AuctionSortGump.cs.bak" />
-    <None Include="Custom\Auction System\Gumps\AuctionViewGump.cs.bak" />
-    <None Include="Custom\Auction System\Gumps\BidViewGump.cs.bak" />
-    <None Include="Custom\Auction System\Gumps\CreatureDeliveryGump.cs.bak" />
-    <None Include="Custom\Auction System\Gumps\DeleteSystemGump.cs.bak" />
-    <None Include="Custom\Auction System\Gumps\MyAuctionGump.cs.bak" />
-    <None Include="Custom\Auction System\Gumps\NewAuctionGump.cs.bak" />
-    <None Include="Custom\Auction System\Items\AuctionCheck.cs.bak" />
-    <None Include="Custom\Auction System\StringTable.cs.bak" />
-    <None Include="Custom\Auction System\Ultima.dlls\Ultima.dll.bak" />
     <None Include="Custom\Bless Deed\BaseArmor.cs0" />
     <None Include="Custom\Bless Deed\BaseWeapon.cs0" />
     <None Include="Custom\Bricks\README.md" />
@@ -8639,19 +8617,13 @@
     <None Include="Custom\FSATS\Taming\rodents.cfg" />
     <None Include="Custom\FSATS\Taming\spiders.cfg" />
     <None Include="Custom\hue room\hues.mul" />
-    <None Include="Custom\MailSystem\LetterGump.cs.bak" />
-    <None Include="Custom\Quest2\ArrianasQuest\ArrianasQuest.zip" />
     <None Include="Custom\Quest2\Runic quest\Runic quest\Data\Decoration\Britannia\RunicQuest.cfg" />
     <None Include="Custom\Quest2\Santa Claus Quest\Santa Claus Quest\Quest Items\ReindeerRewards.exe.manifest" />
     <None Include="Custom\Quest2\Santa Claus Quest\Santa Claus Quest\Santa Claus Quest.rtf" />
     <None Include="Custom\Quest2\SwampQueenQuest\SwampQueenQuest\Swamp Queen quest.txt.rtf" />
     <None Include="Custom\Quest2\VampireQuest\Read Me Please.doc" />
-    <None Include="Custom\Quest2\VampireQuest\VampQuest Arti%27s\Mid level artis.rar" />
     <None Include="Custom\Quest2\Zelda Quest\Zelda Quest Instructions.doc" />
     <None Include="Custom\Quest2\Zelda Quest\~%24lda Quest Instructions.doc" />
-    <None Include="Engines\Holiday\Christmas\Commands\Merry Christmas.cs.bak" />
-    <None Include="Engines\Holiday\Christmas\Items\ChristmasBag.cs.bak" />
-    <None Include="Engines\Holiday\Christmas\Items\Special\Christmas Robe.cs.bak" />
     <None Include="Engines\VeteranRewards\Character Statue Maker\Gumps\CharacterStatueGump.old" />
     <None Include="Houses\Monopoly\Read.doc" />
     <None Include="Items\Deeds\HolidayTreeDeed.old" />
@@ -8667,7 +8639,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Custom\Archery\Making Bow String Tutorial.txt" />
-    <Content Include="Custom\Auction System\Readme.htm" />
     <Content Include="Custom\CRL Homestead\MilkandCheese\Milk and Cheese Readme.txt" />
     <Content Include="Custom\Diablo System\How To.txt" />
     <Content Include="Custom\Diablo System\OnHover.jpg" />

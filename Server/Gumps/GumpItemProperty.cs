@@ -1,7 +1,7 @@
 /***************************************************************************
- *                             SaveStrategy.cs
+ *                            GumpItemProperty.cs
  *                            -------------------
- *   begin                : May 1, 2002
+ *   begin                : May 26, 2013
  *   copyright            : (C) The RunUO Software Team
  *   email                : info@runuo.com
  *
@@ -19,36 +19,42 @@
  ***************************************************************************/
 
 using System;
-using Server;
+using Server.Network;
 
-namespace Server
+namespace Server.Gumps
 {
-	public abstract class SaveStrategy
+	public class GumpItemProperty : GumpEntry
 	{
-		public static SaveStrategy Acquire()
-		{
-			if (Core.MultiProcessor)
-			{
-				int processorCount = Core.ProcessorCount;
+		private int m_Serial;
 
-				if (processorCount > 2)
-				{
-					return new DualSaveStrategy(); // return new DynamicSaveStrategy(); (4.0 or return new ParallelSaveStrategy(processorCount); (2.0)
-				}
-				else
-				{
-					return new DualSaveStrategy();
-				}
-			}
-			else
+		public GumpItemProperty( int serial )
+		{
+			m_Serial = serial;
+		}
+
+		public int Serial
+		{
+			get
 			{
-				return new StandardSaveStrategy();
+				return m_Serial;
+			}
+			set
+			{
+				Delta( ref m_Serial, value );
 			}
 		}
 
-		public abstract string Name { get; }
-		public abstract void Save(SaveMetrics metrics, bool permitBackgroundWrite);
+		public override string Compile()
+		{
+			return String.Format( "{{ itemproperty {0} }}", m_Serial );
+		}
 
-		public abstract void ProcessDecay();
+		private static byte[] m_LayoutName = Gump.StringToBuffer( "itemproperty" );
+
+		public override void AppendTo( IGumpWriter disp )
+		{
+			disp.AppendLayout( m_LayoutName );
+			disp.AppendLayout( m_Serial );
+		}
 	}
 }

@@ -142,7 +142,7 @@ namespace Server.Items
 			return true;
 		}
 			
-		public override void OnRemoved( Object o )
+		public override void OnRemoved( IEntity o )
       		{
       			if( o is Mobile )
       			{

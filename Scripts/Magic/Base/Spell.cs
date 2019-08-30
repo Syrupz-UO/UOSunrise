@@ -146,7 +146,7 @@ namespace Server.Spells
 				{
 					sdiBonus = Server.Misc.DifficultyLevel.SpellDamageIncreaseVsMonsters();
 				}
-			// PvP spell damage increase cap of 15% from an item’s magic property
+			// PvP spell damage increase cap of 15% from an itemâ€™s magic property
 			if ( playerVsPlayer && Server.Misc.DifficultyLevel.SpellDamageIncreaseVsPlayers() > 0 && sdiBonus > Server.Misc.DifficultyLevel.SpellDamageIncreaseVsPlayers() )
 			{
 				sdiBonus = Server.Misc.DifficultyLevel.SpellDamageIncreaseVsPlayers();
@@ -431,7 +431,7 @@ namespace Server.Spells
 				if ( Core.AOS && m_Caster.Player && type == DisturbType.Hurt )
 					DoHurtFizzle();
 
-				m_Caster.NextSpellTime = DateTime.UtcNow + GetDisturbRecovery();
+				m_Caster.NextSpellTime = Core.TickCount + (int)GetDisturbRecovery().TotalMilliseconds;
 			}
 			else if ( m_State == SpellState.Sequencing )
 			{
@@ -507,7 +507,7 @@ namespace Server.Spells
 			{
 				m_Caster.SendLocalizedMessage( 502643 ); // You can not cast a spell while frozen.
 			}
-			else if ( CheckNextSpellTime && DateTime.UtcNow < m_Caster.NextSpellTime )
+			else if ( CheckNextSpellTime && Core.TickCount < m_Caster.NextSpellTime )
 			{
 				m_Caster.SendLocalizedMessage( 502644 ); // You have not yet recovered from casting a spell.
 			}
@@ -888,7 +888,7 @@ namespace Server.Spells
 					m_Spell.m_CastTimer = null;
 					m_Spell.m_Caster.OnSpellCast( m_Spell );
 					m_Spell.m_Caster.Region.OnSpellCast( m_Spell.m_Caster, m_Spell );
-					m_Spell.m_Caster.NextSpellTime = DateTime.UtcNow + m_Spell.GetCastRecovery();// Spell.NextSpellDelay;
+					m_Spell.m_Caster.NextSpellTime = Core.TickCount + (int)m_Spell.GetCastRecovery().TotalMilliseconds;// Spell.NextSpellDelay;
 
 					Target originalTarget = m_Spell.m_Caster.Target;
 

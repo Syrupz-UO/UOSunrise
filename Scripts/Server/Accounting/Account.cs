@@ -1,12 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
 using Server;
+using Server.Commands;
+using Server.Items;
 using Server.Misc;
 using Server.Mobiles;
 using Server.Multis;
@@ -19,6 +22,138 @@ namespace Server.Accounting
 		public static readonly TimeSpan YoungDuration = TimeSpan.FromHours( 40.0 );
 
 		public static readonly TimeSpan InactiveDuration = TimeSpan.FromDays( 180.0 );
+
+		public static readonly TimeSpan EmptyInactiveDuration = TimeSpan.FromDays(30.0);
+
+		public static void Configure()
+		{
+			CommandSystem.Register("ConvertCurrency", AccessLevel.Owner, ConvertCurrency);
+		}
+
+		private static void ConvertCurrency(CommandEventArgs e)
+		{
+			e.Mobile.SendMessage(
+				"Converting All Banked Gold from {0} to {1}.  Please wait...",
+				AccountGold.Enabled ? "checks and coins" : "account treasury",
+				AccountGold.Enabled ? "account treasury" : "checks and coins");
+
+			NetState.Pause();
+
+			double found = 0.0, converted = 0.0;
+
+			try
+			{
+				BankBox box;
+				List<Gold> gold;
+				List<BankCheck> checks;
+				long share = 0, shared;
+				int diff;
+
+				foreach (var a in Accounts.GetAccounts().OfType<Account>().Where(a => a.Count > 0))
+				{
+					try
+					{
+						if (!AccountGold.Enabled)
+						{
+							share = (int)Math.Truncate((a.TotalCurrency / a.Count) * CurrencyThreshold);
+							found += a.TotalCurrency * CurrencyThreshold;
+						}
+
+						foreach (var m in a.m_Mobiles.Where(m => m != null))
+						{
+							box = m.FindBankNoCreate();
+
+							if (box == null)
+							{
+								continue;
+							}
+
+							if (AccountGold.Enabled)
+							{
+								foreach (var o in checks = box.FindItemsByType<BankCheck>())
+								{
+									found += o.Worth;
+
+									if (!a.DepositGold(o.Worth))
+									{
+										break;
+									}
+
+									converted += o.Worth;
+									o.Delete();
+								}
+
+								checks.Clear();
+								checks.TrimExcess();
+
+								foreach (var o in gold = box.FindItemsByType<Gold>())
+								{
+									found += o.Amount;
+
+									if (!a.DepositGold(o.Amount))
+									{
+										break;
+									}
+
+									converted += o.Amount;
+									o.Delete();
+								}
+
+								gold.Clear();
+								gold.TrimExcess();
+							}
+							else
+							{
+								shared = share;
+
+								while (shared > 0)
+								{
+									if (shared > 60000)
+									{
+										diff = (int)Math.Min(10000000, shared);
+
+										if (a.WithdrawGold(diff))
+										{
+											box.DropItem(new BankCheck(diff));
+										}
+										else
+										{
+											break;
+										}
+									}
+									else
+									{
+										diff = (int)Math.Min(60000, shared);
+
+										if (a.WithdrawGold(diff))
+										{
+											box.DropItem(new Gold(diff));
+										}
+										else
+										{
+											break;
+										}
+									}
+
+									converted += diff;
+									shared -= diff;
+								}
+							}
+
+							box.UpdateTotals();
+						}
+					}
+					catch
+					{ }
+				}
+			}
+			catch
+			{ }
+
+			NetState.Resume();
+
+			e.Mobile.SendMessage("Operation complete: {0:#,0} of {1:#,0} Gold has been converted in total.", converted, found);
+		}
 
 		private string m_Username, m_Email, m_PlainPassword, m_CryptPassword, m_NewCryptPassword;
 		private AccessLevel m_AccessLevel;
@@ -113,7 +248,7 @@ namespace Server.Accounting
 		}
 
 		/// <summary>
-		/// Email address used whenever the user wants to change their password.
+		/// Account email address.
 		/// </summary>
 		public string Email
 		{
@@ -232,11 +367,19 @@ namespace Server.Accounting
 		}
 
 		/// <summary>
-		/// An account is considered inactive based upon LastLogin and InactiveDuration
+		/// An account is considered inactive based upon LastLogin and InactiveDuration.  If the account is empty, it is based upon EmptyInactiveDuration
 		/// </summary>
 		public bool Inactive
 		{
-			get { return ( ( m_LastLogin + InactiveDuration ) <= DateTime.UtcNow && AccessLevel == AccessLevel.Player ); }
+			get 
+			{
+				if( this.AccessLevel != AccessLevel.Player )
+					return false;
+
+				TimeSpan inactiveLength = DateTime.UtcNow - m_LastLogin;
+
+				return (inactiveLength > ((this.Count == 0) ? EmptyInactiveDuration : InactiveDuration));
+			}
 		}
 
 		/// <summary>
@@ -362,7 +505,7 @@ namespace Server.Accounting
 			if ( banTime == DateTime.MinValue )
 				RemoveTag( "BanTime" );
 			else
-				SetTag( "BanTime", XmlConvert.ToString( banTime, XmlDateTimeSerializationMode.Local ) );
+				SetTag( "BanTime", XmlConvert.ToString( banTime, XmlDateTimeSerializationMode.Utc ) );
 
 			if ( banDuration == TimeSpan.Zero )
 				RemoveTag( "BanDuration" );
@@ -484,11 +627,6 @@ namespace Server.Accounting
 				SetPassword( plainPassword );
 
 			return ok;
-		}
-
-		public void SetEmail(string email)
-		{
-			m_Email = email;
 		}
 
 		private Timer m_YoungTimer;
@@ -673,10 +811,12 @@ namespace Server.Accounting
 					}
 			}
 
-			m_AccessLevel = (AccessLevel)Enum.Parse( typeof( AccessLevel ), Utility.GetText( node["accessLevel"], "Player" ), true );
+			Enum.TryParse( Utility.GetText( node["accessLevel"], "Player" ), true, out m_AccessLevel );
 			m_Flags = Utility.GetXMLInt32( Utility.GetText( node["flags"], "0" ), 0 );
 			m_Created = Utility.GetXMLDateTime( Utility.GetText( node["created"], null ), DateTime.UtcNow );
 			m_LastLogin = Utility.GetXMLDateTime( Utility.GetText( node["lastLogin"], null ), DateTime.UtcNow );
+
+			TotalCurrency = Utility.GetXMLDouble( Utility.GetText(node["totalCurrency"], "0" ), 0 );
 
 			m_Mobiles = LoadMobiles( node );
 			m_Comments = LoadComments( node );
@@ -1033,11 +1173,11 @@ namespace Server.Accounting
 			}
 
 			xml.WriteStartElement( "created" );
-			xml.WriteString( XmlConvert.ToString( m_Created, XmlDateTimeSerializationMode.Local ) );
+			xml.WriteString( XmlConvert.ToString( m_Created, XmlDateTimeSerializationMode.Utc ) );
 			xml.WriteEndElement();
 
 			xml.WriteStartElement( "lastLogin" );
-			xml.WriteString( XmlConvert.ToString( m_LastLogin, XmlDateTimeSerializationMode.Local ) );
+			xml.WriteString( XmlConvert.ToString( m_LastLogin, XmlDateTimeSerializationMode.Utc ) );
 			xml.WriteEndElement();
 
 			xml.WriteStartElement( "totalGameTime" );
@@ -1127,6 +1267,10 @@ namespace Server.Accounting
 				xml.WriteEndElement();
 			}
 
+			xml.WriteStartElement("totalCurrency");
+			xml.WriteString(XmlConvert.ToString(TotalCurrency));
+			xml.WriteEndElement();
+
 			xml.WriteEndElement();
 		}
 
@@ -1210,9 +1354,17 @@ namespace Server.Accounting
 		public int CompareTo( Account other )
 		{
 			if ( other == null )
-				return -1;
+				return 1;
 
 			return m_Username.CompareTo( other.m_Username );
+		}
+
+		public int CompareTo( IAccount other )
+		{
+			if ( other == null )
+				return 1;
+
+			return m_Username.CompareTo( other.Username );
 		}
 
 		public int CompareTo( object obj )
@@ -1222,5 +1374,242 @@ namespace Server.Accounting
 
 			throw new ArgumentException();
 		}
+
+		#region Gold Account
+		/// <summary>
+		///     This amount specifies the value at which point Gold turns to Platinum.
+		///     By default, when 1,000,000,000 Gold is accumulated, it will transform
+		///     into 1 Platinum.
+		/// </summary>
+		public static int CurrencyThreshold
+		{
+			get { return AccountGold.CurrencyThreshold; }
+			set { AccountGold.CurrencyThreshold = value; }
+		}
+
+		/// <summary>
+		///     This amount represents the total amount of currency owned by the player.
+		///     It is cumulative of both Gold and Platinum, the absolute total amount of
+		///     Gold owned by the player can be found by multiplying this value by the
+		///     CurrencyThreshold value.
+		/// </summary>
+		[CommandProperty(AccessLevel.Administrator, true)]
+		public double TotalCurrency { get; private set; }
+
+		/// <summary>
+		///     This amount represents the current amount of Gold owned by the player.
+		///     The value does not include the value of Platinum and ranges from
+		///     0 to 999,999,999 by default.
+		/// </summary>
+		[CommandProperty(AccessLevel.Administrator)]
+		public int TotalGold
+		{
+			get { return (int)Math.Floor((TotalCurrency - Math.Truncate(TotalCurrency)) * Math.Max(1.0, CurrencyThreshold)); }
+		}
+
+		/// <summary>
+		///     This amount represents the current amount of Platinum owned by the player.
+		///     The value does not include the value of Gold and ranges from
+		///     0 to 2,147,483,647 by default.
+		///     One Platinum represents the value of CurrencyThreshold in Gold.
+		/// </summary>
+		[CommandProperty(AccessLevel.Administrator)]
+		public int TotalPlat { get { return (int)Math.Truncate(TotalCurrency); } }
+
+		/// <summary>
+		///     Attempts to deposit the given amount of Gold and Platinum into this account.
+		/// </summary>
+		/// <param name="amount">Amount to deposit.</param>
+		/// <returns>True if successful, false if amount given is less than or equal to zero.</returns>
+		public bool DepositCurrency(double amount)
+		{
+			if (amount <= 0)
+			{
+				return false;
+			}
+
+			TotalCurrency += amount;
+			return true;
+		}
+
+		/// <summary>
+		///     Attempts to deposit the given amount of Gold into this account.
+		///     If the given amount is greater than the CurrencyThreshold,
+		///     Platinum will be deposited to offset the difference.
+		/// </summary>
+		/// <param name="amount">Amount to deposit.</param>
+		/// <returns>True if successful, false if amount given is less than or equal to zero.</returns>
+		public bool DepositGold(int amount)
+		{
+			return DepositCurrency(amount / Math.Max(1.0, CurrencyThreshold));
+		}
+
+		/// <summary>
+		///     Attempts to deposit the given amount of Gold into this account.
+		///     If the given amount is greater than the CurrencyThreshold,
+		///     Platinum will be deposited to offset the difference.
+		/// </summary>
+		/// <param name="amount">Amount to deposit.</param>
+		/// <returns>True if successful, false if amount given is less than or equal to zero.</returns>
+		public bool DepositGold(long amount)
+		{
+			return DepositCurrency(amount / Math.Max(1.0, CurrencyThreshold));
+		}
+
+		/// <summary>
+		///     Attempts to deposit the given amount of Platinum into this account.
+		/// </summary>
+		/// <param name="amount">Amount to deposit.</param>
+		/// <returns>True if successful, false if amount given is less than or equal to zero.</returns>
+		public bool DepositPlat(int amount)
+		{
+			return DepositCurrency(amount);
+		}
+
+		/// <summary>
+		///     Attempts to deposit the given amount of Platinum into this account.
+		/// </summary>
+		/// <param name="amount">Amount to deposit.</param>
+		/// <returns>True if successful, false if amount given is less than or equal to zero.</returns>
+		public bool DepositPlat(long amount)
+		{
+			return DepositCurrency(amount);
+		}
+
+		/// <summary>
+		///     Attempts to withdraw the given amount of Platinum and Gold from this account.
+		/// </summary>
+		/// <param name="amount">Amount to withdraw.</param>
+		/// <returns>True if successful, false if balance was too low.</returns>
+		public bool WithdrawCurrency(double amount)
+		{
+			if (amount <= 0)
+			{
+				return true;
+			}
+
+			if (amount > TotalCurrency)
+			{
+				return false;
+			}
+
+			TotalCurrency -= amount;
+			return true;
+		}
+
+		/// <summary>
+		///     Attempts to withdraw the given amount of Gold from this account.
+		///     If the given amount is greater than the CurrencyThreshold,
+		///     Platinum will be withdrawn to offset the difference.
+		/// </summary>
+		/// <param name="amount">Amount to withdraw.</param>
+		/// <returns>True if successful, false if balance was too low.</returns>
+		public bool WithdrawGold(int amount)
+		{
+			return WithdrawCurrency(amount / Math.Max(1.0, CurrencyThreshold));
+		}
+
+		/// <summary>
+		///     Attempts to withdraw the given amount of Gold from this account.
+		///     If the given amount is greater than the CurrencyThreshold,
+		///     Platinum will be withdrawn to offset the difference.
+		/// </summary>
+		/// <param name="amount">Amount to withdraw.</param>
+		/// <returns>True if successful, false if balance was too low.</returns>
+		public bool WithdrawGold(long amount)
+		{
+			return WithdrawCurrency(amount / Math.Max(1.0, CurrencyThreshold));
+		}
+
+		/// <summary>
+		///     Attempts to withdraw the given amount of Platinum from this account.
+		/// </summary>
+		/// <param name="amount">Amount to withdraw.</param>
+		/// <returns>True if successful, false if balance was too low.</returns>
+		public bool WithdrawPlat(int amount)
+		{
+			return WithdrawCurrency(amount);
+		}
+
+		/// <summary>
+		///     Attempts to withdraw the given amount of Platinum from this account.
+		/// </summary>
+		/// <param name="amount">Amount to withdraw.</param>
+		/// <returns>True if successful, false if balance was too low.</returns>
+		public bool WithdrawPlat(long amount)
+		{
+			return WithdrawCurrency(amount);
+		}
+
+		/// <summary>
+		///     Gets the total balance of Gold for this account.
+		/// </summary>
+		/// <param name="gold">Gold value, Platinum exclusive</param>
+		/// <param name="totalGold">Gold value, Platinum inclusive</param>
+		public void GetGoldBalance(out int gold, out double totalGold)
+		{
+			gold = TotalGold;
+			totalGold = TotalCurrency * Math.Max(1.0, CurrencyThreshold);
+		}
+
+		/// <summary>
+		///     Gets the total balance of Gold for this account.
+		/// </summary>
+		/// <param name="gold">Gold value, Platinum exclusive</param>
+		/// <param name="totalGold">Gold value, Platinum inclusive</param>
+		public void GetGoldBalance(out long gold, out double totalGold)
+		{
+			gold = TotalGold;
+			totalGold = TotalCurrency * Math.Max(1.0, CurrencyThreshold);
+		}
+
+		/// <summary>
+		///     Gets the total balance of Platinum for this account.
+		/// </summary>
+		/// <param name="plat">Platinum value, Gold exclusive</param>
+		/// <param name="totalPlat">Platinum value, Gold inclusive</param>
+		public void GetPlatBalance(out int plat, out double totalPlat)
+		{
+			plat = TotalPlat;
+			totalPlat = TotalCurrency;
+		}
+
+		/// <summary>
+		///     Gets the total balance of Platinum for this account.
+		/// </summary>
+		/// <param name="plat">Platinum value, Gold exclusive</param>
+		/// <param name="totalPlat">Platinum value, Gold inclusive</param>
+		public void GetPlatBalance(out long plat, out double totalPlat)
+		{
+			plat = TotalPlat;
+			totalPlat = TotalCurrency;
+		}
+
+		/// <summary>
+		///     Gets the total balance of Gold and Platinum for this account.
+		/// </summary>
+		/// <param name="gold">Gold value, Platinum exclusive</param>
+		/// <param name="totalGold">Gold value, Platinum inclusive</param>
+		/// <param name="plat">Platinum value, Gold exclusive</param>
+		/// <param name="totalPlat">Platinum value, Gold inclusive</param>
+		public void GetBalance(out int gold, out double totalGold, out int plat, out double totalPlat)
+		{
+			GetGoldBalance(out gold, out totalGold);
+			GetPlatBalance(out plat, out totalPlat);
+		}
+
+		/// <summary>
+		///     Gets the total balance of Gold and Platinum for this account.
+		/// </summary>
+		/// <param name="gold">Gold value, Platinum exclusive</param>
+		/// <param name="totalGold">Gold value, Platinum inclusive</param>
+		/// <param name="plat">Platinum value, Gold exclusive</param>
+		/// <param name="totalPlat">Platinum value, Gold inclusive</param>
+		public void GetBalance(out long gold, out double totalGold, out long plat, out double totalPlat)
+		{
+			GetGoldBalance(out gold, out totalGold);
+			GetPlatBalance(out plat, out totalPlat);
+		}
+		#endregion
 	}
 }

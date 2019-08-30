@@ -1,4 +1,4 @@
-/***************************************************************************
+﻿/***************************************************************************
  *                          DynamicSaveStrategy.cs
  *                            -------------------
  *   begin                : December 16, 2010
@@ -17,7 +17,8 @@
  *   (at your option) any later version.
  *
  ***************************************************************************/
- 
+
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -156,8 +157,6 @@ namespace Server
 			return commitTask;
 		}
 
-
-
 		private Task SaveMobiles()
 		{
 			//Start the blocking consumer; this runs in background.
@@ -240,7 +239,10 @@ namespace Server
 
 			while( _decayBag.TryTake( out item ) )
 			{
-				item.Delete();
+				if( item.OnDecay() )
+				{
+					item.Delete();
+				}
 			}
 		}
 
@@ -307,4 +309,5 @@ namespace Server
 			bfw.Close();
 		}
 	}
+
 }

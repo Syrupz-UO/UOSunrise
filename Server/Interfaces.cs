@@ -45,7 +45,8 @@ namespace Server
 
 		DateTime LastRestock{ get; set; }
 		TimeSpan RestockDelay{ get; }
-		void Restock();
+
+		void Restock( Mobile from );
 	}
 
 	public interface IPoint2D

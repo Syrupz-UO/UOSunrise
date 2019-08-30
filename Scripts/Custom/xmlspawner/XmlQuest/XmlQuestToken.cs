@@ -91,7 +91,7 @@ namespace Server.Items
             return false;
         }
 
-        public override void OnAdded(object target)
+        public override void OnAdded(IEntity target)
         {
             base.OnAdded(target);
 
@@ -553,7 +553,7 @@ namespace Server.Items
                 }
         }
 
-        public override void OnAdded(object target)
+        public override void OnAdded(IEntity target)
         {
             base.OnAdded(target);
 

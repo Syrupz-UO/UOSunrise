@@ -28,7 +28,7 @@ namespace Server.Network
 		{
 			Mobile from = state.Mobile;
 			
-			if ( from.AccessLevel >= AccessLevel.Counselor || DateTime.UtcNow >= from.NextActionTime )
+			if ( from.AccessLevel >= AccessLevel.Counselor || Core.TickCount >= from.NextActionTime )
 			{
 				Serial use = pvSrc.ReadInt32();
 				Serial targ = pvSrc.ReadInt32();
@@ -58,7 +58,7 @@ namespace Server.Network
 						from.SendLocalizedMessage( 500970 ); // Bandages can not be used on that.
 					}
 					
-					from.NextActionTime = DateTime.UtcNow + TimeSpan.FromSeconds( 0.5 );			
+					from.NextActionTime = Core.TickCount + Mobile.ActionDelay;			
 				}
 			}
 			else

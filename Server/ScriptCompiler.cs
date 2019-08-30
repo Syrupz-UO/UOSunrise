@@ -78,26 +78,34 @@ namespace Server
 			return list.ToArray();
 		}
 
-		public static string GetDefines()
+		public static string GetCompilerOptions( bool debug )
 		{
 			StringBuilder sb = null;
 
+			AppendCompilerOption( ref sb, "/unsafe" );
+
+			if( !debug )
+				AppendCompilerOption( ref sb, "/optimize" );
+
 #if MONO
-			AppendDefine( ref sb, "/d:MONO" );
+			AppendCompilerOption( ref sb, "/d:MONO" );
 #endif
 
-#if DEBUG
-			AppendDefine( ref sb, "/d:DEBUG" );
-#else
-			AppendDefine( ref sb, "/optimize" );
+			if( Core.Is64Bit )
+				AppendCompilerOption( ref sb, "/d:x64" );
+			
+#if NEWTIMERS
+			AppendCompilerOption(ref sb, "/d:NEWTIMERS");
 #endif
 
-			AppendDefine( ref sb, "/unsafe" );
+#if NEWPARENT
+			AppendCompilerOption(ref sb, "/d:NEWPARENT");
+#endif
 
 			return (sb == null ? null : sb.ToString());
 		}
 
-		public static void AppendDefine( ref StringBuilder sb, string define )
+		private static void AppendCompilerOption( ref StringBuilder sb, string define )
 		{
 			if( sb == null )
 				sb = new StringBuilder();
@@ -217,10 +225,10 @@ namespace Server
 
 				CompilerParameters parms = new CompilerParameters( GetReferenceAssemblies(), path, debug );
 
-				string defines = GetDefines();
+				string options = GetCompilerOptions( debug );
 
-				if( defines != null )
-					parms.CompilerOptions = defines;
+				if( options != null )
+					parms.CompilerOptions = options;
 
 				if( Core.HaltOnWarning )
 					parms.WarningLevel = 4;
@@ -229,7 +237,7 @@ namespace Server
 				CompilerResults results = provider.CompileAssemblyFromFile( parms, files );
 #else
 				parms.CompilerOptions = String.Format( "{0} /nowarn:169,219,414 /recurse:Scripts/*.cs", parms.CompilerOptions );
-				var results = provider.CompileAssemblyFromFile(parms, files);
+				CompilerResults results = provider.CompileAssemblyFromFile( parms, "" );
 #endif
 				m_AdditionalReferences.Add( path );
 
@@ -357,10 +365,10 @@ namespace Server
 
 				CompilerParameters parms = new CompilerParameters( GetReferenceAssemblies(), path, debug );
 
-				string defines = GetDefines();
+				string options = GetCompilerOptions( debug );
 
-				if( defines != null )
-					parms.CompilerOptions = String.Format( "/D:{0}", defines );
+				if( options != null )
+					parms.CompilerOptions = options;
 
 				if( Core.HaltOnWarning )
 					parms.WarningLevel = 4;
@@ -454,7 +462,7 @@ namespace Server
 					Utility.PushColor( ConsoleColor.DarkYellow );
 
 					foreach( CompilerError e in list )
-						Console.WriteLine( "    {0}: Line {1}: {3}", e.ErrorNumber, e.Line, e.Column, e.ErrorText );
+						Console.WriteLine( "    {0}: Line {1}: {2}", e.ErrorNumber, e.Line, e.ErrorText );
 
 					Utility.PopColor();
 				}
@@ -479,7 +487,7 @@ namespace Server
 					Utility.PushColor( ConsoleColor.DarkRed );
 
 					foreach( CompilerError e in list )
-						Console.WriteLine( "    {0}: Line {1}: {3}", e.ErrorNumber, e.Line, e.Column, e.ErrorText );
+						Console.WriteLine( "    {0}: Line {1}: {2}", e.ErrorNumber, e.Line, e.ErrorText );
 
 					Utility.PopColor();
 				}

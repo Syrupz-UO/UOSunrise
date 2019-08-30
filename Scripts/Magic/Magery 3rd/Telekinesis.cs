@@ -89,7 +89,7 @@ namespace Server.Spells.Third
 				if (item.Movable == false){ Caster.SendMessage( "That item does not seem to move." ); }
 				else if (item.Amount > 1){ Caster.SendMessage( "There are too many items stacked here to move." ); }
 				else if (item.Weight > (Caster.Int / 20)){ Caster.SendMessage( "That is to heavy to move." ); }
-				else if (item.RootParentEntity != null){ Caster.SendMessage( "You can not move objects that are inside of other objects or being worn." ); }
+				else if (item.RootParent != null){ Caster.SendMessage( "You can not move objects that are inside of other objects or being worn." ); }
 				else
 				{
 					Effects.SendLocationParticles(EffectItem.Create(item.Location, item.Map, EffectItem.DefaultDuration), 0x376A, 9, 32, Server.Items.CharacterDatabase.GetMySpellHue( Caster, 0 ), 0, 5022, 0);

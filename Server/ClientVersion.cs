@@ -98,7 +98,7 @@ namespace Server
 			m_Patch = pat;
 			m_Type = type;
 
-			m_SourceString = ToString();
+			m_SourceString = _ToStringImpl();
 		}
 
 		public static bool operator == ( ClientVersion l, ClientVersion r )
@@ -153,7 +153,7 @@ namespace Server
 				&& m_Type == v.m_Type;
 		}
 
-		public override string ToString()
+		private string _ToStringImpl()
 		{
 			StringBuilder builder = new StringBuilder( 16 );
 
@@ -181,6 +181,11 @@ namespace Server
 			}
 
 			return builder.ToString();
+		}
+
+		public override string ToString()
+		{
+			return _ToStringImpl();
 		}
 
 		public ClientVersion( string fmt )

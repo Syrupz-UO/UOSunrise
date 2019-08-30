@@ -411,7 +411,7 @@ namespace VitaNex.Mobiles
 
 		protected virtual void OnRestock(Mobile m)
 		{
-			Restock();
+			Restock(m);
 
 			if (m != null)
 			{
@@ -512,7 +512,7 @@ namespace VitaNex.Mobiles
 		
 		private bool _WasStocked, _Restocking;
 
-		public override void Restock()
+		public override void Restock( Mobile from )
 		{
 			if (_Restocking || !CanRestock)
 			{

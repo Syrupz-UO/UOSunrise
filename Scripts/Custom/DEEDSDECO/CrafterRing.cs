@@ -17,7 +17,7 @@ namespace Server.Items
 			Attributes.RegenMana = 5;
 		}
 
-		public override void OnAdded( object parent )
+		public override void OnAdded( IEntity parent )
 		{
 			base.OnAdded( parent );
 			if( parent is Mobile )
@@ -32,7 +32,7 @@ namespace Server.Items
                                 from.Skills.Tinkering.Base += 20;
 			}
 		}
-		public override void OnRemoved( object parent )
+		public override void OnRemoved( IEntity parent )
 		{
 			base.OnRemoved( parent );
 			if( parent is Mobile )

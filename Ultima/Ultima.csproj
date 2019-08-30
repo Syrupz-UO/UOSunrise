@@ -39,7 +39,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>TRACE;DEBUG;NEWTIMERS;ServUO</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NEWTIMERS;NEWPARENT</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
@@ -66,7 +66,7 @@
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile>
     </ConfigurationOverrideFile>
-    <DefineConstants>TRACE;NEWTIMERS;ServUO</DefineConstants>
+    <DefineConstants>TRACE;NEWTIMERS;NEWPARENT</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>false</DebugSymbols>

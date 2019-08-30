@@ -142,7 +142,7 @@ namespace Server.Items
 			}
 		}
 		
-		public override void OnAdded(object target)
+		public override void OnAdded(IEntity target)
 		{
 			switch ( ((Item)this).ItemID )
 			{

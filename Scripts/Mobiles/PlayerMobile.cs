@@ -1223,27 +1223,19 @@ namespace Server.Mobiles
 			m_IsStealthing = false; // IsStealthing should be moved to Server.Mobiles
 		}
 
-		[CommandProperty( AccessLevel.GameMaster )]
-		public override bool Hidden
+		public override void OnHiddenChanged()
 		{
-			get
+			base.OnHiddenChanged();
+
+			RemoveBuff( BuffIcon.Invisibility );	//Always remove, default to the hiding icon EXCEPT in the invis spell where it's explicitly set
+
+			if( !Hidden )
 			{
-				return base.Hidden;
+				RemoveBuff( BuffIcon.HidingAndOrStealth );
 			}
-			set
+			else// if( !InvisibilitySpell.HasTimer( this ) )
 			{
-				base.Hidden = value;
-
-				RemoveBuff( BuffIcon.Invisibility );	//Always remove, default to the hiding icon EXCEPT in the invis spell where it's explicitly set
-
-				if( !Hidden )
-				{
-					RemoveBuff( BuffIcon.HidingAndOrStealth );
-				}
-				else// if( !InvisibilitySpell.HasTimer( this ) )
-				{
-					BuffInfo.AddBuff( this, new BuffInfo( BuffIcon.HidingAndOrStealth, 1075655 ) );	//Hidden/Stealthing & You Are Hidden
-				}
+				BuffInfo.AddBuff( this, new BuffInfo( BuffIcon.HidingAndOrStealth, 1075655 ) );	//Hidden/Stealthing & You Are Hidden
 			}
 		}
 
@@ -1465,7 +1457,7 @@ namespace Server.Mobiles
 				else if ( HasGump( typeof( ResurrectNowGump ) ) ) { if ( Alive ) { CloseGump( typeof( ResurrectNowGump ) ); } }  // WIZARD ADDED FOR NEW DEATH GUMP
 			}
 
-			TimeSpan speed = ComputeMovementSpeed( d );
+			int speed = ComputeMovementSpeed( d );
 
 			bool res;
 
@@ -2296,7 +2288,7 @@ namespace Server.Mobiles
 		{
 			if (!item.Deleted && (item.LootType == LootType.Blessed || item.Insured == true))
 			{
-				if (this.Backpack != item.ParentEntity)
+				if (this.Backpack != item.Parent)
 				{
 					return true;
 				}
@@ -3686,13 +3678,13 @@ if (Country != null)
 
 		#region Fastwalk Prevention
 		private static bool FastwalkPrevention = true; // Is fastwalk prevention enabled?
-		private static TimeSpan FastwalkThreshold = TimeSpan.FromSeconds( 0.4 ); // Fastwalk prevention will become active after 0.4 seconds
+		private static int FastwalkThreshold = 400; // Fastwalk prevention will become active after 0.4 seconds
 
-		private DateTime m_NextMovementTime;
+		private long m_NextMovementTime;
 
 		public virtual bool UsesFastwalkPrevention{ get{ return ( AccessLevel < AccessLevel.Counselor ); } }
 
-		public override TimeSpan ComputeMovementSpeed( Direction dir, bool checkTurning )
+		public override int ComputeMovementSpeed( Direction dir, bool checkTurning )
 		{
 			if ( checkTurning && (dir & Direction.Mask) != (this.Direction & Direction.Mask) )
 				return Mobile.RunMount;	// We are NOT actually moving (just a direction change)
@@ -3718,7 +3710,7 @@ if (Country != null)
 		{
 			PlayerMobile pm = ns.Mobile as PlayerMobile;
 
-			TimeSpan ts = pm.m_NextMovementTime - DateTime.UtcNow;
+			long ts = pm.m_NextMovementTime - Core.TickCount;
 
 			if ( pm != null )
 			{
@@ -3732,17 +3724,17 @@ if (Country != null)
 			if ( pm == null || !pm.UsesFastwalkPrevention )
 				return true;
 
-			if ( pm.m_NextMovementTime == DateTime.MinValue )
+			if ( pm.m_NextMovementTime <= 0 )
 			{
 				// has not yet moved
-				pm.m_NextMovementTime = DateTime.UtcNow;
+				pm.m_NextMovementTime = Core.TickCount;
 				return true;
 			}
 
-			if ( ts < TimeSpan.Zero )
+			if ( ts < 0 )
 			{
 				// been a while since we've last moved
-				pm.m_NextMovementTime = DateTime.UtcNow;
+				pm.m_NextMovementTime = Core.TickCount;
 				return true;
 			}
 

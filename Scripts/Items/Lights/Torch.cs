@@ -24,16 +24,6 @@ namespace Server.Items
 			Weight = 1.0;
 		}
 
-		public override void OnAdded( object parent )
-		{
-			base.OnAdded( parent );
-		}
-
-		public override void Ignite()
-		{
-			base.Ignite();
-		}
-
 		public Torch( Serial serial ) : base( serial )
 		{
 		}

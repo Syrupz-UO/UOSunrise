@@ -584,7 +584,7 @@ namespace Server.Factions
 					StartBandage();
 			}
 
-			if ( m_Mobile.Spell == null && DateTime.UtcNow >= m_Mobile.NextSpellTime )
+			if ( m_Mobile.Spell == null && Core.TickCount >= m_Mobile.NextSpellTime )
 			{
 				Spell spell = null;
 
@@ -614,7 +614,7 @@ namespace Server.Factions
 					{
 						if ( m_Guard.Mana >= 11 && (m_Guard.Hits + 30) < m_Guard.HitsMax )
 							spell = new GreaterHealSpell( m_Guard, null );
-						else if ( (m_Guard.Hits + 10) < m_Guard.HitsMax && (m_Guard.Mana < 11 || (m_Guard.NextCombatTime - DateTime.UtcNow) > TimeSpan.FromSeconds( 2.0 )) )
+						else if ( (m_Guard.Hits + 10) < m_Guard.HitsMax && (m_Guard.Mana < 11 || (m_Guard.NextCombatTime - Core.TickCount) > 2000) )
 							spell = new HealSpell( m_Guard, null );
 					}
 					else if ( m_Guard.CanBeginAction( typeof( BaseHealPotion ) ) )

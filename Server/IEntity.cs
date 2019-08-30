@@ -61,8 +61,8 @@ namespace Server
 		private string m_Name;
 		private Serial m_Serial;
 		private Point3D m_Location;
-		private readonly Map m_Map;
-		private readonly bool m_Deleted;
+		private Map m_Map;
+		private bool m_Deleted;
 
 		public Entity( Serial serial, Point3D loc, Map map )
 		{
@@ -126,6 +126,7 @@ namespace Server
 
 		public void Delete()
 		{
+			m_Deleted = true;
 		}
 
 		public void ProcessDelta()

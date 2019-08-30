@@ -112,7 +112,7 @@ namespace Server.SkillHandlers
 
 			public override void OnDisturb( DisturbType type, bool message )
 			{
-				Caster.NextSkillTime = DateTime.UtcNow;
+				Caster.NextSkillTime = Core.TickCount;
 
 				base.OnDisturb( type, message );
 			}

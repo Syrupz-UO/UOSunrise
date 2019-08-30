@@ -2258,7 +2258,7 @@ namespace Server.Engines.XmlSpawner2
         {
             Mobile from = state.Mobile;
 
-            if (from.AccessLevel >= AccessLevel.GameMaster || DateTime.UtcNow >= from.NextActionTime)
+            if (from.AccessLevel >= AccessLevel.GameMaster || Core.TickCount >= from.NextActionTime)
             {
                 int value = pvSrc.ReadInt32();
 

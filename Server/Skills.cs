@@ -944,11 +944,11 @@ namespace Server
 
 				if ( info.Callback != null )
 				{
-					if ( from.NextSkillTime <= DateTime.UtcNow && from.Spell == null )
+					if (Core.TickCount - from.NextSkillTime >= 0 && from.Spell == null)
 					{
 						from.DisruptiveAction();
 
-						from.NextSkillTime = DateTime.UtcNow + info.Callback( from );
+						from.NextSkillTime = Core.TickCount + (int)(info.Callback(from)).TotalMilliseconds;
 
 						return true;
 					}
@@ -1110,14 +1110,14 @@ namespace Server
 				ns.Send( new SkillChange( skill ) );
 		}
 		
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return GetEnumerator();
-		}
-
 		public IEnumerator<Skill> GetEnumerator()
 		{
-			return m_Skills.OfType<Skill>().GetEnumerator();
+			return m_Skills.Where(s => s != null).GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return m_Skills.Where(s => s != null).GetEnumerator();
 		}
 	}
 }

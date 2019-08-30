@@ -395,7 +395,7 @@ namespace VitaNex.Text
 		{
 			return ReadArray<string, T>(o => BaseGuild.FindByName(o) as T, o => o != null);
 		}
-		/*
+		
 		public override HashSet<Item> ReadItemSet()
 		{
 			return new HashSet<Item>(ReadArray<Serial, Item>(World.FindItem, o => o != null));
@@ -425,7 +425,7 @@ namespace VitaNex.Text
 		{
 			return new HashSet<T>(ReadArray<string, T>(o => BaseGuild.FindByName(o) as T, o => o != null));
 		}
-		*/
+		
 #if ServUO
 		public override int PeekInt()
 		{
